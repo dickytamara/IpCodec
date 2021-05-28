@@ -16,6 +16,8 @@ use pjsip_sys::*;
 use pjsip_simple_sys::*;
 use pjsip_ua_sys::*;
 
+use std::os::raw::{c_int, c_uint, c_char, c_void};
+
 #[repr(C)]
 pub struct __BindgenUnionField<T>(::std::marker::PhantomData<T>);
 impl<T> __BindgenUnionField<T> {
@@ -106,12 +108,12 @@ pub const PJSUA_TRANSPORT_RESTART_DELAY_TIME: u32 = 10;
 pub const PJSUA_INVALID_ID: pjsua_invalid_id_const_ = -1;
 pub type pjsua_invalid_id_const_ = i32;
 
-pub type pjsua_call_id = ::std::os::raw::c_int;
-pub type pjsua_acc_id = ::std::os::raw::c_int;
-pub type pjsua_buddy_id = ::std::os::raw::c_int;
-pub type pjsua_player_id = ::std::os::raw::c_int;
-pub type pjsua_recorder_id = ::std::os::raw::c_int;
-pub type pjsua_conf_port_id = ::std::os::raw::c_int;
+pub type pjsua_call_id = c_int;
+pub type pjsua_acc_id = c_int;
+pub type pjsua_buddy_id = c_int;
+pub type pjsua_player_id = c_int;
+pub type pjsua_recorder_id = c_int;
+pub type pjsua_conf_port_id = c_int;
 
 
 #[repr(C)]
@@ -132,16 +134,16 @@ pub type pjsua_state = u32;
 #[derive(Debug, Clone, Copy)]
 pub struct pjsua_logging_config {
     pub msg_logging: pj_bool_t,
-    pub level: ::std::os::raw::c_uint,
-    pub console_level: ::std::os::raw::c_uint,
-    pub decor: ::std::os::raw::c_uint,
+    pub level: c_uint,
+    pub console_level: c_uint,
+    pub decor: c_uint,
     pub log_filename: pj_str_t,
-    pub log_file_flags: ::std::os::raw::c_uint,
-    pub cb: ::std::option::Option<
+    pub log_file_flags: c_uint,
+    pub cb: Option<
         unsafe extern "C" fn(
-            level: ::std::os::raw::c_int,
-            data: *const ::std::os::raw::c_char,
-            len: ::std::os::raw::c_int,
+            level: c_int,
+            data: *const c_char,
+            len: c_int,
         ),
     >,
 }
@@ -186,7 +188,7 @@ pub struct pjsua_stream_stat {
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsua_on_stream_precreate_param {
-    pub stream_idx: ::std::os::raw::c_uint,
+    pub stream_idx: c_uint,
     pub stream_info: pjsua_stream_info,
 }
 
@@ -194,7 +196,7 @@ pub struct pjsua_on_stream_precreate_param {
 #[derive(Debug, Clone, Copy)]
 pub struct pjsua_on_stream_created_param {
     pub stream: *mut pjmedia_stream,
-    pub stream_idx: ::std::os::raw::c_uint,
+    pub stream_idx: c_uint,
     pub destroy_port: pj_bool_t,
     pub port: *mut pjmedia_port,
 }
@@ -210,30 +212,30 @@ pub type pjsua_med_tp_st = u32;
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsua_med_tp_state_info {
-    pub med_idx: ::std::os::raw::c_uint,
+    pub med_idx: c_uint,
     pub state: pjsua_med_tp_st,
     pub status: pj_status_t,
-    pub sip_err_code: ::std::os::raw::c_int,
-    pub ext_info: *mut ::std::os::raw::c_void,
+    pub sip_err_code: c_int,
+    pub ext_info: *mut c_void,
 }
 
-pub type pjsua_med_tp_state_cb = ::std::option::Option<
+pub type pjsua_med_tp_state_cb = Option<
     unsafe extern "C" fn(
         call_id: pjsua_call_id,
         info: *const pjsua_med_tp_state_info,
     ) -> pj_status_t,
 >;
 
-pub type pj_stun_resolve_cb = ::std::option::Option<unsafe extern "C" fn(result: *const pj_stun_resolve_result)>;
+pub type pj_stun_resolve_cb = Option<unsafe extern "C" fn(result: *const pj_stun_resolve_result)>;
 pub const PJSUA_MED_TP_CLOSE_MEMBER: pjsua_create_media_transport_flag = 1;
 pub type pjsua_create_media_transport_flag = u32;
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsua_srtp_opt {
-    pub crypto_count: ::std::os::raw::c_uint,
+    pub crypto_count: c_uint,
     pub crypto: [pjmedia_srtp_crypto; 16usize],
-    pub keying_count: ::std::os::raw::c_uint,
+    pub keying_count: c_uint,
     pub keying: [pjmedia_srtp_keying_method; 2usize],
 }
 
@@ -264,19 +266,19 @@ pub struct pjsua_ip_change_op_info {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsua_ip_change_op_info__bindgen_ty_1 {
-    pub transport_id: ::std::os::raw::c_int,
+    pub transport_id: c_int,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsua_ip_change_op_info__bindgen_ty_2 {
-    pub acc_id: ::std::os::raw::c_int,
+    pub acc_id: c_int,
 }
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsua_ip_change_op_info__bindgen_ty_3 {
     pub acc_id: pjsua_acc_id,
     pub is_register: pj_bool_t,
-    pub code: ::std::os::raw::c_int,
+    pub code: c_int,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -297,47 +299,47 @@ pub type pjsua_dtmf_method = u32;
 #[derive(Debug, Copy, Clone)]
 pub struct pjsua_dtmf_info {
     pub method: pjsua_dtmf_method,
-    pub digit: ::std::os::raw::c_uint,
-    pub duration: ::std::os::raw::c_uint,
+    pub digit: c_uint,
+    pub duration: c_uint,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsua_dtmf_event {
     pub method: pjsua_dtmf_method,
-    pub timestamp: ::std::os::raw::c_uint,
-    pub digit: ::std::os::raw::c_uint,
-    pub duration: ::std::os::raw::c_uint,
-    pub flags: ::std::os::raw::c_uint,
+    pub timestamp: c_uint,
+    pub digit: c_uint,
+    pub duration: c_uint,
+    pub flags: c_uint,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsua_call_setting {
-    pub flag: ::std::os::raw::c_uint,
-    pub req_keyframe_method: ::std::os::raw::c_uint,
-    pub aud_cnt: ::std::os::raw::c_uint,
-    pub vid_cnt: ::std::os::raw::c_uint,
+    pub flag: c_uint,
+    pub req_keyframe_method: c_uint,
+    pub aud_cnt: c_uint,
+    pub vid_cnt: c_uint,
 }
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsua_callback {
     pub on_call_state:
-        ::std::option::Option<unsafe extern "C" fn(call_id: pjsua_call_id, e: *mut pjsip_event)>,
-    pub on_incoming_call: ::std::option::Option<
+        Option<unsafe extern "C" fn(call_id: pjsua_call_id, e: *mut pjsip_event)>,
+    pub on_incoming_call: Option<
         unsafe extern "C" fn(
             acc_id: pjsua_acc_id,
             call_id: pjsua_call_id,
             rdata: *mut pjsip_rx_data,
         ),
     >,
-    pub on_call_tsx_state: ::std::option::Option<
+    pub on_call_tsx_state: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             tsx: *mut pjsip_transaction,
             e: *mut pjsip_event,
         ),
     >,
-    pub on_call_media_state: ::std::option::Option<unsafe extern "C" fn(call_id: pjsua_call_id)>,
-    pub on_call_sdp_created: ::std::option::Option<
+    pub on_call_media_state: Option<unsafe extern "C" fn(call_id: pjsua_call_id)>,
+    pub on_call_sdp_created: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             sdp: *mut pjmedia_sdp_session,
@@ -345,44 +347,44 @@ pub struct pjsua_callback {
             rem_sdp: *const pjmedia_sdp_session,
         ),
     >,
-    pub on_stream_precreate: ::std::option::Option<
+    pub on_stream_precreate: Option<
         unsafe extern "C" fn(call_id: pjsua_call_id, param: *mut pjsua_on_stream_precreate_param),
     >,
-    pub on_stream_created: ::std::option::Option<
+    pub on_stream_created: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             strm: *mut pjmedia_stream,
-            stream_idx: ::std::os::raw::c_uint,
+            stream_idx: c_uint,
             p_port: *mut *mut pjmedia_port,
         ),
     >,
-    pub on_stream_created2: ::std::option::Option<
+    pub on_stream_created2: Option<
         unsafe extern "C" fn(call_id: pjsua_call_id, param: *mut pjsua_on_stream_created_param),
     >,
-    pub on_stream_destroyed: ::std::option::Option<
+    pub on_stream_destroyed: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             strm: *mut pjmedia_stream,
-            stream_idx: ::std::os::raw::c_uint,
+            stream_idx: c_uint,
         ),
     >,
-    pub on_dtmf_digit: ::std::option::Option<
-        unsafe extern "C" fn(call_id: pjsua_call_id, digit: ::std::os::raw::c_int),
+    pub on_dtmf_digit: Option<
+        unsafe extern "C" fn(call_id: pjsua_call_id, digit: c_int),
     >,
-    pub on_dtmf_digit2: ::std::option::Option<
+    pub on_dtmf_digit2: Option<
         unsafe extern "C" fn(call_id: pjsua_call_id, info: *const pjsua_dtmf_info),
     >,
-    pub on_dtmf_event: ::std::option::Option<
+    pub on_dtmf_event: Option<
         unsafe extern "C" fn(call_id: pjsua_call_id, event: *const pjsua_dtmf_event),
     >,
-    pub on_call_transfer_request: ::std::option::Option<
+    pub on_call_transfer_request: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             dst: *const pj_str_t,
             code: *mut pjsip_status_code,
         ),
     >,
-    pub on_call_transfer_request2: ::std::option::Option<
+    pub on_call_transfer_request2: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             dst: *const pj_str_t,
@@ -390,72 +392,72 @@ pub struct pjsua_callback {
             opt: *mut pjsua_call_setting,
         ),
     >,
-    pub on_call_transfer_status: ::std::option::Option<
+    pub on_call_transfer_status: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
-            st_code: ::std::os::raw::c_int,
+            st_code: c_int,
             st_text: *const pj_str_t,
             final_: pj_bool_t,
             p_cont: *mut pj_bool_t,
         ),
     >,
-    pub on_call_replace_request: ::std::option::Option<
+    pub on_call_replace_request: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             rdata: *mut pjsip_rx_data,
-            st_code: *mut ::std::os::raw::c_int,
+            st_code: *mut c_int,
             st_text: *mut pj_str_t,
         ),
     >,
-    pub on_call_replace_request2: ::std::option::Option<
+    pub on_call_replace_request2: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             rdata: *mut pjsip_rx_data,
-            st_code: *mut ::std::os::raw::c_int,
+            st_code: *mut c_int,
             st_text: *mut pj_str_t,
             opt: *mut pjsua_call_setting,
         ),
     >,
-    pub on_call_replaced: ::std::option::Option<
+    pub on_call_replaced: Option<
         unsafe extern "C" fn(old_call_id: pjsua_call_id, new_call_id: pjsua_call_id),
     >,
-    pub on_call_rx_offer: ::std::option::Option<
+    pub on_call_rx_offer: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             offer: *const pjmedia_sdp_session,
-            reserved: *mut ::std::os::raw::c_void,
+            reserved: *mut c_void,
             code: *mut pjsip_status_code,
             opt: *mut pjsua_call_setting,
         ),
     >,
-    pub on_call_rx_reinvite: ::std::option::Option<
+    pub on_call_rx_reinvite: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             offer: *const pjmedia_sdp_session,
             rdata: *mut pjsip_rx_data,
-            reserved: *mut ::std::os::raw::c_void,
+            reserved: *mut c_void,
             async_: *mut pj_bool_t,
             code: *mut pjsip_status_code,
             opt: *mut pjsua_call_setting,
         ),
     >,
-    pub on_call_tx_offer: ::std::option::Option<
+    pub on_call_tx_offer: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
-            reserved: *mut ::std::os::raw::c_void,
+            reserved: *mut c_void,
             opt: *mut pjsua_call_setting,
         ),
     >,
     pub on_reg_started:
-        ::std::option::Option<unsafe extern "C" fn(acc_id: pjsua_acc_id, renew: pj_bool_t)>,
-    pub on_reg_started2: ::std::option::Option<
+        Option<unsafe extern "C" fn(acc_id: pjsua_acc_id, renew: pj_bool_t)>,
+    pub on_reg_started2: Option<
         unsafe extern "C" fn(acc_id: pjsua_acc_id, info: *mut pjsua_reg_info),
     >,
-    pub on_reg_state: ::std::option::Option<unsafe extern "C" fn(acc_id: pjsua_acc_id)>,
-    pub on_reg_state2: ::std::option::Option<
+    pub on_reg_state: Option<unsafe extern "C" fn(acc_id: pjsua_acc_id)>,
+    pub on_reg_state2: Option<
         unsafe extern "C" fn(acc_id: pjsua_acc_id, info: *mut pjsua_reg_info),
     >,
-    pub on_incoming_subscribe: ::std::option::Option<
+    pub on_incoming_subscribe: Option<
         unsafe extern "C" fn(
             acc_id: pjsua_acc_id,
             srv_pres: *mut pjsua_srv_pres,
@@ -467,7 +469,7 @@ pub struct pjsua_callback {
             msg_data: *mut pjsua_msg_data,
         ),
     >,
-    pub on_srv_subscribe_state: ::std::option::Option<
+    pub on_srv_subscribe_state: Option<
         unsafe extern "C" fn(
             acc_id: pjsua_acc_id,
             srv_pres: *mut pjsua_srv_pres,
@@ -476,15 +478,15 @@ pub struct pjsua_callback {
             event: *mut pjsip_event,
         ),
     >,
-    pub on_buddy_state: ::std::option::Option<unsafe extern "C" fn(buddy_id: pjsua_buddy_id)>,
-    pub on_buddy_evsub_state: ::std::option::Option<
+    pub on_buddy_state: Option<unsafe extern "C" fn(buddy_id: pjsua_buddy_id)>,
+    pub on_buddy_evsub_state: Option<
         unsafe extern "C" fn(
             buddy_id: pjsua_buddy_id,
             sub: *mut pjsip_evsub,
             event: *mut pjsip_event,
         ),
     >,
-    pub on_pager: ::std::option::Option<
+    pub on_pager: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             from: *const pj_str_t,
@@ -494,7 +496,7 @@ pub struct pjsua_callback {
             body: *const pj_str_t,
         ),
     >,
-    pub on_pager2: ::std::option::Option<
+    pub on_pager2: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             from: *const pj_str_t,
@@ -506,22 +508,22 @@ pub struct pjsua_callback {
             acc_id: pjsua_acc_id,
         ),
     >,
-    pub on_pager_status: ::std::option::Option<
+    pub on_pager_status: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             to: *const pj_str_t,
             body: *const pj_str_t,
-            user_data: *mut ::std::os::raw::c_void,
+            user_data: *mut c_void,
             status: pjsip_status_code,
             reason: *const pj_str_t,
         ),
     >,
-    pub on_pager_status2: ::std::option::Option<
+    pub on_pager_status2: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             to: *const pj_str_t,
             body: *const pj_str_t,
-            user_data: *mut ::std::os::raw::c_void,
+            user_data: *mut c_void,
             status: pjsip_status_code,
             reason: *const pj_str_t,
             tdata: *mut pjsip_tx_data,
@@ -529,7 +531,7 @@ pub struct pjsua_callback {
             acc_id: pjsua_acc_id,
         ),
     >,
-    pub on_typing: ::std::option::Option<
+    pub on_typing: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             from: *const pj_str_t,
@@ -538,7 +540,7 @@ pub struct pjsua_callback {
             is_typing: pj_bool_t,
         ),
     >,
-    pub on_typing2: ::std::option::Option<
+    pub on_typing2: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             from: *const pj_str_t,
@@ -550,8 +552,8 @@ pub struct pjsua_callback {
         ),
     >,
     pub on_nat_detect:
-        ::std::option::Option<unsafe extern "C" fn(res: *const pj_stun_nat_detect_result)>,
-    pub on_call_redirected: ::std::option::Option<
+        Option<unsafe extern "C" fn(res: *const pj_stun_nat_detect_result)>,
+    pub on_call_redirected: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
             target: *const pjsip_uri,
@@ -559,57 +561,57 @@ pub struct pjsua_callback {
         ) -> pjsip_redirect_op,
     >,
     pub on_mwi_state:
-        ::std::option::Option<unsafe extern "C" fn(acc_id: pjsua_acc_id, evsub: *mut pjsip_evsub)>,
-    pub on_mwi_info: ::std::option::Option<
+        Option<unsafe extern "C" fn(acc_id: pjsua_acc_id, evsub: *mut pjsip_evsub)>,
+    pub on_mwi_info: Option<
         unsafe extern "C" fn(acc_id: pjsua_acc_id, mwi_info: *mut pjsua_mwi_info),
     >,
     pub on_transport_state: pjsip_tp_state_callback,
     pub on_call_media_transport_state: pjsua_med_tp_state_cb,
-    pub on_ice_transport_error: ::std::option::Option<
+    pub on_ice_transport_error: Option<
         unsafe extern "C" fn(
-            index: ::std::os::raw::c_int,
+            index: c_int,
             op: pj_ice_strans_op,
             status: pj_status_t,
-            param: *mut ::std::os::raw::c_void,
+            param: *mut c_void,
         ),
     >,
-    pub on_snd_dev_operation: ::std::option::Option<
-        unsafe extern "C" fn(operation: ::std::os::raw::c_int) -> pj_status_t,
+    pub on_snd_dev_operation: Option<
+        unsafe extern "C" fn(operation: c_int) -> pj_status_t,
     >,
-    pub on_call_media_event: ::std::option::Option<
+    pub on_call_media_event: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
-            med_idx: ::std::os::raw::c_uint,
+            med_idx: c_uint,
             event: *mut pjmedia_event,
         ),
     >,
-    pub on_create_media_transport: ::std::option::Option<
+    pub on_create_media_transport: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
-            media_idx: ::std::os::raw::c_uint,
+            media_idx: c_uint,
             base_tp: *mut pjmedia_transport,
-            flags: ::std::os::raw::c_uint,
+            flags: c_uint,
         ) -> *mut pjmedia_transport,
     >,
-    pub on_create_media_transport_srtp: ::std::option::Option<
+    pub on_create_media_transport_srtp: Option<
         unsafe extern "C" fn(
             call_id: pjsua_call_id,
-            media_idx: ::std::os::raw::c_uint,
+            media_idx: c_uint,
             srtp_opt: *mut pjmedia_srtp_setting,
         ),
     >,
-    pub on_acc_find_for_incoming: ::std::option::Option<
+    pub on_acc_find_for_incoming: Option<
         unsafe extern "C" fn(rdata: *const pjsip_rx_data, acc_id: *mut pjsua_acc_id),
     >,
     pub on_stun_resolution_complete: pj_stun_resolve_cb,
-    pub on_ip_change_progress: ::std::option::Option<
+    pub on_ip_change_progress: Option<
         unsafe extern "C" fn(
             op: pjsua_ip_change_op,
             status: pj_status_t,
             info: *const pjsua_ip_change_op_info,
         ),
     >,
-    pub on_media_event: ::std::option::Option<unsafe extern "C" fn(event: *mut pjmedia_event)>,
+    pub on_media_event: Option<unsafe extern "C" fn(event: *mut pjmedia_event)>,
 }
 
 pub const PJSUA_SIP_TIMER_INACTIVE: pjsua_sip_timer_use = 0;
@@ -626,31 +628,31 @@ pub type pjsua_100rel_use = u32;
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsua_config {
-    pub max_calls: ::std::os::raw::c_uint,
-    pub thread_cnt: ::std::os::raw::c_uint,
-    pub nameserver_count: ::std::os::raw::c_uint,
+    pub max_calls: c_uint,
+    pub thread_cnt: c_uint,
+    pub nameserver_count: c_uint,
     pub nameserver: [pj_str_t; 4usize],
     pub force_lr: pj_bool_t,
-    pub outbound_proxy_cnt: ::std::os::raw::c_uint,
+    pub outbound_proxy_cnt: c_uint,
     pub outbound_proxy: [pj_str_t; 4usize],
     pub stun_domain: pj_str_t,
     pub stun_host: pj_str_t,
-    pub stun_srv_cnt: ::std::os::raw::c_uint,
+    pub stun_srv_cnt: c_uint,
     pub stun_srv: [pj_str_t; 8usize],
     pub stun_try_ipv6: pj_bool_t,
     pub stun_ignore_failure: pj_bool_t,
     pub stun_map_use_stun2: pj_bool_t,
-    pub nat_type_in_sdp: ::std::os::raw::c_int,
+    pub nat_type_in_sdp: c_int,
     pub require_100rel: pjsua_100rel_use,
     pub use_timer: pjsua_sip_timer_use,
     pub enable_unsolicited_mwi: pj_bool_t,
     pub timer_setting: pjsip_timer_setting,
-    pub cred_count: ::std::os::raw::c_uint,
+    pub cred_count: c_uint,
     pub cred_info: [pjsip_cred_info; 8usize],
     pub cb: pjsua_callback,
     pub user_agent: pj_str_t,
     pub use_srtp: pjmedia_srtp_use,
-    pub srtp_secure_signaling: ::std::os::raw::c_int,
+    pub srtp_secure_signaling: c_int,
     pub srtp_optional_dup_offer: pj_bool_t,
     pub srtp_opt: pjsua_srtp_opt,
     pub hangup_forked_call: pj_bool_t,
@@ -677,17 +679,17 @@ pub struct pjsua_msg_data {
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pj_stun_resolve_result {
-    pub token: *mut ::std::os::raw::c_void,
+    pub token: *mut c_void,
     pub status: pj_status_t,
     pub name: pj_str_t,
     pub addr: pj_sockaddr,
-    pub index: ::std::os::raw::c_uint,
+    pub index: c_uint,
 }
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsua_ip_change_param {
     pub restart_listener: pj_bool_t,
-    pub restart_lis_delay: ::std::os::raw::c_uint,
+    pub restart_lis_delay: c_uint,
 }
 
 #[repr(C)]
@@ -695,15 +697,15 @@ pub struct pjsua_ip_change_param {
 pub struct pjsua_ip_change_acc_cfg {
     pub shutdown_tp: pj_bool_t,
     pub hangup_calls: pj_bool_t,
-    pub reinvite_flags: ::std::os::raw::c_uint,
+    pub reinvite_flags: c_uint,
 }
 
-pub type pjsua_transport_id = ::std::os::raw::c_int;
+pub type pjsua_transport_id = c_int;
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsua_transport_config {
-    pub port: ::std::os::raw::c_uint,
-    pub port_range: ::std::os::raw::c_uint,
+    pub port: c_uint,
+    pub port_range: c_uint,
     pub public_addr: pj_str_t,
     pub bound_addr: pj_str_t,
     pub tls_setting: pjsip_tls_setting,
@@ -719,11 +721,11 @@ pub struct pjsua_transport_info {
     pub type_: pjsip_transport_type_e,
     pub type_name: pj_str_t,
     pub info: pj_str_t,
-    pub flag: ::std::os::raw::c_uint,
-    pub addr_len: ::std::os::raw::c_uint,
+    pub flag: c_uint,
+    pub addr_len: c_uint,
     pub local_addr: pj_sockaddr,
     pub local_name: pjsip_host_port,
-    pub usage_count: ::std::os::raw::c_uint,
+    pub usage_count: c_uint,
 }
 
 pub const PJSUA_CALL_HOLD_TYPE_RFC3264: pjsua_call_hold_type = 0;
@@ -747,7 +749,7 @@ pub type pjsua_turn_config_use = u32;
 #[derive(Debug, Clone, Copy)]
 pub struct pjsua_ice_config {
     pub enable_ice: pj_bool_t,
-    pub ice_max_host_cands: ::std::os::raw::c_int,
+    pub ice_max_host_cands: c_int,
     pub ice_opt: pj_ice_sess_options,
     pub ice_no_rtcp: pj_bool_t,
     pub ice_always_update: pj_bool_t,
@@ -774,18 +776,18 @@ pub type pjsua_nat64_opt = u32;
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsua_acc_config {
-    pub user_data: *mut ::std::os::raw::c_void,
-    pub priority: ::std::os::raw::c_int,
+    pub user_data: *mut c_void,
+    pub priority: c_int,
     pub id: pj_str_t,
     pub reg_uri: pj_str_t,
     pub reg_hdr_list: pjsip_hdr,
     pub reg_contact_params: pj_str_t,
     pub sub_hdr_list: pjsip_hdr,
     pub mwi_enabled: pj_bool_t,
-    pub mwi_expires: ::std::os::raw::c_uint,
+    pub mwi_expires: c_uint,
     pub publish_enabled: pj_bool_t,
     pub publish_opt: pjsip_publishc_opt,
-    pub unpublish_max_wait_time_msec: ::std::os::raw::c_uint,
+    pub unpublish_max_wait_time_msec: c_uint,
     pub auth_pref: pjsip_auth_clt_pref,
     pub pidf_tuple_id: pj_str_t,
     pub force_contact: pj_str_t,
@@ -794,28 +796,28 @@ pub struct pjsua_acc_config {
     pub require_100rel: pjsua_100rel_use,
     pub use_timer: pjsua_sip_timer_use,
     pub timer_setting: pjsip_timer_setting,
-    pub proxy_cnt: ::std::os::raw::c_uint,
+    pub proxy_cnt: c_uint,
     pub proxy: [pj_str_t; 8usize],
-    pub lock_codec: ::std::os::raw::c_uint,
-    pub reg_timeout: ::std::os::raw::c_uint,
-    pub reg_delay_before_refresh: ::std::os::raw::c_uint,
-    pub unreg_timeout: ::std::os::raw::c_uint,
-    pub cred_count: ::std::os::raw::c_uint,
+    pub lock_codec: c_uint,
+    pub reg_timeout: c_uint,
+    pub reg_delay_before_refresh: c_uint,
+    pub unreg_timeout: c_uint,
+    pub cred_count: c_uint,
     pub cred_info: [pjsip_cred_info; 8usize],
     pub transport_id: pjsua_transport_id,
     pub allow_contact_rewrite: pj_bool_t,
-    pub contact_rewrite_method: ::std::os::raw::c_int,
+    pub contact_rewrite_method: c_int,
     pub contact_use_src_port: pj_bool_t,
     pub allow_via_rewrite: pj_bool_t,
     pub allow_sdp_nat_rewrite: pj_bool_t,
-    pub use_rfc5626: ::std::os::raw::c_uint,
+    pub use_rfc5626: c_uint,
     pub rfc5626_instance_id: pj_str_t,
     pub rfc5626_reg_id: pj_str_t,
-    pub ka_interval: ::std::os::raw::c_uint,
+    pub ka_interval: c_uint,
     pub ka_data: pj_str_t,
     pub vid_in_auto_show: pj_bool_t,
     pub vid_out_auto_transmit: pj_bool_t,
-    pub vid_wnd_flags: ::std::os::raw::c_uint,
+    pub vid_wnd_flags: c_uint,
     pub vid_cap_dev: pjmedia_vid_dev_index,
     pub vid_rend_dev: pjmedia_vid_dev_index,
     pub vid_stream_rc_cfg: pjmedia_vid_stream_rc_config,
@@ -832,14 +834,14 @@ pub struct pjsua_acc_config {
     pub turn_cfg_use: pjsua_turn_config_use,
     pub turn_cfg: pjsua_turn_config,
     pub use_srtp: pjmedia_srtp_use,
-    pub srtp_secure_signaling: ::std::os::raw::c_int,
+    pub srtp_secure_signaling: c_int,
     pub srtp_optional_dup_offer: pj_bool_t,
     pub srtp_opt: pjsua_srtp_opt,
-    pub reg_retry_interval: ::std::os::raw::c_uint,
-    pub reg_first_retry_interval: ::std::os::raw::c_uint,
-    pub reg_retry_random_interval: ::std::os::raw::c_uint,
+    pub reg_retry_interval: c_uint,
+    pub reg_first_retry_interval: c_uint,
+    pub reg_retry_random_interval: c_uint,
     pub drop_calls_on_reg_fail: pj_bool_t,
-    pub reg_use_proxy: ::std::os::raw::c_uint,
+    pub reg_use_proxy: c_uint,
     pub call_hold_type: pjsua_call_hold_type,
     pub register_on_acc_add: pj_bool_t,
     pub ip_change_cfg: pjsua_ip_change_acc_cfg,
@@ -854,18 +856,18 @@ pub struct pjsua_acc_info {
     pub is_default: pj_bool_t,
     pub acc_uri: pj_str_t,
     pub has_registration: pj_bool_t,
-    pub expires: ::std::os::raw::c_uint,
+    pub expires: c_uint,
     pub status: pjsip_status_code,
     pub reg_last_err: pj_status_t,
     pub status_text: pj_str_t,
     pub online_status: pj_bool_t,
     pub online_status_text: pj_str_t,
     pub rpid: pjrpid_element,
-    pub buf_: [::std::os::raw::c_char; 80usize],
+    pub buf_: [c_char; 80usize],
 }
 
 
-pub type pjsua_vid_win_id = ::std::os::raw::c_int;
+pub type pjsua_vid_win_id = c_int;
 pub const PJSUA_CALL_MEDIA_NONE: pjsua_call_media_status = 0;
 pub const PJSUA_CALL_MEDIA_ACTIVE: pjsua_call_media_status = 1;
 pub const PJSUA_CALL_MEDIA_LOCAL_HOLD: pjsua_call_media_status = 2;
@@ -880,7 +882,7 @@ pub type pjsua_vid_req_keyframe_method = u32;
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsua_call_media_info {
-    pub index: ::std::os::raw::c_uint,
+    pub index: c_uint,
     pub type_: pjmedia_type,
     pub dir: pjmedia_dir,
     pub status: pjsua_call_media_status,
@@ -924,26 +926,26 @@ pub struct pjsua_call_info {
     pub media_status: pjsua_call_media_status,
     pub media_dir: pjmedia_dir,
     pub conf_slot: pjsua_conf_port_id,
-    pub media_cnt: ::std::os::raw::c_uint,
+    pub media_cnt: c_uint,
     pub media: [pjsua_call_media_info; 16usize],
-    pub prov_media_cnt: ::std::os::raw::c_uint,
+    pub prov_media_cnt: c_uint,
     pub prov_media: [pjsua_call_media_info; 16usize],
     pub connect_duration: pj_time_val,
     pub total_duration: pj_time_val,
     pub rem_offerer: pj_bool_t,
-    pub rem_aud_cnt: ::std::os::raw::c_uint,
-    pub rem_vid_cnt: ::std::os::raw::c_uint,
+    pub rem_aud_cnt: c_uint,
+    pub rem_vid_cnt: c_uint,
     pub buf_: pjsua_call_info__bindgen_ty_1,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct pjsua_call_info__bindgen_ty_1 {
-    pub local_info: [::std::os::raw::c_char; 256usize],
-    pub local_contact: [::std::os::raw::c_char; 256usize],
-    pub remote_info: [::std::os::raw::c_char; 256usize],
-    pub remote_contact: [::std::os::raw::c_char; 256usize],
-    pub call_id: [::std::os::raw::c_char; 128usize],
-    pub last_status_text: [::std::os::raw::c_char; 128usize],
+    pub local_info: [c_char; 256usize],
+    pub local_contact: [c_char; 256usize],
+    pub remote_info: [c_char; 256usize],
+    pub remote_contact: [c_char; 256usize],
+    pub call_id: [c_char; 128usize],
+    pub last_status_text: [c_char; 128usize],
 }
 pub const PJSUA_CALL_UNHOLD: pjsua_call_flag = 1;
 pub const PJSUA_CALL_UPDATE_CONTACT: pjsua_call_flag = 2;
@@ -967,7 +969,7 @@ pub type pjsua_call_vid_strm_op = u32;
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsua_call_vid_strm_op_param {
-    pub med_idx: ::std::os::raw::c_int,
+    pub med_idx: c_int,
     pub dir: pjmedia_dir,
     pub cap_dev: pjmedia_vid_dev_index,
 }
@@ -975,7 +977,7 @@ pub struct pjsua_call_vid_strm_op_param {
 #[derive(Debug, Clone, Copy)]
 pub struct pjsua_call_send_dtmf_param {
     pub method: pjsua_dtmf_method,
-    pub duration: ::std::os::raw::c_uint,
+    pub duration: c_uint,
     pub digits: pj_str_t,
 }
 
@@ -984,7 +986,7 @@ pub struct pjsua_call_send_dtmf_param {
 pub struct pjsua_buddy_config {
     pub uri: pj_str_t,
     pub subscribe: pj_bool_t,
-    pub user_data: *mut ::std::os::raw::c_void,
+    pub user_data: *mut c_void,
 }
 
 pub const PJSUA_BUDDY_STATUS_UNKNOWN: pjsua_buddy_status = 0;
@@ -1002,41 +1004,41 @@ pub struct pjsua_buddy_info {
     pub status_text: pj_str_t,
     pub monitor_pres: pj_bool_t,
     pub sub_state: pjsip_evsub_state,
-    pub sub_state_name: *const ::std::os::raw::c_char,
-    pub sub_term_code: ::std::os::raw::c_uint,
+    pub sub_state_name: *const c_char,
+    pub sub_term_code: c_uint,
     pub sub_term_reason: pj_str_t,
     pub rpid: pjrpid_element,
     pub pres_status: pjsip_pres_status,
-    pub buf_: [::std::os::raw::c_char; 512usize],
+    pub buf_: [c_char; 512usize],
 }
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsua_media_config {
-    pub clock_rate: ::std::os::raw::c_uint,
-    pub snd_clock_rate: ::std::os::raw::c_uint,
-    pub channel_count: ::std::os::raw::c_uint,
-    pub audio_frame_ptime: ::std::os::raw::c_uint,
-    pub max_media_ports: ::std::os::raw::c_uint,
+    pub clock_rate: c_uint,
+    pub snd_clock_rate: c_uint,
+    pub channel_count: c_uint,
+    pub audio_frame_ptime: c_uint,
+    pub max_media_ports: c_uint,
     pub has_ioqueue: pj_bool_t,
-    pub thread_cnt: ::std::os::raw::c_uint,
-    pub quality: ::std::os::raw::c_uint,
-    pub ptime: ::std::os::raw::c_uint,
+    pub thread_cnt: c_uint,
+    pub quality: c_uint,
+    pub ptime: c_uint,
     pub no_vad: pj_bool_t,
-    pub ilbc_mode: ::std::os::raw::c_uint,
-    pub tx_drop_pct: ::std::os::raw::c_uint,
-    pub rx_drop_pct: ::std::os::raw::c_uint,
-    pub ec_options: ::std::os::raw::c_uint,
-    pub ec_tail_len: ::std::os::raw::c_uint,
-    pub snd_rec_latency: ::std::os::raw::c_uint,
-    pub snd_play_latency: ::std::os::raw::c_uint,
-    pub jb_init: ::std::os::raw::c_int,
-    pub jb_min_pre: ::std::os::raw::c_int,
-    pub jb_max_pre: ::std::os::raw::c_int,
-    pub jb_max: ::std::os::raw::c_int,
+    pub ilbc_mode: c_uint,
+    pub tx_drop_pct: c_uint,
+    pub rx_drop_pct: c_uint,
+    pub ec_options: c_uint,
+    pub ec_tail_len: c_uint,
+    pub snd_rec_latency: c_uint,
+    pub snd_play_latency: c_uint,
+    pub jb_init: c_int,
+    pub jb_min_pre: c_int,
+    pub jb_max_pre: c_int,
+    pub jb_max: c_int,
     pub jb_discard_algo: pjmedia_jb_discard_algo,
     pub enable_ice: pj_bool_t,
-    pub ice_max_host_cands: ::std::os::raw::c_int,
+    pub ice_max_host_cands: c_int,
     pub ice_opt: pj_ice_sess_options,
     pub ice_no_rtcp: pj_bool_t,
     pub ice_always_update: pj_bool_t,
@@ -1045,14 +1047,14 @@ pub struct pjsua_media_config {
     pub turn_conn_type: pj_turn_tp_type,
     pub turn_auth_cred: pj_stun_auth_cred,
     pub turn_tls_setting: pj_turn_sock_tls_cfg,
-    pub snd_auto_close_time: ::std::os::raw::c_int,
+    pub snd_auto_close_time: c_int,
     pub vid_preview_enable_native: pj_bool_t,
     pub no_smart_media_update: pj_bool_t,
     pub no_rtcp_sdes_bye: pj_bool_t,
     pub on_aud_prev_play_frame:
-        ::std::option::Option<unsafe extern "C" fn(frame: *mut pjmedia_frame)>,
+        Option<unsafe extern "C" fn(frame: *mut pjmedia_frame)>,
     pub on_aud_prev_rec_frame:
-        ::std::option::Option<unsafe extern "C" fn(frame: *mut pjmedia_frame)>,
+        Option<unsafe extern "C" fn(frame: *mut pjmedia_frame)>,
 }
 
 extern "C" {
@@ -1065,7 +1067,7 @@ pub struct pjsua_codec_info {
     pub codec_id: pj_str_t,
     pub priority: pj_uint8_t,
     pub desc: pj_str_t,
-    pub buf_: [::std::os::raw::c_char; 64usize],
+    pub buf_: [c_char; 64usize],
 }
 
 #[repr(C)]
@@ -1074,13 +1076,13 @@ pub struct pjsua_conf_port_info {
     pub slot_id: pjsua_conf_port_id,
     pub name: pj_str_t,
     pub format: pjmedia_format,
-    pub clock_rate: ::std::os::raw::c_uint,
-    pub channel_count: ::std::os::raw::c_uint,
-    pub samples_per_frame: ::std::os::raw::c_uint,
-    pub bits_per_sample: ::std::os::raw::c_uint,
+    pub clock_rate: c_uint,
+    pub channel_count: c_uint,
+    pub samples_per_frame: c_uint,
+    pub bits_per_sample: c_uint,
     pub tx_level_adj: f32,
     pub rx_level_adj: f32,
-    pub listener_cnt: ::std::os::raw::c_uint,
+    pub listener_cnt: c_uint,
     pub listeners: [pjsua_conf_port_id; 254usize],
 }
 
@@ -1104,9 +1106,9 @@ pub type pjsua_snd_dev_mode = u32;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsua_snd_dev_param {
-    pub capture_dev: ::std::os::raw::c_int,
-    pub playback_dev: ::std::os::raw::c_int,
-    pub mode: ::std::os::raw::c_uint,
+    pub capture_dev: c_int,
+    pub playback_dev: c_int,
+    pub mode: c_uint,
 }
 
 #[repr(C)]
@@ -1127,7 +1129,7 @@ pub struct pjsua_ext_snd_dev {
 pub struct pjsua_vid_preview_param {
     pub rend_id: pjmedia_vid_dev_index,
     pub show: pj_bool_t,
-    pub wnd_flags: ::std::os::raw::c_uint,
+    pub wnd_flags: c_uint,
     pub format: pjmedia_format,
     pub wnd: pjmedia_vid_dev_hwnd,
 }
@@ -1147,43 +1149,28 @@ pub struct pjsua_vid_conf_port_info {
     pub slot_id: pjsua_conf_port_id,
     pub name: pj_str_t,
     pub format: pjmedia_format,
-    pub listener_cnt: ::std::os::raw::c_uint,
+    pub listener_cnt: c_uint,
     pub listeners: [pjsua_conf_port_id; 254usize],
-    pub transmitter_cnt: ::std::os::raw::c_uint,
+    pub transmitter_cnt: c_uint,
     pub transmitters: [pjsua_conf_port_id; 254usize],
 }
 
 extern "C" {
     pub fn pjsua_logging_config_default(cfg: *mut pjsua_logging_config);
-    pub fn pjsua_logging_config_dup(
-        pool: *mut pj_pool_t,
-        dst: *mut pjsua_logging_config,
-        src: *const pjsua_logging_config,
-    );
+    pub fn pjsua_logging_config_dup(pool: *mut pj_pool_t,dst: *mut pjsua_logging_config,src: *const pjsua_logging_config);
     pub fn pjsua_config_default(cfg: *mut pjsua_config);
     pub fn pjsua_config_dup(pool: *mut pj_pool_t, dst: *mut pjsua_config, src: *const pjsua_config);
     pub fn pjsua_msg_data_init(msg_data: *mut pjsua_msg_data);
-    pub fn pjsua_msg_data_clone(
-        pool: *mut pj_pool_t,
-        rhs: *const pjsua_msg_data,
-    ) -> *mut pjsua_msg_data;
+    pub fn pjsua_msg_data_clone(pool: *mut pj_pool_t, rhs: *const pjsua_msg_data) -> *mut pjsua_msg_data;
     pub fn pjsua_create() -> pj_status_t;
-    pub fn pjsua_init(
-        ua_cfg: *const pjsua_config,
-        log_cfg: *const pjsua_logging_config,
-        media_cfg: *const pjsua_media_config,
-    ) -> pj_status_t;
+    pub fn pjsua_init(ua_cfg: *const pjsua_config, log_cfg: *const pjsua_logging_config, media_cfg: *const pjsua_media_config) -> pj_status_t;
     pub fn pjsua_start() -> pj_status_t;
     pub fn pjsua_destroy() -> pj_status_t;
     pub fn pjsua_get_state() -> pjsua_state;
-    pub fn pjsua_destroy2(flags: ::std::os::raw::c_uint) -> pj_status_t;
-    pub fn pjsua_handle_events(msec_timeout: ::std::os::raw::c_uint) -> ::std::os::raw::c_int;
+    pub fn pjsua_destroy2(flags: c_uint) -> pj_status_t;
+    pub fn pjsua_handle_events(msec_timeout: c_uint) -> c_int;
     pub fn pjsua_stop_worker_threads();
-    pub fn pjsua_pool_create(
-        name: *const ::std::os::raw::c_char,
-        init_size: pj_size_t,
-        increment: pj_size_t,
-    ) -> *mut pj_pool_t;
+    pub fn pjsua_pool_create(name: *const c_char, init_size: pj_size_t, increment: pj_size_t) -> *mut pj_pool_t;
     pub fn pjsua_reconfigure_logging(c: *const pjsua_logging_config) -> pj_status_t;
     pub fn pjsua_get_pjsip_endpt() -> *mut pjsip_endpoint;
     pub fn pjsua_get_pjmedia_endpt() -> *mut pjmedia_endpt;
@@ -1191,510 +1178,157 @@ extern "C" {
     pub fn pjsua_ip_change_param_default(param: *mut pjsua_ip_change_param);
     pub fn pjsua_detect_nat_type() -> pj_status_t;
     pub fn pjsua_get_nat_type(type_: *mut pj_stun_nat_type) -> pj_status_t;
-    pub fn pjsua_update_stun_servers(
-        count: ::std::os::raw::c_uint,
-        srv: *mut pj_str_t,
-        wait: pj_bool_t,
-    ) -> pj_status_t;
-    pub fn pjsua_resolve_stun_servers(
-        count: ::std::os::raw::c_uint,
-        srv: *mut pj_str_t,
-        wait: pj_bool_t,
-        token: *mut ::std::os::raw::c_void,
-        cb: pj_stun_resolve_cb,
-    ) -> pj_status_t;
-    pub fn pjsua_cancel_stun_resolution(
-        token: *mut ::std::os::raw::c_void,
-        notify_cb: pj_bool_t,
-    ) -> pj_status_t;
-    pub fn pjsua_verify_sip_url(url: *const ::std::os::raw::c_char) -> pj_status_t;
-    pub fn pjsua_verify_url(url: *const ::std::os::raw::c_char) -> pj_status_t;
-    pub fn pjsua_schedule_timer_dbg(
-        entry: *mut pj_timer_entry,
-        delay: *const pj_time_val,
-        src_file: *const ::std::os::raw::c_char,
-        src_line: ::std::os::raw::c_int,
-    ) -> pj_status_t;
-    pub fn pjsua_schedule_timer2_dbg(
-        cb: ::std::option::Option<unsafe extern "C" fn(user_data: *mut ::std::os::raw::c_void)>,
-        user_data: *mut ::std::os::raw::c_void,
-        msec_delay: ::std::os::raw::c_uint,
-        src_file: *const ::std::os::raw::c_char,
-        src_line: ::std::os::raw::c_int,
-    ) -> pj_status_t;
+    pub fn pjsua_update_stun_servers(count: c_uint, srv: *mut pj_str_t, wait: pj_bool_t) -> pj_status_t;
+    pub fn pjsua_resolve_stun_servers(count: c_uint, srv: *mut pj_str_t, wait: pj_bool_t, token: *mut c_void, cb: pj_stun_resolve_cb) -> pj_status_t;
+    pub fn pjsua_cancel_stun_resolution(token: *mut c_void, notify_cb: pj_bool_t) -> pj_status_t;
+    pub fn pjsua_verify_sip_url(url: *const c_char) -> pj_status_t;
+    pub fn pjsua_verify_url(url: *const c_char) -> pj_status_t;
+    pub fn pjsua_schedule_timer_dbg(entry: *mut pj_timer_entry, delay: *const pj_time_val, src_file: *const c_char, src_line: c_int) -> pj_status_t;
+    pub fn pjsua_schedule_timer2_dbg(cb: Option<unsafe extern "C" fn(user_data: *mut c_void)>, user_data: *mut c_void, msec_delay: c_uint, src_file: *const c_char, src_line: c_int) -> pj_status_t;
     pub fn pjsua_cancel_timer(entry: *mut pj_timer_entry);
-    pub fn pjsua_perror(
-        sender: *const ::std::os::raw::c_char,
-        title: *const ::std::os::raw::c_char,
-        status: pj_status_t,
-    );
+    pub fn pjsua_perror(sender: *const c_char, title: *const c_char, status: pj_status_t);
     pub fn pjsua_dump(detail: pj_bool_t);
     pub fn pjsua_handle_ip_change(param: *const pjsua_ip_change_param) -> pj_status_t;
-    pub fn pjsua_transport_create(
-        type_: pjsip_transport_type_e,
-        cfg: *const pjsua_transport_config,
-        p_id: *mut pjsua_transport_id,
-    ) -> pj_status_t;
-    pub fn pjsua_transport_register(
-        tp: *mut pjsip_transport,
-        p_id: *mut pjsua_transport_id,
-    ) -> pj_status_t;
-    pub fn pjsua_tpfactory_register(
-        tf: *mut pjsip_tpfactory,
-        p_id: *mut pjsua_transport_id,
-    ) -> pj_status_t;
-    pub fn pjsua_enum_transports(
-        id: *mut pjsua_transport_id,
-        count: *mut ::std::os::raw::c_uint,
-    ) -> pj_status_t;
-    pub fn pjsua_transport_get_info(
-        id: pjsua_transport_id,
-        info: *mut pjsua_transport_info,
-    ) -> pj_status_t;
+    pub fn pjsua_transport_create(type_: pjsip_transport_type_e, cfg: *const pjsua_transport_config, p_id: *mut pjsua_transport_id) -> pj_status_t;
+    pub fn pjsua_transport_register(tp: *mut pjsip_transport, p_id: *mut pjsua_transport_id) -> pj_status_t;
+    pub fn pjsua_tpfactory_register(tf: *mut pjsip_tpfactory, p_id: *mut pjsua_transport_id) -> pj_status_t;
+    pub fn pjsua_enum_transports(id: *mut pjsua_transport_id, count: *mut c_uint) -> pj_status_t;
+    pub fn pjsua_transport_get_info(id: pjsua_transport_id, info: *mut pjsua_transport_info) -> pj_status_t;
     pub fn pjsua_transport_set_enable(id: pjsua_transport_id, enabled: pj_bool_t) -> pj_status_t;
     pub fn pjsua_transport_close(id: pjsua_transport_id, force: pj_bool_t) -> pj_status_t;
-    pub fn pjsua_transport_lis_start(
-        id: pjsua_transport_id,
-        cfg: *const pjsua_transport_config,
-    ) -> pj_status_t;
+    pub fn pjsua_transport_lis_start(id: pjsua_transport_id, cfg: *const pjsua_transport_config) -> pj_status_t;
     pub fn pjsua_transport_config_default(cfg: *mut pjsua_transport_config);
-    pub fn pjsua_transport_config_dup(
-        pool: *mut pj_pool_t,
-        dst: *mut pjsua_transport_config,
-        src: *const pjsua_transport_config,
-    );
-    pub fn pjsua_ice_config_from_media_config(
-        pool: *mut pj_pool_t,
-        dst: *mut pjsua_ice_config,
-        src: *const pjsua_media_config,
-    );
-    pub fn pjsua_ice_config_dup(
-        pool: *mut pj_pool_t,
-        dst: *mut pjsua_ice_config,
-        src: *const pjsua_ice_config,
-    );
-    pub fn pjsua_turn_config_from_media_config(
-        pool: *mut pj_pool_t,
-        dst: *mut pjsua_turn_config,
-        src: *const pjsua_media_config,
-    );
-    pub fn pjsua_turn_config_dup(
-        pool: *mut pj_pool_t,
-        dst: *mut pjsua_turn_config,
-        src: *const pjsua_turn_config,
-    );
+    pub fn pjsua_transport_config_dup(pool: *mut pj_pool_t, dst: *mut pjsua_transport_config, src: *const pjsua_transport_config);
+    pub fn pjsua_ice_config_from_media_config(pool: *mut pj_pool_t, dst: *mut pjsua_ice_config, src: *const pjsua_media_config);
+    pub fn pjsua_ice_config_dup(pool: *mut pj_pool_t, dst: *mut pjsua_ice_config, src: *const pjsua_ice_config);
+    pub fn pjsua_turn_config_from_media_config(pool: *mut pj_pool_t, dst: *mut pjsua_turn_config, src: *const pjsua_media_config);
+    pub fn pjsua_turn_config_dup(pool: *mut pj_pool_t, dst: *mut pjsua_turn_config, src: *const pjsua_turn_config);
     pub fn pjsua_srtp_opt_default(cfg: *mut pjsua_srtp_opt);
-    pub fn pjsua_srtp_opt_dup(
-        pool: *mut pj_pool_t,
-        dst: *mut pjsua_srtp_opt,
-        src: *const pjsua_srtp_opt,
-        check_str: pj_bool_t,
-    );
+    pub fn pjsua_srtp_opt_dup(pool: *mut pj_pool_t, dst: *mut pjsua_srtp_opt, src: *const pjsua_srtp_opt, check_str: pj_bool_t);
     pub fn pjsua_acc_config_default(cfg: *mut pjsua_acc_config);
-    pub fn pjsua_acc_config_dup(
-        pool: *mut pj_pool_t,
-        dst: *mut pjsua_acc_config,
-        src: *const pjsua_acc_config,
-    );
-    pub fn pjsua_acc_get_count() -> ::std::os::raw::c_uint;
+    pub fn pjsua_acc_config_dup(pool: *mut pj_pool_t, dst: *mut pjsua_acc_config, src: *const pjsua_acc_config);
+    pub fn pjsua_acc_get_count() -> c_uint;
     pub fn pjsua_acc_is_valid(acc_id: pjsua_acc_id) -> pj_bool_t;
     pub fn pjsua_acc_set_default(acc_id: pjsua_acc_id) -> pj_status_t;
     pub fn pjsua_acc_get_default() -> pjsua_acc_id;
-    pub fn pjsua_acc_add(
-        acc_cfg: *const pjsua_acc_config,
-        is_default: pj_bool_t,
-        p_acc_id: *mut pjsua_acc_id,
-    ) -> pj_status_t;
-    pub fn pjsua_acc_add_local(
-        tid: pjsua_transport_id,
-        is_default: pj_bool_t,
-        p_acc_id: *mut pjsua_acc_id,
-    ) -> pj_status_t;
-    pub fn pjsua_acc_set_user_data(
-        acc_id: pjsua_acc_id,
-        user_data: *mut ::std::os::raw::c_void,
-    ) -> pj_status_t;
-    pub fn pjsua_acc_get_user_data(acc_id: pjsua_acc_id) -> *mut ::std::os::raw::c_void;
+    pub fn pjsua_acc_add(acc_cfg: *const pjsua_acc_config, is_default: pj_bool_t, p_acc_id: *mut pjsua_acc_id) -> pj_status_t;
+    pub fn pjsua_acc_add_local(tid: pjsua_transport_id, is_default: pj_bool_t, p_acc_id: *mut pjsua_acc_id) -> pj_status_t;
+    pub fn pjsua_acc_set_user_data(acc_id: pjsua_acc_id, user_data: *mut c_void) -> pj_status_t;
+    pub fn pjsua_acc_get_user_data(acc_id: pjsua_acc_id) -> *mut c_void;
     pub fn pjsua_acc_del(acc_id: pjsua_acc_id) -> pj_status_t;
-    pub fn pjsua_acc_get_config(
-        acc_id: pjsua_acc_id,
-        pool: *mut pj_pool_t,
-        acc_cfg: *mut pjsua_acc_config,
-    ) -> pj_status_t;
+    pub fn pjsua_acc_get_config(acc_id: pjsua_acc_id, pool: *mut pj_pool_t, acc_cfg: *mut pjsua_acc_config) -> pj_status_t;
     pub fn pjsua_acc_modify(acc_id: pjsua_acc_id, acc_cfg: *const pjsua_acc_config) -> pj_status_t;
     pub fn pjsua_acc_set_online_status(acc_id: pjsua_acc_id, is_online: pj_bool_t) -> pj_status_t;
-    pub fn pjsua_acc_set_online_status2(
-        acc_id: pjsua_acc_id,
-        is_online: pj_bool_t,
-        pr: *const pjrpid_element,
-    ) -> pj_status_t;
+    pub fn pjsua_acc_set_online_status2(acc_id: pjsua_acc_id, is_online: pj_bool_t, pr: *const pjrpid_element) -> pj_status_t;
     pub fn pjsua_acc_set_registration(acc_id: pjsua_acc_id, renew: pj_bool_t) -> pj_status_t;
     pub fn pjsua_acc_get_info(acc_id: pjsua_acc_id, info: *mut pjsua_acc_info) -> pj_status_t;
-    pub fn pjsua_enum_accs(
-        ids: *mut pjsua_acc_id,
-        count: *mut ::std::os::raw::c_uint,
-    ) -> pj_status_t;
-    pub fn pjsua_acc_enum_info(
-        info: *mut pjsua_acc_info,
-        count: *mut ::std::os::raw::c_uint,
-    ) -> pj_status_t;
+    pub fn pjsua_enum_accs(ids: *mut pjsua_acc_id, count: *mut c_uint) -> pj_status_t;
+    pub fn pjsua_acc_enum_info(info: *mut pjsua_acc_info, count: *mut c_uint) -> pj_status_t;
     pub fn pjsua_acc_find_for_outgoing(url: *const pj_str_t) -> pjsua_acc_id;
     pub fn pjsua_acc_find_for_incoming(rdata: *mut pjsip_rx_data) -> pjsua_acc_id;
-    pub fn pjsua_acc_create_request(
-        acc_id: pjsua_acc_id,
-        method: *const pjsip_method,
-        target: *const pj_str_t,
-        p_tdata: *mut *mut pjsip_tx_data,
-    ) -> pj_status_t;
-    pub fn pjsua_acc_create_uac_contact(
-        pool: *mut pj_pool_t,
-        contact: *mut pj_str_t,
-        acc_id: pjsua_acc_id,
-        uri: *const pj_str_t,
-    ) -> pj_status_t;
-    pub fn pjsua_acc_create_uas_contact(
-        pool: *mut pj_pool_t,
-        contact: *mut pj_str_t,
-        acc_id: pjsua_acc_id,
-        rdata: *mut pjsip_rx_data,
-    ) -> pj_status_t;
+    pub fn pjsua_acc_create_request(acc_id: pjsua_acc_id, method: *const pjsip_method, target: *const pj_str_t, p_tdata: *mut *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsua_acc_create_uac_contact(pool: *mut pj_pool_t, contact: *mut pj_str_t, acc_id: pjsua_acc_id, uri: *const pj_str_t) -> pj_status_t;
+    pub fn pjsua_acc_create_uas_contact(pool: *mut pj_pool_t, contact: *mut pj_str_t, acc_id: pjsua_acc_id, rdata: *mut pjsip_rx_data) -> pj_status_t;
     pub fn pjsua_acc_set_transport(acc_id: pjsua_acc_id, tp_id: pjsua_transport_id) -> pj_status_t;
     pub fn pjsua_call_setting_default(opt: *mut pjsua_call_setting);
     pub fn pjsua_call_send_dtmf_param_default(param: *mut pjsua_call_send_dtmf_param);
-    pub fn pjsua_call_get_max_count() -> ::std::os::raw::c_uint;
-    pub fn pjsua_call_get_count() -> ::std::os::raw::c_uint;
-    pub fn pjsua_enum_calls(
-        ids: *mut pjsua_call_id,
-        count: *mut ::std::os::raw::c_uint,
-    ) -> pj_status_t;
-    pub fn pjsua_call_make_call(
-        acc_id: pjsua_acc_id,
-        dst_uri: *const pj_str_t,
-        opt: *const pjsua_call_setting,
-        user_data: *mut ::std::os::raw::c_void,
-        msg_data: *const pjsua_msg_data,
-        p_call_id: *mut pjsua_call_id,
-    ) -> pj_status_t;
+    pub fn pjsua_call_get_max_count() -> c_uint;
+    pub fn pjsua_call_get_count() -> c_uint;
+    pub fn pjsua_enum_calls(ids: *mut pjsua_call_id, count: *mut c_uint) -> pj_status_t;
+    pub fn pjsua_call_make_call(acc_id: pjsua_acc_id, dst_uri: *const pj_str_t, opt: *const pjsua_call_setting, user_data: *mut c_void, msg_data: *const pjsua_msg_data, p_call_id: *mut pjsua_call_id) -> pj_status_t;
     pub fn pjsua_call_is_active(call_id: pjsua_call_id) -> pj_bool_t;
     pub fn pjsua_call_has_media(call_id: pjsua_call_id) -> pj_bool_t;
     pub fn pjsua_call_get_conf_port(call_id: pjsua_call_id) -> pjsua_conf_port_id;
     pub fn pjsua_call_get_info(call_id: pjsua_call_id, info: *mut pjsua_call_info) -> pj_status_t;
-    pub fn pjsua_call_remote_has_cap(
-        call_id: pjsua_call_id,
-        htype: ::std::os::raw::c_int,
-        hname: *const pj_str_t,
-        token: *const pj_str_t,
-    ) -> pjsip_dialog_cap_status;
-    pub fn pjsua_call_set_user_data(
-        call_id: pjsua_call_id,
-        user_data: *mut ::std::os::raw::c_void,
-    ) -> pj_status_t;
-    pub fn pjsua_call_get_user_data(call_id: pjsua_call_id) -> *mut ::std::os::raw::c_void;
-    pub fn pjsua_call_get_rem_nat_type(
-        call_id: pjsua_call_id,
-        p_type: *mut pj_stun_nat_type,
-    ) -> pj_status_t;
-    pub fn pjsua_call_answer(
-        call_id: pjsua_call_id,
-        code: ::std::os::raw::c_uint,
-        reason: *const pj_str_t,
-        msg_data: *const pjsua_msg_data,
-    ) -> pj_status_t;
-    pub fn pjsua_call_answer2(
-        call_id: pjsua_call_id,
-        opt: *const pjsua_call_setting,
-        code: ::std::os::raw::c_uint,
-        reason: *const pj_str_t,
-        msg_data: *const pjsua_msg_data,
-    ) -> pj_status_t;
-    pub fn pjsua_call_answer_with_sdp(
-        call_id: pjsua_call_id,
-        sdp: *const pjmedia_sdp_session,
-        opt: *const pjsua_call_setting,
-        code: ::std::os::raw::c_uint,
-        reason: *const pj_str_t,
-        msg_data: *const pjsua_msg_data,
-    ) -> pj_status_t;
-    pub fn pjsua_call_hangup(
-        call_id: pjsua_call_id,
-        code: ::std::os::raw::c_uint,
-        reason: *const pj_str_t,
-        msg_data: *const pjsua_msg_data,
-    ) -> pj_status_t;
-    pub fn pjsua_call_process_redirect(
-        call_id: pjsua_call_id,
-        cmd: pjsip_redirect_op,
-    ) -> pj_status_t;
-    pub fn pjsua_call_set_hold(
-        call_id: pjsua_call_id,
-        msg_data: *const pjsua_msg_data,
-    ) -> pj_status_t;
-    pub fn pjsua_call_set_hold2(
-        call_id: pjsua_call_id,
-        options: ::std::os::raw::c_uint,
-        msg_data: *const pjsua_msg_data,
-    ) -> pj_status_t;
-    pub fn pjsua_call_reinvite(
-        call_id: pjsua_call_id,
-        options: ::std::os::raw::c_uint,
-        msg_data: *const pjsua_msg_data,
-    ) -> pj_status_t;
-    pub fn pjsua_call_reinvite2(
-        call_id: pjsua_call_id,
-        opt: *const pjsua_call_setting,
-        msg_data: *const pjsua_msg_data,
-    ) -> pj_status_t;
-    pub fn pjsua_call_update(
-        call_id: pjsua_call_id,
-        options: ::std::os::raw::c_uint,
-        msg_data: *const pjsua_msg_data,
-    ) -> pj_status_t;
-    pub fn pjsua_call_update2(
-        call_id: pjsua_call_id,
-        opt: *const pjsua_call_setting,
-        msg_data: *const pjsua_msg_data,
-    ) -> pj_status_t;
-    pub fn pjsua_call_xfer(
-        call_id: pjsua_call_id,
-        dest: *const pj_str_t,
-        msg_data: *const pjsua_msg_data,
-    ) -> pj_status_t;
-    pub fn pjsua_call_xfer_replaces(
-        call_id: pjsua_call_id,
-        dest_call_id: pjsua_call_id,
-        options: ::std::os::raw::c_uint,
-        msg_data: *const pjsua_msg_data,
-    ) -> pj_status_t;
+    pub fn pjsua_call_remote_has_cap(call_id: pjsua_call_id, htype: c_int, hname: *const pj_str_t, token: *const pj_str_t) -> pjsip_dialog_cap_status;
+    pub fn pjsua_call_set_user_data(call_id: pjsua_call_id, user_data: *mut c_void) -> pj_status_t;
+    pub fn pjsua_call_get_user_data(call_id: pjsua_call_id) -> *mut c_void;
+    pub fn pjsua_call_get_rem_nat_type(call_id: pjsua_call_id, p_type: *mut pj_stun_nat_type) -> pj_status_t;
+    pub fn pjsua_call_answer(call_id: pjsua_call_id, code: c_uint, reason: *const pj_str_t, msg_data: *const pjsua_msg_data) -> pj_status_t;
+    pub fn pjsua_call_answer2(call_id: pjsua_call_id, opt: *const pjsua_call_setting, code: c_uint, reason: *const pj_str_t, msg_data: *const pjsua_msg_data) -> pj_status_t;
+    pub fn pjsua_call_answer_with_sdp(call_id: pjsua_call_id, sdp: *const pjmedia_sdp_session, opt: *const pjsua_call_setting, code: c_uint, reason: *const pj_str_t, msg_data: *const pjsua_msg_data) -> pj_status_t;
+    pub fn pjsua_call_hangup(call_id: pjsua_call_id, code: c_uint, reason: *const pj_str_t, msg_data: *const pjsua_msg_data) -> pj_status_t;
+    pub fn pjsua_call_process_redirect(call_id: pjsua_call_id, cmd: pjsip_redirect_op) -> pj_status_t;
+    pub fn pjsua_call_set_hold(call_id: pjsua_call_id, msg_data: *const pjsua_msg_data) -> pj_status_t;
+    pub fn pjsua_call_set_hold2(call_id: pjsua_call_id, options: c_uint, msg_data: *const pjsua_msg_data) -> pj_status_t;
+    pub fn pjsua_call_reinvite(call_id: pjsua_call_id, options: c_uint, msg_data: *const pjsua_msg_data) -> pj_status_t;
+    pub fn pjsua_call_reinvite2(call_id: pjsua_call_id, opt: *const pjsua_call_setting, msg_data: *const pjsua_msg_data) -> pj_status_t;
+    pub fn pjsua_call_update(call_id: pjsua_call_id, options: c_uint, msg_data: *const pjsua_msg_data) -> pj_status_t;
+    pub fn pjsua_call_update2(call_id: pjsua_call_id, opt: *const pjsua_call_setting, msg_data: *const pjsua_msg_data) -> pj_status_t;
+    pub fn pjsua_call_xfer(call_id: pjsua_call_id, dest: *const pj_str_t, msg_data: *const pjsua_msg_data) -> pj_status_t;
+    pub fn pjsua_call_xfer_replaces(call_id: pjsua_call_id, dest_call_id: pjsua_call_id, options: c_uint, msg_data: *const pjsua_msg_data) -> pj_status_t;
     pub fn pjsua_call_dial_dtmf(call_id: pjsua_call_id, digits: *const pj_str_t) -> pj_status_t;
-    pub fn pjsua_call_send_dtmf(
-        call_id: pjsua_call_id,
-        param: *const pjsua_call_send_dtmf_param,
-    ) -> pj_status_t;
-    pub fn pjsua_call_send_im(
-        call_id: pjsua_call_id,
-        mime_type: *const pj_str_t,
-        content: *const pj_str_t,
-        msg_data: *const pjsua_msg_data,
-        user_data: *mut ::std::os::raw::c_void,
-    ) -> pj_status_t;
-    pub fn pjsua_call_send_typing_ind(
-        call_id: pjsua_call_id,
-        is_typing: pj_bool_t,
-        msg_data: *const pjsua_msg_data,
-    ) -> pj_status_t;
-    pub fn pjsua_call_send_request(
-        call_id: pjsua_call_id,
-        method: *const pj_str_t,
-        msg_data: *const pjsua_msg_data,
-    ) -> pj_status_t;
+    pub fn pjsua_call_send_dtmf(call_id: pjsua_call_id, param: *const pjsua_call_send_dtmf_param) -> pj_status_t;
+    pub fn pjsua_call_send_im(call_id: pjsua_call_id, mime_type: *const pj_str_t, content: *const pj_str_t, msg_data: *const pjsua_msg_data, user_data: *mut c_void) -> pj_status_t;
+    pub fn pjsua_call_send_typing_ind(call_id: pjsua_call_id, is_typing: pj_bool_t, msg_data: *const pjsua_msg_data) -> pj_status_t;
+    pub fn pjsua_call_send_request(call_id: pjsua_call_id, method: *const pj_str_t, msg_data: *const pjsua_msg_data) -> pj_status_t;
     pub fn pjsua_call_hangup_all();
-    pub fn pjsua_call_dump(
-        call_id: pjsua_call_id,
-        with_media: pj_bool_t,
-        buffer: *mut ::std::os::raw::c_char,
-        maxlen: ::std::os::raw::c_uint,
-        indent: *const ::std::os::raw::c_char,
-    ) -> pj_status_t;
-    pub fn pjsua_call_get_stream_info(
-        call_id: pjsua_call_id,
-        med_idx: ::std::os::raw::c_uint,
-        psi: *mut pjsua_stream_info,
-    ) -> pj_status_t;
-    pub fn pjsua_call_get_stream_stat(
-        call_id: pjsua_call_id,
-        med_idx: ::std::os::raw::c_uint,
-        stat: *mut pjsua_stream_stat,
-    ) -> pj_status_t;
-    pub fn pjsua_call_get_med_transport_info(
-        call_id: pjsua_call_id,
-        med_idx: ::std::os::raw::c_uint,
-        t: *mut pjmedia_transport_info,
-    ) -> pj_status_t;
+    pub fn pjsua_call_dump(call_id: pjsua_call_id, with_media: pj_bool_t, buffer: *mut c_char, maxlen: c_uint, indent: *const c_char) -> pj_status_t;
+    pub fn pjsua_call_get_stream_info(call_id: pjsua_call_id, med_idx: c_uint, psi: *mut pjsua_stream_info) -> pj_status_t;
+    pub fn pjsua_call_get_stream_stat(call_id: pjsua_call_id, med_idx: c_uint, stat: *mut pjsua_stream_stat) -> pj_status_t;
+    pub fn pjsua_call_get_med_transport_info(call_id: pjsua_call_id, med_idx: c_uint, t: *mut pjmedia_transport_info) -> pj_status_t;
     pub fn pjsua_buddy_config_default(cfg: *mut pjsua_buddy_config);
-    pub fn pjsua_get_buddy_count() -> ::std::os::raw::c_uint;
+    pub fn pjsua_get_buddy_count() -> c_uint;
     pub fn pjsua_buddy_is_valid(buddy_id: pjsua_buddy_id) -> pj_bool_t;
-    pub fn pjsua_enum_buddies(
-        ids: *mut pjsua_buddy_id,
-        count: *mut ::std::os::raw::c_uint,
-    ) -> pj_status_t;
+    pub fn pjsua_enum_buddies(ids: *mut pjsua_buddy_id, count: *mut c_uint) -> pj_status_t;
     pub fn pjsua_buddy_find(uri: *const pj_str_t) -> pjsua_buddy_id;
-    pub fn pjsua_buddy_get_info(
-        buddy_id: pjsua_buddy_id,
-        info: *mut pjsua_buddy_info,
-    ) -> pj_status_t;
-    pub fn pjsua_buddy_set_user_data(
-        buddy_id: pjsua_buddy_id,
-        user_data: *mut ::std::os::raw::c_void,
-    ) -> pj_status_t;
-    pub fn pjsua_buddy_get_user_data(buddy_id: pjsua_buddy_id) -> *mut ::std::os::raw::c_void;
-    pub fn pjsua_buddy_add(
-        buddy_cfg: *const pjsua_buddy_config,
-        p_buddy_id: *mut pjsua_buddy_id,
-    ) -> pj_status_t;
+    pub fn pjsua_buddy_get_info(buddy_id: pjsua_buddy_id, info: *mut pjsua_buddy_info) -> pj_status_t;
+    pub fn pjsua_buddy_set_user_data(buddy_id: pjsua_buddy_id, user_data: *mut c_void) -> pj_status_t;
+    pub fn pjsua_buddy_get_user_data(buddy_id: pjsua_buddy_id) -> *mut c_void;
+    pub fn pjsua_buddy_add(buddy_cfg: *const pjsua_buddy_config, p_buddy_id: *mut pjsua_buddy_id) -> pj_status_t;
     pub fn pjsua_buddy_del(buddy_id: pjsua_buddy_id) -> pj_status_t;
-    pub fn pjsua_buddy_subscribe_pres(
-        buddy_id: pjsua_buddy_id,
-        subscribe: pj_bool_t,
-    ) -> pj_status_t;
+    pub fn pjsua_buddy_subscribe_pres(buddy_id: pjsua_buddy_id, subscribe: pj_bool_t) -> pj_status_t;
     pub fn pjsua_buddy_update_pres(buddy_id: pjsua_buddy_id) -> pj_status_t;
-    pub fn pjsua_pres_notify(
-        acc_id: pjsua_acc_id,
-        srv_pres: *mut pjsua_srv_pres,
-        state: pjsip_evsub_state,
-        state_str: *const pj_str_t,
-        reason: *const pj_str_t,
-        with_body: pj_bool_t,
-        msg_data: *const pjsua_msg_data,
-    ) -> pj_status_t;
+    pub fn pjsua_pres_notify(acc_id: pjsua_acc_id, srv_pres: *mut pjsua_srv_pres, state: pjsip_evsub_state, state_str: *const pj_str_t, reason: *const pj_str_t, with_body: pj_bool_t, msg_data: *const pjsua_msg_data) -> pj_status_t;
     pub fn pjsua_pres_dump(verbose: pj_bool_t);
-    pub fn pjsua_im_send(
-        acc_id: pjsua_acc_id,
-        to: *const pj_str_t,
-        mime_type: *const pj_str_t,
-        content: *const pj_str_t,
-        msg_data: *const pjsua_msg_data,
-        user_data: *mut ::std::os::raw::c_void,
-    ) -> pj_status_t;
-    pub fn pjsua_im_typing(
-        acc_id: pjsua_acc_id,
-        to: *const pj_str_t,
-        is_typing: pj_bool_t,
-        msg_data: *const pjsua_msg_data,
-    ) -> pj_status_t;
+    pub fn pjsua_im_send(acc_id: pjsua_acc_id, to: *const pj_str_t, mime_type: *const pj_str_t, content: *const pj_str_t, msg_data: *const pjsua_msg_data, user_data: *mut c_void) -> pj_status_t;
+    pub fn pjsua_im_typing(acc_id: pjsua_acc_id, to: *const pj_str_t, is_typing: pj_bool_t, msg_data: *const pjsua_msg_data) -> pj_status_t;
     pub fn pjsua_snd_dev_param_default(prm: *mut pjsua_snd_dev_param);
     pub fn pjsua_conf_connect_param_default(prm: *mut pjsua_conf_connect_param);
-    pub fn pjsua_conf_get_max_ports() -> ::std::os::raw::c_uint;
-    pub fn pjsua_conf_get_active_ports() -> ::std::os::raw::c_uint;
-    pub fn pjsua_enum_conf_ports(
-        id: *mut pjsua_conf_port_id,
-        count: *mut ::std::os::raw::c_uint,
-    ) -> pj_status_t;
-    pub fn pjsua_conf_get_port_info(
-        port_id: pjsua_conf_port_id,
-        info: *mut pjsua_conf_port_info,
-    ) -> pj_status_t;
-    pub fn pjsua_conf_add_port(
-        pool: *mut pj_pool_t,
-        port: *mut pjmedia_port,
-        p_id: *mut pjsua_conf_port_id,
-    ) -> pj_status_t;
+    pub fn pjsua_conf_get_max_ports() -> c_uint;
+    pub fn pjsua_conf_get_active_ports() -> c_uint;
+    pub fn pjsua_enum_conf_ports(id: *mut pjsua_conf_port_id, count: *mut c_uint) -> pj_status_t;
+    pub fn pjsua_conf_get_port_info(port_id: pjsua_conf_port_id, info: *mut pjsua_conf_port_info) -> pj_status_t;
+    pub fn pjsua_conf_add_port(pool: *mut pj_pool_t, port: *mut pjmedia_port, p_id: *mut pjsua_conf_port_id) -> pj_status_t;
     pub fn pjsua_conf_remove_port(port_id: pjsua_conf_port_id) -> pj_status_t;
     pub fn pjsua_conf_connect(source: pjsua_conf_port_id, sink: pjsua_conf_port_id) -> pj_status_t;
-    pub fn pjsua_conf_connect2(
-        source: pjsua_conf_port_id,
-        sink: pjsua_conf_port_id,
-        prm: *const pjsua_conf_connect_param,
-    ) -> pj_status_t;
-    pub fn pjsua_conf_disconnect(
-        source: pjsua_conf_port_id,
-        sink: pjsua_conf_port_id,
-    ) -> pj_status_t;
+    pub fn pjsua_conf_connect2(source: pjsua_conf_port_id, sink: pjsua_conf_port_id, prm: *const pjsua_conf_connect_param) -> pj_status_t;
+    pub fn pjsua_conf_disconnect(source: pjsua_conf_port_id, sink: pjsua_conf_port_id) -> pj_status_t;
     pub fn pjsua_conf_adjust_tx_level(slot: pjsua_conf_port_id, level: f32) -> pj_status_t;
     pub fn pjsua_conf_adjust_rx_level(slot: pjsua_conf_port_id, level: f32) -> pj_status_t;
-    pub fn pjsua_conf_get_signal_level(
-        slot: pjsua_conf_port_id,
-        tx_level: *mut ::std::os::raw::c_uint,
-        rx_level: *mut ::std::os::raw::c_uint,
-    ) -> pj_status_t;
-    pub fn pjsua_conf_get_msignal_level(
-        slot: pjsua_conf_port_id,
-        tx_level_l: *mut ::std::os::raw::c_uint,
-        tx_level_r: *mut ::std::os::raw::c_uint,
-        rx_level_l: *mut ::std::os::raw::c_uint,
-        rx_level_r: *mut ::std::os::raw::c_uint,
-    ) -> pj_status_t;
-    pub fn pjsua_player_create(
-        filename: *const pj_str_t,
-        options: ::std::os::raw::c_uint,
-        p_id: *mut pjsua_player_id,
-    ) -> pj_status_t;
-    pub fn pjsua_playlist_create(
-        file_names: *const pj_str_t,
-        file_count: ::std::os::raw::c_uint,
-        label: *const pj_str_t,
-        options: ::std::os::raw::c_uint,
-        p_id: *mut pjsua_player_id,
-    ) -> pj_status_t;
+    pub fn pjsua_conf_get_signal_level(slot: pjsua_conf_port_id, tx_level: *mut c_uint, rx_level: *mut c_uint) -> pj_status_t;
+    pub fn pjsua_conf_get_msignal_level(slot: pjsua_conf_port_id, tx_level_l: *mut c_uint, tx_level_r: *mut c_uint, rx_level_l: *mut c_uint, rx_level_r: *mut c_uint) -> pj_status_t;
+    pub fn pjsua_player_create(filename: *const pj_str_t, options: c_uint, p_id: *mut pjsua_player_id) -> pj_status_t;
+    pub fn pjsua_playlist_create(file_names: *const pj_str_t, file_count: c_uint, label: *const pj_str_t, options: c_uint, p_id: *mut pjsua_player_id) -> pj_status_t;
     pub fn pjsua_player_get_conf_port(id: pjsua_player_id) -> pjsua_conf_port_id;
-    pub fn pjsua_player_get_port(
-        id: pjsua_player_id,
-        p_port: *mut *mut pjmedia_port,
-    ) -> pj_status_t;
-    pub fn pjsua_player_get_info(
-        id: pjsua_player_id,
-        info: *mut pjmedia_wav_player_info,
-    ) -> pj_status_t;
+    pub fn pjsua_player_get_port(id: pjsua_player_id, p_port: *mut *mut pjmedia_port) -> pj_status_t;
+    pub fn pjsua_player_get_info(id: pjsua_player_id, info: *mut pjmedia_wav_player_info) -> pj_status_t;
     pub fn pjsua_player_get_pos(id: pjsua_player_id) -> pj_ssize_t;
     pub fn pjsua_player_set_pos(id: pjsua_player_id, samples: pj_uint32_t) -> pj_status_t;
     pub fn pjsua_player_destroy(id: pjsua_player_id) -> pj_status_t;
-    pub fn pjsua_recorder_create(
-        filename: *const pj_str_t,
-        enc_type: ::std::os::raw::c_uint,
-        enc_param: *mut ::std::os::raw::c_void,
-        max_size: pj_ssize_t,
-        options: ::std::os::raw::c_uint,
-        p_id: *mut pjsua_recorder_id,
-    ) -> pj_status_t;
+    pub fn pjsua_recorder_create(filename: *const pj_str_t, enc_type: c_uint, enc_param: *mut c_void, max_size: pj_ssize_t, options: c_uint, p_id: *mut pjsua_recorder_id) -> pj_status_t;
     pub fn pjsua_recorder_get_conf_port(id: pjsua_recorder_id) -> pjsua_conf_port_id;
-    pub fn pjsua_recorder_get_port(
-        id: pjsua_recorder_id,
-        p_port: *mut *mut pjmedia_port,
-    ) -> pj_status_t;
+    pub fn pjsua_recorder_get_port(id: pjsua_recorder_id, p_port: *mut *mut pjmedia_port) -> pj_status_t;
     pub fn pjsua_recorder_destroy(id: pjsua_recorder_id) -> pj_status_t;
-    pub fn pjsua_enum_aud_devs(
-        info: *mut pjmedia_aud_dev_info,
-        count: *mut ::std::os::raw::c_uint,
-    ) -> pj_status_t;
-    pub fn pjsua_enum_snd_devs(
-        info: *mut pjmedia_snd_dev_info,
-        count: *mut ::std::os::raw::c_uint,
-    ) -> pj_status_t;
-    pub fn pjsua_get_snd_dev(
-        capture_dev: *mut ::std::os::raw::c_int,
-        playback_dev: *mut ::std::os::raw::c_int,
-    ) -> pj_status_t;
-    pub fn pjsua_set_snd_dev(
-        capture_dev: ::std::os::raw::c_int,
-        playback_dev: ::std::os::raw::c_int,
-    ) -> pj_status_t;
+    pub fn pjsua_enum_aud_devs(info: *mut pjmedia_aud_dev_info, count: *mut c_uint) -> pj_status_t;
+    pub fn pjsua_enum_snd_devs(info: *mut pjmedia_snd_dev_info, count: *mut c_uint) -> pj_status_t;
+    pub fn pjsua_get_snd_dev(capture_dev: *mut c_int, playback_dev: *mut c_int) -> pj_status_t;
+    pub fn pjsua_set_snd_dev(capture_dev: c_int, playback_dev: c_int) -> pj_status_t;
     pub fn pjsua_set_snd_dev2(snd_param: *mut pjsua_snd_dev_param) -> pj_status_t;
     pub fn pjsua_set_null_snd_dev() -> pj_status_t;
     pub fn pjsua_set_no_snd_dev() -> *mut pjmedia_port;
-    pub fn pjsua_set_ec(
-        tail_ms: ::std::os::raw::c_uint,
-        options: ::std::os::raw::c_uint,
-    ) -> pj_status_t;
-    pub fn pjsua_get_ec_tail(p_tail_ms: *mut ::std::os::raw::c_uint) -> pj_status_t;
+    pub fn pjsua_set_ec(tail_ms: c_uint, options: c_uint) -> pj_status_t;
+    pub fn pjsua_get_ec_tail(p_tail_ms: *mut c_uint) -> pj_status_t;
     pub fn pjsua_get_ec_stat(p_stat: *mut pjmedia_echo_stat) -> pj_status_t;
     pub fn pjsua_snd_is_active() -> pj_bool_t;
-    pub fn pjsua_snd_set_setting(
-        cap: pjmedia_aud_dev_cap,
-        pval: *const ::std::os::raw::c_void,
-        keep: pj_bool_t,
-    ) -> pj_status_t;
-    pub fn pjsua_snd_get_setting(
-        cap: pjmedia_aud_dev_cap,
-        pval: *mut ::std::os::raw::c_void,
-    ) -> pj_status_t;
-    pub fn pjsua_ext_snd_dev_create(
-        param: *mut pjmedia_snd_port_param,
-        p_snd: *mut *mut pjsua_ext_snd_dev,
-    ) -> pj_status_t;
+    pub fn pjsua_snd_set_setting(cap: pjmedia_aud_dev_cap, pval: *const c_void, keep: pj_bool_t) -> pj_status_t;
+    pub fn pjsua_snd_get_setting(cap: pjmedia_aud_dev_cap, pval: *mut c_void) -> pj_status_t;
+    pub fn pjsua_ext_snd_dev_create(param: *mut pjmedia_snd_port_param, p_snd: *mut *mut pjsua_ext_snd_dev) -> pj_status_t;
     pub fn pjsua_ext_snd_dev_destroy(snd: *mut pjsua_ext_snd_dev) -> pj_status_t;
     pub fn pjsua_ext_snd_dev_get_snd_port(snd: *mut pjsua_ext_snd_dev) -> *mut pjmedia_snd_port;
     pub fn pjsua_ext_snd_dev_get_conf_port(snd: *mut pjsua_ext_snd_dev) -> pjsua_conf_port_id;
-    pub fn pjsua_enum_codecs(
-        id: *mut pjsua_codec_info,
-        count: *mut ::std::os::raw::c_uint,
-    ) -> pj_status_t;
-    pub fn pjsua_codec_set_priority(codec_id: *const pj_str_t, priority: pj_uint8_t)
-        -> pj_status_t;
-    pub fn pjsua_codec_get_param(
-        codec_id: *const pj_str_t,
-        param: *mut pjmedia_codec_param,
-    ) -> pj_status_t;
-    pub fn pjsua_codec_set_param(
-        codec_id: *const pj_str_t,
-        param: *const pjmedia_codec_param,
-    ) -> pj_status_t;
+    pub fn pjsua_enum_codecs(id: *mut pjsua_codec_info, count: *mut c_uint) -> pj_status_t;
+    pub fn pjsua_codec_set_priority(codec_id: *const pj_str_t, priority: pj_uint8_t) -> pj_status_t;
+    pub fn pjsua_codec_get_param(codec_id: *const pj_str_t, param: *mut pjmedia_codec_param) -> pj_status_t;
+    pub fn pjsua_codec_set_param(codec_id: *const pj_str_t, param: *const pjmedia_codec_param) -> pj_status_t;
 }
