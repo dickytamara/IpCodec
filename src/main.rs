@@ -69,13 +69,7 @@ use settings::{SettingsCurrentActivePage, SettingsWidget};
 use sipua::*;
 
 use crate::dialpad::CallButtonState;
-
-// use sip_account::SIPAccountExt;
-
 enum SignalLevel { Level( (u32, u32, u32, u32)) }
-
-
-// TODO: Check BBC reference sip application
 
 /// update receive transmit level bar
 fn thread_update_level_bar(rx_widget_clone: AudioLineWidget, tx_widget_clone: AudioLineWidget) {
@@ -98,10 +92,7 @@ fn thread_update_level_bar(rx_widget_clone: AudioLineWidget, tx_widget_clone: Au
         }
     });
 
-    // todo fix the late destroy of
-    // thread. this segmentation fault
-    // trigered when receiver destroyed
-    // before sender.
+    // TODO: fix thread attach.
     receiver.attach(None, move |level| {
         match level {
             SignalLevel::Level((tx_l,tx_r, rx_l, rx_r)) => {
@@ -212,18 +203,14 @@ fn callback_account_widget(sipua: &mut SIPUserAgent, account: &AccountWidget) {
     let account_clone = account.clone();
     let sipua_clone = sipua.clone();
     account.on_btn_connect_clicked(move || {
-        // sipacc.config_default();
-        // let mut transport = pjsua_sys::pjsua_transport_config::new();
         // transport.port = 4000;
-        // sipacc.set_rtp_cfg(transport);
-
         sipua_clone.acc_config().set_id(account_clone.get_sip_url());
         sipua_clone.acc_config().set_reg_uri(account_clone.get_registrar_url());
         sipua_clone.acc_cred().set_data_type(CredentialInfoType::PlainText);
         sipua_clone.acc_cred().set_realm(account_clone.get_realm());
         sipua_clone.acc_cred().set_username(account_clone.get_username());
         sipua_clone.acc_cred().set_data(account_clone.get_password());
-
+        sipua_clone.get_context().account_connect();
         // sipacc.add(true);
     });
 }
@@ -267,7 +254,7 @@ fn callback_settings_widget(sipua: &mut SIPUserAgent, settings: &SettingsWidget)
     settings.apply_connect_clicked(move |page| {
         match page.unwrap() {
             SettingsCurrentActivePage::Ua => {
-
+                ua.get_context().auto_answer.set(settings_clone.call.get_autoanswer());
             },
             SettingsCurrentActivePage::Stun => {
                 ua.ua_config().set_stun_srv(
@@ -310,8 +297,8 @@ fn callback_settings_widget(sipua: &mut SIPUserAgent, settings: &SettingsWidget)
                 ua.ua_config().set_outbound_proxy(
                     settings_clone.proxy.get_proxy1(),
                     settings_clone.proxy.get_proxy2(),
-                    settings_clone.proxy.get_proxy3(),
-                    settings_clone.proxy.get_proxy4()
+                    None ,
+                    None
                 );
             },
             SettingsCurrentActivePage::Dns => {

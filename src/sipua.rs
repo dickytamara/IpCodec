@@ -58,7 +58,7 @@ impl SIPUserAgent {
         }
     }
 
-    pub fn acc_config(&self) -> RefMut<UAAccConfig> {
+    pub fn acc_config(&self) -> RefMut<Box<UAAccConfig>> {
         unsafe {
             SIP_CORE.as_ref().unwrap().default_acc_config.borrow_mut()
         }

@@ -26,10 +26,10 @@ pub struct SIPCore {
     pub media_config: Rc<RefCell<UAMediaConfig>>,
     pub default_transport_config: Rc<RefCell<UATransportConfig>>,
     pub default_rtp_config: Rc<RefCell<UATransportConfig>>,
-    pub default_acc_config: Rc<RefCell<UAAccConfig>>,
+    pub default_acc_config: Rc<RefCell<Box<UAAccConfig>>>,
     pub default_acc_cred: Rc<RefCell<CredentialInfo>>,
     pub default_acc:Rc<RefCell<Option<UAAccount>>>,
-    def_pool: Rc::<Cell<Option<Box::<*mut PJPool>>>>,
+    def_pool: Rc::<Cell<Option<Box::<*mut PJPool>>>>, // this pool mostlly unused.
     module: Rc<RefCell<SIPModule>>,
     no_udp: Rc<Cell<bool>>,
     no_tcp: Rc<Cell<bool>>,
@@ -42,7 +42,7 @@ pub struct SIPCore {
     input_dev: Rc<Cell<i32>>,
     output_dev: Rc<Cell<i32>>,
     current_call: Rc<Cell<Option<UACall>>>,
-    auto_answer: Rc<Cell<bool>>,
+    pub auto_answer: Rc<Cell<bool>>,
     events: Rc<RefCell<SIPCoreEvents>>,
     no_refersub: Rc<Cell<bool>>,
     compact_form: Rc<Cell<bool>>,
@@ -73,7 +73,7 @@ impl SIPCore {
             media_config: Rc::new(RefCell::new(UAMediaConfig::default())),
             default_transport_config: Rc::new(RefCell::new(UATransportConfig::default())),
             default_rtp_config: Rc::new(RefCell::new(UATransportConfig::default())),
-            default_acc_config: Rc::new(RefCell::new(UAAccConfig::default())),
+            default_acc_config: Rc::new(RefCell::new(Box::new(UAAccConfig::default()))),
             default_acc_cred: Rc::new(RefCell::new(CredentialInfo::new())),
             default_acc: Rc::new(RefCell::new(None)),
             def_pool: Rc::new(Cell::new(None)),
@@ -219,10 +219,7 @@ impl SIPCore {
             self.transport_tcp6.set(Some(tp));
         }
 
-        if ! self.default_acc_config.borrow().get_id().is_empty() {
-            let acc = UAAccount::new(&self.default_acc_config.borrow(), true).unwrap();
-            self.default_acc.replace(Some(acc));
-        }
+        self.account_connect();
 
         // self.media_config.init();
         UASound::default().set_snd_dev(self.input_dev.get(), self.output_dev.get()).unwrap();
@@ -237,6 +234,19 @@ impl SIPCore {
     pub fn stop(&self) {
         pjsua::destroy().unwrap();
         // self.ua_config.deinit();
+    }
+
+    pub fn account_connect(&self) {
+        if self.default_acc.take().is_some() {
+            // do unregister process
+        }
+
+        if ! self.default_acc_config.borrow().get_id().is_empty() {
+            let cred = self.default_acc_cred.borrow().clone();
+            self.default_acc_config.borrow_mut().set_cred_info(cred).unwrap();
+            let acc = UAAccount::new(&self.default_acc_config.borrow_mut(), true).unwrap();
+            self.default_acc.replace(Some(acc));
+        }
     }
 
     pub fn call(&self, call_addr: &str) {
@@ -273,6 +283,9 @@ impl SIPCore {
         // let current_call = SIPCall::from(self.current_call);
         // let mut msg_data = pjsua_msg_data::new();
         // let mut call_opt = calls.get_call_opt();
+        if self.current_call.get().is_some() {
+            self.current_call.get().unwrap().answer(SIPStatusCode::Ok, None, None).unwrap();
+        }
 
         // current_call.answer2(&mut call_opt, 200, None, Some(&mut msg_data));
     }
@@ -394,6 +407,9 @@ impl SIPCore {
         // // outer level
         // println!("INVSTATE [INCOMING]");
         // (self.events.invite)(SIPInviteState::Incoming);
+        //(self.events.borrow().invite)(call.get_info().unwrap().get_state());
+        self.current_call.set(Some(call));
+        (self.events.borrow().invite)(SIPInvState::Incoming);
 
         // if self.auto_answer > 0 {
         //     call.answer2(&mut opt, 200, None, None);

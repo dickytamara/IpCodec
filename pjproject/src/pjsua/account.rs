@@ -1269,10 +1269,9 @@ impl UAAccConfigExt for UAAccConfig {
 impl AutoDefault<UAAccConfig> for UAAccConfig {
     fn default() -> Self {
         unsafe {
-            let mut cfg = UAAccConfig::new();
-            pjsua_sys::pjsua_acc_config_default(&mut cfg as *mut _);
-
-            cfg
+            let mut cfg = Box::new(UAAccConfig::new());
+            pjsua_sys::pjsua_acc_config_default(cfg.as_mut() as *mut _);
+            *cfg
         }
     }
 }
