@@ -2027,6 +2027,7 @@ pub struct pjsip_dialog {
     pub via_addr: pjsip_host_port,
     pub via_tp: *const c_void,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_dlg_create_uac_param {
