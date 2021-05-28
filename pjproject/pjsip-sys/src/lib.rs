@@ -375,16 +375,6 @@ pub struct pjsip_param {
     pub value: pj_str_t,
 }
 
-extern "C" {
-    pub static mut pjsip_sip_cfg_var: pjsip_cfg_t;
-    pub fn pjsip_strerror(status: pj_status_t, buffer: *mut c_char, bufsize: pj_size_t) -> pj_str_t;
-    pub fn pjsip_param_find(param_list: *const pjsip_param,name: *const pj_str_t) -> *mut pjsip_param;
-    pub fn pjsip_param_cmp(param_list1: *const pjsip_param, param_list2: *const pjsip_param, ig_nf: pj_bool_t) -> c_int;
-    pub fn pjsip_param_clone(pool: *mut pj_pool_t, dst_list: *mut pjsip_param, src_list: *const pjsip_param);
-    pub fn pjsip_param_shallow_clone(pool: *mut pj_pool_t, dst_list: *mut pjsip_param, src_list: *const pjsip_param);
-    pub fn pjsip_param_print_on(param_list: *const pjsip_param, buf: *mut c_char, size: pj_size_t, pname_unres: *const pj_cis_t, pvalue_unres: *const pj_cis_t, sep: c_int) -> pj_ssize_t;
-}
-
 pub const PJSIP_URI_IN_REQ_URI: pjsip_uri_context_e = 0;
 pub const PJSIP_URI_IN_FROMTO_HDR: pjsip_uri_context_e = 1;
 pub const PJSIP_URI_IN_CONTACT_HDR: pjsip_uri_context_e = 2;
@@ -453,20 +443,6 @@ pub struct pjsip_name_addr {
     pub uri: *mut pjsip_uri,
 }
 
-extern "C" {
-    pub fn pjsip_sip_uri_create(pool: *mut pj_pool_t, secure: pj_bool_t) -> *mut pjsip_sip_uri;
-    pub fn pjsip_sip_uri_set_secure(uri: *mut pjsip_sip_uri, secure: pj_bool_t);
-    pub fn pjsip_sip_uri_init(url: *mut pjsip_sip_uri, secure: pj_bool_t);
-    pub fn pjsip_sip_uri_assign(pool: *mut pj_pool_t, url: *mut pjsip_sip_uri, rhs: *const pjsip_sip_uri);
-    pub fn pjsip_name_addr_create(pool: *mut pj_pool_t) -> *mut pjsip_name_addr;
-    pub fn pjsip_name_addr_init(name_addr: *mut pjsip_name_addr);
-    pub fn pjsip_name_addr_assign(pool: *mut pj_pool_t, addr: *mut pjsip_name_addr, rhs: *const pjsip_name_addr);
-    pub fn pjsip_other_uri_create(pool: *mut pj_pool_t) -> *mut pjsip_other_uri;
-    pub fn pjsip_tel_uri_create(pool: *mut pj_pool_t) -> *mut pjsip_tel_uri;
-    pub fn pjsip_tel_nb_cmp(nb1: *const pj_str_t, nb2: *const pj_str_t) -> c_int;
-}
-
-
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_other_uri {
@@ -502,25 +478,6 @@ pub struct pjsip_method {
     pub name: pj_str_t,
 }
 
-extern "C" {
-    pub static pjsip_invite_method: pjsip_method;
-    pub static pjsip_cancel_method: pjsip_method;
-    pub static pjsip_ack_method: pjsip_method;
-    pub static pjsip_bye_method: pjsip_method;
-    pub static pjsip_register_method: pjsip_method;
-    pub static pjsip_options_method: pjsip_method;
-    pub fn pjsip_get_invite_method() -> *const pjsip_method;
-    pub fn pjsip_get_cancel_method() -> *const pjsip_method;
-    pub fn pjsip_get_ack_method() -> *const pjsip_method;
-    pub fn pjsip_get_bye_method() -> *const pjsip_method;
-    pub fn pjsip_get_register_method() -> *const pjsip_method;
-    pub fn pjsip_get_options_method() -> *const pjsip_method;
-    pub fn pjsip_method_init(m: *mut pjsip_method, pool: *mut pj_pool_t, str_: *const pj_str_t);
-    pub fn pjsip_method_init_np(m: *mut pjsip_method, str_: *mut pj_str_t);
-    pub fn pjsip_method_set(m: *mut pjsip_method, id: pjsip_method_e);
-    pub fn pjsip_method_copy(pool: *mut pj_pool_t, method: *mut pjsip_method, rhs: *const pjsip_method);
-    pub fn pjsip_method_cmp(m1: *const pjsip_method, m2: *const pjsip_method) -> c_int;
-}
 
 pub const PJSIP_H_ACCEPT: pjsip_hdr_e = 0;
 pub const PJSIP_H_ACCEPT_ENCODING_UNIMP: pjsip_hdr_e = 1;
@@ -568,6 +525,7 @@ pub const PJSIP_H_WARNING_UNIMP: pjsip_hdr_e = 42;
 pub const PJSIP_H_WWW_AUTHENTICATE: pjsip_hdr_e = 43;
 pub const PJSIP_H_OTHER: pjsip_hdr_e = 44;
 pub type pjsip_hdr_e = u32;
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsip_hdr_vptr {
@@ -603,19 +561,12 @@ pub struct pjsip_hdr {
     pub vptr: *mut pjsip_hdr_vptr,
 }
 
-extern "C" {
-    pub fn pjsip_hdr_clone(pool: *mut pj_pool_t, hdr: *const c_void) -> *mut c_void;
-    pub fn pjsip_hdr_shallow_clone(pool: *mut pj_pool_t, hdr: *const c_void) -> *mut c_void;
-    pub fn pjsip_hdr_print_on(hdr: *mut c_void, buf: *mut c_char, len: pj_size_t) -> c_int;
-}
-
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_request_line {
     pub method: pjsip_method,
     pub uri: *mut pjsip_uri,
 }
-
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_status_line {
@@ -706,7 +657,6 @@ pub const PJSIP_SC_TSX_TRANSPORT_ERROR: pjsip_status_code = 503;
 pub const PJSIP_SC__force_32bit: pjsip_status_code = 2147483647;
 pub type pjsip_status_code = u32;
 
-
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_media_type {
@@ -714,7 +664,6 @@ pub struct pjsip_media_type {
     pub subtype: pj_str_t,
     pub param: pjsip_param,
 }
-
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
@@ -738,10 +687,10 @@ pub struct pjsip_msg_body {
     >,
 }
 
-
 pub const PJSIP_REQUEST_MSG: pjsip_msg_type_e = 0;
 pub const PJSIP_RESPONSE_MSG: pjsip_msg_type_e = 1;
 pub type pjsip_msg_type_e = u32;
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_msg {
@@ -750,6 +699,7 @@ pub struct pjsip_msg {
     pub hdr: pjsip_hdr,
     pub body: *mut pjsip_msg_body,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_msg__bindgen_ty_1 {
@@ -757,7 +707,6 @@ pub struct pjsip_msg__bindgen_ty_1 {
     pub status: __BindgenUnionField<pjsip_status_line>,
     pub bindgen_union_field: [u64; 4usize],
 }
-
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
@@ -771,7 +720,6 @@ pub struct pjsip_generic_string_hdr {
     pub hvalue: pj_str_t,
 }
 
-
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_generic_int_hdr {
@@ -783,7 +731,6 @@ pub struct pjsip_generic_int_hdr {
     pub vptr: *mut pjsip_hdr_vptr,
     pub ivalue: pj_uint32_t,
 }
-
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
@@ -799,10 +746,7 @@ pub struct pjsip_generic_array_hdr {
 }
 
 pub type pjsip_accept_hdr = pjsip_generic_array_hdr;
-
-
 pub type pjsip_allow_hdr = pjsip_generic_array_hdr;
-
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
@@ -829,42 +773,6 @@ pub struct pjsip_clen_hdr {
     pub len: c_int,
 }
 
-extern "C" {
-    pub fn pjsip_get_status_text(status_code: c_int) -> *const pj_str_t;
-    pub fn pjsip_media_type_init(mt: *mut pjsip_media_type, type_: *mut pj_str_t, subtype: *mut pj_str_t);
-    pub fn pjsip_media_type_init2(mt: *mut pjsip_media_type, type_: *mut c_char, subtype: *mut c_char);
-    pub fn pjsip_media_type_cmp(mt1: *const pjsip_media_type, mt2: *const pjsip_media_type, cmp_param: c_int) -> c_int;
-    pub fn pjsip_media_type_cp(pool: *mut pj_pool_t, dst: *mut pjsip_media_type, src: *const pjsip_media_type);
-    pub fn pjsip_media_type_print(buf: *mut c_char, len: c_uint, mt: *const pjsip_media_type) -> c_int;
-    pub fn pjsip_print_text_body(msg_body: *mut pjsip_msg_body, buf: *mut c_char, size: pj_size_t) -> c_int;
-    pub fn pjsip_clone_text_data(pool: *mut pj_pool_t, data: *const c_void, len: c_uint) -> *mut c_void;
-    pub fn pjsip_msg_body_copy(pool: *mut pj_pool_t, dst_body: *mut pjsip_msg_body, src_body: *const pjsip_msg_body) -> pj_status_t;
-    pub fn pjsip_msg_body_clone(pool: *mut pj_pool_t, body: *const pjsip_msg_body) -> *mut pjsip_msg_body;
-    pub fn pjsip_msg_body_create(pool: *mut pj_pool_t, type_: *const pj_str_t, subtype: *const pj_str_t, text: *const pj_str_t) -> *mut pjsip_msg_body;
-    pub fn pjsip_msg_create(pool: *mut pj_pool_t, type_: pjsip_msg_type_e) -> *mut pjsip_msg;
-    pub fn pjsip_msg_clone(pool: *mut pj_pool_t, msg: *const pjsip_msg) -> *mut pjsip_msg;
-    pub fn pjsip_msg_find_hdr(msg: *const pjsip_msg, type_: pjsip_hdr_e, start: *const c_void) -> *mut c_void;
-    pub fn pjsip_msg_find_hdr_by_name(msg: *const pjsip_msg, name: *const pj_str_t, start: *const c_void) -> *mut c_void;
-    pub fn pjsip_msg_find_hdr_by_names(msg: *const pjsip_msg, name: *const pj_str_t, sname: *const pj_str_t, start: *const c_void) -> *mut c_void;
-    pub fn pjsip_msg_find_remove_hdr(msg: *mut pjsip_msg, hdr: pjsip_hdr_e, start: *mut c_void) -> *mut c_void;
-    pub fn pjsip_msg_print(msg: *const pjsip_msg, buf: *mut c_char, size: pj_size_t) -> pj_ssize_t;
-    pub fn pjsip_generic_string_hdr_create(pool: *mut pj_pool_t, hname: *const pj_str_t, hvalue: *const pj_str_t) -> *mut pjsip_generic_string_hdr;
-    pub fn pjsip_generic_string_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void, hname: *const pj_str_t, hvalue: *const pj_str_t) -> *mut pjsip_generic_string_hdr;
-    pub fn pjsip_generic_string_hdr_init2(h: *mut pjsip_generic_string_hdr, hname: *mut pj_str_t, hvalue: *mut pj_str_t);
-    pub fn pjsip_generic_int_hdr_create(pool: *mut pj_pool_t, hname: *const pj_str_t, hvalue: c_uint) -> *mut pjsip_generic_int_hdr;
-    pub fn pjsip_generic_int_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void, hname: *const pj_str_t, value: c_uint) -> *mut pjsip_generic_int_hdr;
-    pub fn pjsip_generic_array_hdr_create(pool: *mut pj_pool_t, hname: *const pj_str_t) -> *mut pjsip_generic_array_hdr;
-    pub fn pjsip_generic_array_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void, hname: *const pj_str_t) -> *mut pjsip_generic_array_hdr;
-    pub fn pjsip_accept_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_accept_hdr;
-    pub fn pjsip_accept_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_accept_hdr;
-    pub fn pjsip_allow_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_allow_hdr;
-    pub fn pjsip_allow_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_allow_hdr;
-    pub fn pjsip_cid_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_cid_hdr;
-    pub fn pjsip_cid_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_cid_hdr;
-    pub fn pjsip_clen_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_clen_hdr;
-    pub fn pjsip_clen_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_clen_hdr;
-}
-
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_cseq_hdr {
@@ -876,11 +784,6 @@ pub struct pjsip_cseq_hdr {
     pub vptr: *mut pjsip_hdr_vptr,
     pub cseq: pj_int32_t,
     pub method: pjsip_method,
-}
-
-extern "C" {
-    pub fn pjsip_cseq_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_cseq_hdr;
-    pub fn pjsip_cseq_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_cseq_hdr;
 }
 
 #[repr(C)]
@@ -899,11 +802,6 @@ pub struct pjsip_contact_hdr {
     pub other_param: pjsip_param,
 }
 
-extern "C" {
-    pub fn pjsip_contact_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_contact_hdr;
-    pub fn pjsip_contact_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_contact_hdr;
-}
-
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_ctype_hdr {
@@ -916,17 +814,7 @@ pub struct pjsip_ctype_hdr {
     pub media: pjsip_media_type,
 }
 
-extern "C" {
-    pub fn pjsip_ctype_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_ctype_hdr;
-    pub fn pjsip_ctype_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_ctype_hdr;
-}
-
 pub type pjsip_expires_hdr = pjsip_generic_int_hdr;
-
-extern "C" {
-    pub fn pjsip_expires_hdr_create(pool: *mut pj_pool_t, value: c_uint) -> *mut pjsip_expires_hdr;
-    pub fn pjsip_expires_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void, value: c_uint) -> *mut pjsip_expires_hdr;
-}
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
@@ -941,31 +829,11 @@ pub struct pjsip_fromto_hdr {
     pub tag: pj_str_t,
     pub other_param: pjsip_param,
 }
+
 pub type pjsip_from_hdr = pjsip_fromto_hdr;
 pub type pjsip_to_hdr = pjsip_fromto_hdr;
-
-extern "C" {
-    pub fn pjsip_from_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_from_hdr;
-    pub fn pjsip_from_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_from_hdr;
-    pub fn pjsip_to_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_to_hdr;
-    pub fn pjsip_to_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_to_hdr;
-    pub fn pjsip_fromto_hdr_set_from(hdr: *mut pjsip_fromto_hdr) -> *mut pjsip_from_hdr;
-    pub fn pjsip_fromto_hdr_set_to(hdr: *mut pjsip_fromto_hdr) -> *mut pjsip_to_hdr;
-}
-
 pub type pjsip_max_fwd_hdr = pjsip_generic_int_hdr;
-
-extern "C" {
-    pub fn pjsip_max_fwd_hdr_create(pool: *mut pj_pool_t, value: c_uint) -> *mut pjsip_max_fwd_hdr;
-    pub fn pjsip_max_fwd_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void, value: c_uint) -> *mut pjsip_max_fwd_hdr;
-}
-
 pub type pjsip_min_expires_hdr = pjsip_generic_int_hdr;
-
-extern "C" {
-    pub fn pjsip_min_expires_hdr_create(pool: *mut pj_pool_t, value: c_uint) -> *mut pjsip_min_expires_hdr;
-    pub fn pjsip_min_expires_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void, value: c_uint) -> *mut pjsip_min_expires_hdr;
-}
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
@@ -979,24 +847,10 @@ pub struct pjsip_routing_hdr {
     pub name_addr: pjsip_name_addr,
     pub other_param: pjsip_param,
 }
+
 pub type pjsip_rr_hdr = pjsip_routing_hdr;
 pub type pjsip_route_hdr = pjsip_routing_hdr;
-
-extern "C" {
-    pub fn pjsip_rr_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_rr_hdr;
-    pub fn pjsip_rr_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_rr_hdr;
-    pub fn pjsip_route_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_route_hdr;
-    pub fn pjsip_route_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_route_hdr;
-    pub fn pjsip_routing_hdr_set_rr(r: *mut pjsip_routing_hdr) -> *mut pjsip_rr_hdr;
-    pub fn pjsip_routing_hdr_set_route(r: *mut pjsip_routing_hdr) -> *mut pjsip_route_hdr;
-}
-
 pub type pjsip_require_hdr = pjsip_generic_array_hdr;
-
-extern "C" {
-    pub fn pjsip_require_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_require_hdr;
-    pub fn pjsip_require_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_require_hdr;
-}
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
@@ -1012,24 +866,8 @@ pub struct pjsip_retry_after_hdr {
     pub comment: pj_str_t,
 }
 
-extern "C" {
-    pub fn pjsip_retry_after_hdr_create(pool: *mut pj_pool_t, value: c_int) -> *mut pjsip_retry_after_hdr;
-    pub fn pjsip_retry_after_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void, value: c_int) -> *mut pjsip_retry_after_hdr;
-}
-
 pub type pjsip_supported_hdr = pjsip_generic_array_hdr;
-
-extern "C" {
-    pub fn pjsip_supported_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_supported_hdr;
-    pub fn pjsip_supported_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_supported_hdr;
-}
-
 pub type pjsip_unsupported_hdr = pjsip_generic_array_hdr;
-
-extern "C" {
-    pub fn pjsip_unsupported_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_unsupported_hdr;
-    pub fn pjsip_unsupported_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_unsupported_hdr;
-}
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
@@ -1051,18 +889,7 @@ pub struct pjsip_via_hdr {
     pub comment: pj_str_t,
 }
 
-extern "C" {
-    pub fn pjsip_via_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_via_hdr;
-    pub fn pjsip_via_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_via_hdr;
-}
-
 pub type pjsip_warning_hdr = pjsip_generic_string_hdr;
-
-extern "C" {
-    pub fn pjsip_warning_hdr_create(pool: *mut pj_pool_t, code: c_int, host: *const pj_str_t, text: *const pj_str_t) -> *mut pjsip_warning_hdr;
-    pub fn pjsip_warning_hdr_create_from_status(pool: *mut pj_pool_t, host: *const pj_str_t, status: pj_status_t) -> *mut pjsip_warning_hdr;
-}
-
 pub type pjsip_accept_encoding_hdr = pjsip_generic_string_hdr;
 pub type pjsip_accept_lang_hdr = pjsip_generic_string_hdr;
 pub type pjsip_alert_info_hdr = pjsip_generic_string_hdr;
@@ -1083,6 +910,7 @@ pub type pjsip_server_hdr = pjsip_generic_string_hdr;
 pub type pjsip_subject_hdr = pjsip_generic_string_hdr;
 pub type pjsip_timestamp_hdr = pjsip_generic_string_hdr;
 pub type pjsip_user_agent_hdr = pjsip_generic_string_hdr;
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_multipart_part {
@@ -1092,26 +920,9 @@ pub struct pjsip_multipart_part {
     pub body: *mut pjsip_msg_body,
 }
 
-extern "C" {
-    pub fn pjsip_multipart_create(pool: *mut pj_pool_t, ctype: *const pjsip_media_type, boundary: *const pj_str_t) -> *mut pjsip_msg_body;
-    pub fn pjsip_multipart_create_part(pool: *mut pj_pool_t) -> *mut pjsip_multipart_part;
-    pub fn pjsip_multipart_clone_part(pool: *mut pj_pool_t, part: *const pjsip_multipart_part) -> *mut pjsip_multipart_part;
-    pub fn pjsip_multipart_add_part(pool: *mut pj_pool_t, mp: *mut pjsip_msg_body, part: *mut pjsip_multipart_part) -> pj_status_t;
-    pub fn pjsip_multipart_get_first_part(mp: *const pjsip_msg_body) -> *mut pjsip_multipart_part;
-    pub fn pjsip_multipart_get_next_part(mp: *const pjsip_msg_body, part: *mut pjsip_multipart_part) -> *mut pjsip_multipart_part;
-    pub fn pjsip_multipart_find_part(mp: *const pjsip_msg_body, content_type: *const pjsip_media_type, start: *const pjsip_multipart_part) -> *mut pjsip_multipart_part;
-    pub fn pjsip_multipart_parse(pool: *mut pj_pool_t, buf: *mut c_char, len: pj_size_t, ctype: *const pjsip_media_type, options: c_uint) -> *mut pjsip_msg_body;
-    pub fn pjsip_multipart_get_raw(mp: *mut pjsip_msg_body, boundary: *mut pj_str_t, raw_data: *mut pj_str_t) -> pj_status_t;
-}
-
 pub const PJSIP_PARSE_URI_AS_NAMEADDR: u32 = 1;
 pub const PJSIP_PARSE_URI_IN_FROM_TO_HDR: u32 = 2;
 pub type _bindgen_ty_3 = u32;
-
-extern "C" {
-    pub static mut PJSIP_SYN_ERR_EXCEPTION: c_int;
-    pub static mut PJSIP_EINVAL_ERR_EXCEPTION: c_int;
-}
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
@@ -1123,6 +934,7 @@ pub struct pjsip_parser_err_report {
     pub col: c_int,
     pub hname: pj_str_t,
 }
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsip_parse_ctx {
@@ -1138,18 +950,6 @@ pub type pjsip_parse_uri_func = Option<
         parse_params: pj_bool_t,
     ) -> *mut c_void,
 >;
-
-extern "C" {
-    pub fn pjsip_register_hdr_parser(hname: *const c_char, hshortname: *const c_char, fptr: pjsip_parse_hdr_func) -> pj_status_t;
-    pub fn pjsip_register_uri_parser(scheme: *mut c_char, func: pjsip_parse_uri_func) -> pj_status_t;
-    pub fn pjsip_parse_uri(pool: *mut pj_pool_t, buf: *mut c_char, size: pj_size_t, options: c_uint) -> *mut pjsip_uri;
-    pub fn pjsip_parse_status_line(buf: *mut c_char, size: pj_size_t, status_line: *mut pjsip_status_line) -> pj_status_t;
-    pub fn pjsip_parse_msg(pool: *mut pj_pool_t, buf: *mut c_char, size: pj_size_t, err_list: *mut pjsip_parser_err_report) -> *mut pjsip_msg;
-    pub fn pjsip_parse_rdata(buf: *mut c_char, size: pj_size_t, rdata: *mut pjsip_rx_data) -> *mut pjsip_msg;
-    pub fn pjsip_find_msg(buf: *const c_char, size: pj_size_t, is_datagram: pj_bool_t, msg_size: *mut pj_size_t) -> pj_status_t;
-    pub fn pjsip_parse_hdr(pool: *mut pj_pool_t, hname: *const pj_str_t, line: *mut c_char, size: pj_size_t, parsed_len: *mut c_int) -> *mut c_void;
-    pub fn pjsip_parse_headers(pool: *mut pj_pool_t, input: *mut c_char, size: pj_size_t, hlist: *mut pjsip_hdr, options: c_uint) -> pj_status_t;
-}
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
@@ -1195,49 +995,8 @@ pub struct pjsip_parser_const_t {
     pub pjsip_OTHER_URI_CONTENT: pj_cis_t,
 }
 
-extern "C" {
-    pub fn pjsip_parser_const() -> *const pjsip_parser_const_t;
-}
-
 pub const PJSIP_PARSE_REMOVE_QUOTE: u32 = 1;
 pub type _bindgen_ty_4 = u32;
-
-extern "C" {
-    pub fn pjsip_parse_param_imp(
-        scanner: *mut pj_scanner,
-        pool: *mut pj_pool_t,
-        pname: *mut pj_str_t,
-        pvalue: *mut pj_str_t,
-        opt: c_uint,
-    );
-}
-extern "C" {
-    pub fn pjsip_parse_uri_param_imp(
-        scanner: *mut pj_scanner,
-        pool: *mut pj_pool_t,
-        pname: *mut pj_str_t,
-        pvalue: *mut pj_str_t,
-        opt: c_uint,
-    );
-}
-extern "C" {
-    pub fn pjsip_concat_param_imp(
-        param: *mut pj_str_t,
-        pool: *mut pj_pool_t,
-        pname: *const pj_str_t,
-        pvalue: *const pj_str_t,
-        sepchar: c_int,
-    );
-}
-extern "C" {
-    pub fn pjsip_parse_end_hdr_imp(scanner: *mut pj_scanner);
-}
-extern "C" {
-    pub fn pjsip_parse_generic_array_hdr_imp(
-        hdr: *mut pjsip_generic_array_hdr,
-        scanner: *mut pj_scanner,
-    );
-}
 
 pub const PJSIP_EVENT_UNKNOWN: pjsip_event_id_e = 0;
 pub const PJSIP_EVENT_TIMER: pjsip_event_id_e = 1;
@@ -1247,6 +1006,7 @@ pub const PJSIP_EVENT_TRANSPORT_ERROR: pjsip_event_id_e = 4;
 pub const PJSIP_EVENT_TSX_STATE: pjsip_event_id_e = 5;
 pub const PJSIP_EVENT_USER: pjsip_event_id_e = 6;
 pub type pjsip_event_id_e = u32;
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_event {
@@ -1255,6 +1015,7 @@ pub struct pjsip_event {
     pub type_: pjsip_event_id_e,
     pub body: pjsip_event__bindgen_ty_1,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_event__bindgen_ty_1 {
@@ -1266,11 +1027,13 @@ pub struct pjsip_event__bindgen_ty_1 {
     pub user: __BindgenUnionField<pjsip_event__bindgen_ty_1__bindgen_ty_6>,
     pub bindgen_union_field: [u64; 4usize],
 }
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsip_event__bindgen_ty_1__bindgen_ty_1 {
     pub entry: *mut pj_timer_entry,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_event__bindgen_ty_1__bindgen_ty_2 {
@@ -1279,6 +1042,7 @@ pub struct pjsip_event__bindgen_ty_1__bindgen_ty_2 {
     pub prev_state: c_int,
     pub type_: pjsip_event_id_e,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_event__bindgen_ty_1__bindgen_ty_2__bindgen_ty_1 {
@@ -1289,22 +1053,26 @@ pub struct pjsip_event__bindgen_ty_1__bindgen_ty_2__bindgen_ty_1 {
     pub data: __BindgenUnionField<*mut c_void>,
     pub bindgen_union_field: u64,
 }
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsip_event__bindgen_ty_1__bindgen_ty_3 {
     pub tdata: *mut pjsip_tx_data,
 }
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsip_event__bindgen_ty_1__bindgen_ty_4 {
     pub tdata: *mut pjsip_tx_data,
     pub tsx: *mut pjsip_transaction,
 }
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsip_event__bindgen_ty_1__bindgen_ty_5 {
     pub rdata: *mut pjsip_rx_data,
 }
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsip_event__bindgen_ty_1__bindgen_ty_6 {
@@ -1313,9 +1081,9 @@ pub struct pjsip_event__bindgen_ty_1__bindgen_ty_6 {
     pub user3: *mut c_void,
     pub user4: *mut c_void,
 }
-extern "C" {
-    pub fn pjsip_event_str(e: pjsip_event_id_e) -> *const c_char;
-}
+
+
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_module {
@@ -1341,18 +1109,21 @@ pub struct pjsip_module {
         unsafe extern "C" fn(tsx: *mut pjsip_transaction, event: *mut pjsip_event),
     >,
 }
+
 pub const PJSIP_MOD_PRIORITY_TRANSPORT_LAYER: pjsip_module_priority = 8;
 pub const PJSIP_MOD_PRIORITY_TSX_LAYER: pjsip_module_priority = 16;
 pub const PJSIP_MOD_PRIORITY_UA_PROXY_LAYER: pjsip_module_priority = 32;
 pub const PJSIP_MOD_PRIORITY_DIALOG_USAGE: pjsip_module_priority = 48;
 pub const PJSIP_MOD_PRIORITY_APPLICATION: pjsip_module_priority = 64;
 pub type pjsip_module_priority = u32;
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_server_addresses {
     pub count: c_uint,
     pub entry: [pjsip_server_addresses__bindgen_ty_1; 16usize],
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_server_addresses__bindgen_ty_1 {
@@ -1362,6 +1133,7 @@ pub struct pjsip_server_addresses__bindgen_ty_1 {
     pub addr: pj_sockaddr,
     pub addr_len: c_int,
 }
+
 pub type pjsip_resolver_callback = Option<
     unsafe extern "C" fn(
         status: pj_status_t,
@@ -1369,6 +1141,7 @@ pub type pjsip_resolver_callback = Option<
         addr: *const pjsip_server_addresses,
     ),
 >;
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsip_ext_resolver {
@@ -1382,86 +1155,20 @@ pub struct pjsip_ext_resolver {
         ),
     >,
 }
-extern "C" {
-    pub fn pjsip_resolver_create(
-        pool: *mut pj_pool_t,
-        p_res: *mut *mut pjsip_resolver_t,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_resolver_set_resolver(
-        res: *mut pjsip_resolver_t,
-        dns_res: *mut pj_dns_resolver,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_resolver_set_ext_resolver(
-        res: *mut pjsip_resolver_t,
-        ext_res: *mut pjsip_ext_resolver,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_resolver_get_resolver(res: *mut pjsip_resolver_t) -> *mut pj_dns_resolver;
-}
-extern "C" {
-    pub fn pjsip_resolver_destroy(resolver: *mut pjsip_resolver_t);
-}
-extern "C" {
-    pub fn pjsip_resolve(
-        resolver: *mut pjsip_resolver_t,
-        pool: *mut pj_pool_t,
-        target: *const pjsip_host_info,
-        token: *mut c_void,
-        cb: pjsip_resolver_callback,
-    );
-}
+
+
+
 pub const PJSIP_TRANSPORT_RELIABLE: pjsip_transport_flags_e = 1;
 pub const PJSIP_TRANSPORT_SECURE: pjsip_transport_flags_e = 2;
 pub const PJSIP_TRANSPORT_DATAGRAM: pjsip_transport_flags_e = 4;
 pub type pjsip_transport_flags_e = u32;
-extern "C" {
-    pub fn pjsip_transport_register_type(
-        tp_flag: c_uint,
-        tp_name: *const c_char,
-        def_port: c_int,
-        p_tp_type: *mut c_int,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_transport_get_type_from_name(name: *const pj_str_t) -> pjsip_transport_type_e;
-}
-extern "C" {
-    pub fn pjsip_transport_get_type_from_flag(
-        flag: c_uint,
-    ) -> pjsip_transport_type_e;
-}
-extern "C" {
-    pub fn pjsip_transport_type_get_af(type_: pjsip_transport_type_e) -> c_int;
-}
-extern "C" {
-    pub fn pjsip_transport_get_flag_from_type(
-        type_: pjsip_transport_type_e,
-    ) -> c_uint;
-}
-extern "C" {
-    pub fn pjsip_transport_get_default_port_for_type(
-        type_: pjsip_transport_type_e,
-    ) -> c_int;
-}
-extern "C" {
-    pub fn pjsip_transport_get_type_name(
-        t: pjsip_transport_type_e,
-    ) -> *const c_char;
-}
-extern "C" {
-    pub fn pjsip_transport_get_type_desc(
-        t: pjsip_transport_type_e,
-    ) -> *const c_char;
-}
+
+
 pub const PJSIP_TPSELECTOR_NONE: pjsip_tpselector_type = 0;
 pub const PJSIP_TPSELECTOR_TRANSPORT: pjsip_tpselector_type = 1;
 pub const PJSIP_TPSELECTOR_LISTENER: pjsip_tpselector_type = 2;
 pub type pjsip_tpselector_type = u32;
+
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct pjsip_tpselector {
@@ -1469,6 +1176,7 @@ pub struct pjsip_tpselector {
     pub disable_connection_reuse: pj_bool_t,
     pub u: pjsip_tpselector__bindgen_ty_1,
 }
+
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union pjsip_tpselector__bindgen_ty_1 {
@@ -1476,18 +1184,14 @@ pub union pjsip_tpselector__bindgen_ty_1 {
     pub listener: *mut pjsip_tpfactory,
     pub ptr: *mut c_void,
 }
-extern "C" {
-    pub fn pjsip_tpselector_add_ref(sel: *mut pjsip_tpselector);
-}
-extern "C" {
-    pub fn pjsip_tpselector_dec_ref(sel: *mut pjsip_tpselector);
-}
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_rx_data_op_key {
     pub op_key: pj_ioqueue_op_key_t,
     pub rdata: *mut pjsip_rx_data,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_rx_data {
@@ -1496,6 +1200,7 @@ pub struct pjsip_rx_data {
     pub msg_info: pjsip_rx_data__bindgen_ty_3,
     pub endpt_info: pjsip_rx_data__bindgen_ty_4,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_rx_data__bindgen_ty_1 {
@@ -1504,6 +1209,7 @@ pub struct pjsip_rx_data__bindgen_ty_1 {
     pub tp_data: *mut c_void,
     pub op_key: pjsip_rx_data_op_key,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_rx_data__bindgen_ty_2 {
@@ -1542,19 +1248,9 @@ pub struct pjsip_rx_data__bindgen_ty_3 {
 pub struct pjsip_rx_data__bindgen_ty_4 {
     pub mod_data: [*mut c_void; 32usize],
 }
-extern "C" {
-    pub fn pjsip_rx_data_get_info(rdata: *mut pjsip_rx_data) -> *mut c_char;
-}
-extern "C" {
-    pub fn pjsip_rx_data_clone(
-        src: *const pjsip_rx_data,
-        flags: c_uint,
-        p_rdata: *mut *mut pjsip_rx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_rx_data_free_cloned(rdata: *mut pjsip_rx_data) -> pj_status_t;
-}
+
+
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_tx_data_op_key {
@@ -1569,6 +1265,7 @@ pub struct pjsip_tx_data_op_key {
         ),
     >,
 }
+
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct pjsip_tx_data {
@@ -1602,6 +1299,7 @@ pub struct pjsip_tx_data {
     pub via_addr: pjsip_host_port,
     pub via_tp: *const c_void,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_tx_data__bindgen_ty_1 {
@@ -1609,6 +1307,7 @@ pub struct pjsip_tx_data__bindgen_ty_1 {
     pub addr: pjsip_server_addresses,
     pub cur_addr: c_uint,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_tx_data__bindgen_ty_2 {
@@ -1618,43 +1317,9 @@ pub struct pjsip_tx_data__bindgen_ty_2 {
     pub dst_name: [c_char; 46usize],
     pub dst_port: c_int,
 }
-extern "C" {
-    pub fn pjsip_tx_data_create(
-        mgr: *mut pjsip_tpmgr,
-        tdata: *mut *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tx_data_add_ref(tdata: *mut pjsip_tx_data);
-}
-extern "C" {
-    pub fn pjsip_tx_data_dec_ref(tdata: *mut pjsip_tx_data) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tx_data_encode(tdata: *mut pjsip_tx_data) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tx_data_is_valid(tdata: *mut pjsip_tx_data) -> pj_bool_t;
-}
-extern "C" {
-    pub fn pjsip_tx_data_invalidate_msg(tdata: *mut pjsip_tx_data);
-}
-extern "C" {
-    pub fn pjsip_tx_data_get_info(tdata: *mut pjsip_tx_data) -> *mut c_char;
-}
-extern "C" {
-    pub fn pjsip_tx_data_set_transport(
-        tdata: *mut pjsip_tx_data,
-        sel: *const pjsip_tpselector,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tx_data_clone(
-        src: *const pjsip_tx_data,
-        flags: c_uint,
-        p_rdata: *mut *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
+
+
+
 pub type pjsip_transport_callback = Option<
     unsafe extern "C" fn(
         tp: *mut pjsip_transport,
@@ -1662,6 +1327,7 @@ pub type pjsip_transport_callback = Option<
         sent_bytes: pj_ssize_t,
     ),
 >;
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_transport_key {
@@ -1672,6 +1338,7 @@ pub const PJSIP_TP_DIR_NONE: pjsip_transport_dir = 0;
 pub const PJSIP_TP_DIR_OUTGOING: pjsip_transport_dir = 1;
 pub const PJSIP_TP_DIR_INCOMING: pjsip_transport_dir = 2;
 pub type pjsip_transport_dir = u32;
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_transport {
@@ -1714,31 +1381,9 @@ pub struct pjsip_transport {
     pub destroy:
         Option<unsafe extern "C" fn(transport: *mut pjsip_transport) -> pj_status_t>,
 }
-extern "C" {
-    pub fn pjsip_transport_register(mgr: *mut pjsip_tpmgr, tp: *mut pjsip_transport)
-        -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_transport_shutdown(tp: *mut pjsip_transport) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_transport_shutdown2(tp: *mut pjsip_transport, force: pj_bool_t) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_transport_destroy(tp: *mut pjsip_transport) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_transport_add_ref(tp: *mut pjsip_transport) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_transport_dec_ref(tp: *mut pjsip_transport) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tpmgr_receive_packet(
-        mgr: *mut pjsip_tpmgr,
-        rdata: *mut pjsip_rx_data,
-    ) -> pj_ssize_t;
-}
+
+
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_tpfactory {
@@ -1777,43 +1422,18 @@ pub struct pjsip_tpfactory {
     pub destroy:
         Option<unsafe extern "C" fn(factory: *mut pjsip_tpfactory) -> pj_status_t>,
 }
-extern "C" {
-    pub fn pjsip_tpmgr_register_tpfactory(
-        mgr: *mut pjsip_tpmgr,
-        tpf: *mut pjsip_tpfactory,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tpmgr_unregister_tpfactory(
-        mgr: *mut pjsip_tpmgr,
-        tpf: *mut pjsip_tpfactory,
-    ) -> pj_status_t;
-}
+
+
+
 pub type pjsip_rx_callback = Option<
     unsafe extern "C" fn(ep: *mut pjsip_endpoint, status: pj_status_t, rd: *mut pjsip_rx_data),
 >;
 pub type pjsip_tx_callback = Option<
     unsafe extern "C" fn(ep: *mut pjsip_endpoint, td: *mut pjsip_tx_data) -> pj_status_t,
 >;
-extern "C" {
-    pub fn pjsip_tpmgr_create(
-        pool: *mut pj_pool_t,
-        endpt: *mut pjsip_endpoint,
-        rx_cb: pjsip_rx_callback,
-        tx_cb: pjsip_tx_callback,
-        p_mgr: *mut *mut pjsip_tpmgr,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tpmgr_find_local_addr(
-        tpmgr: *mut pjsip_tpmgr,
-        pool: *mut pj_pool_t,
-        type_: pjsip_transport_type_e,
-        sel: *const pjsip_tpselector,
-        ip_addr: *mut pj_str_t,
-        port: *mut c_int,
-    ) -> pj_status_t;
-}
+
+
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_tpmgr_fla2_param {
@@ -1825,46 +1445,9 @@ pub struct pjsip_tpmgr_fla2_param {
     pub ret_port: pj_uint16_t,
     pub ret_tp: *const c_void,
 }
-extern "C" {
-    pub fn pjsip_tpmgr_fla2_param_default(prm: *mut pjsip_tpmgr_fla2_param);
-}
-extern "C" {
-    pub fn pjsip_tpmgr_find_local_addr2(
-        tpmgr: *mut pjsip_tpmgr,
-        pool: *mut pj_pool_t,
-        prm: *mut pjsip_tpmgr_fla2_param,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tpmgr_get_transport_count(mgr: *mut pjsip_tpmgr) -> c_uint;
-}
-extern "C" {
-    pub fn pjsip_tpmgr_destroy(mgr: *mut pjsip_tpmgr) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tpmgr_dump_transports(mgr: *mut pjsip_tpmgr);
-}
-extern "C" {
-    pub fn pjsip_tpmgr_acquire_transport(
-        mgr: *mut pjsip_tpmgr,
-        type_: pjsip_transport_type_e,
-        remote: *const pj_sockaddr_t,
-        addr_len: c_int,
-        sel: *const pjsip_tpselector,
-        tp: *mut *mut pjsip_transport,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tpmgr_acquire_transport2(
-        mgr: *mut pjsip_tpmgr,
-        type_: pjsip_transport_type_e,
-        remote: *const pj_sockaddr_t,
-        addr_len: c_int,
-        sel: *const pjsip_tpselector,
-        tdata: *mut pjsip_tx_data,
-        tp: *mut *mut pjsip_transport,
-    ) -> pj_status_t;
-}
+
+
+
 pub type pjsip_tp_send_callback = Option<
     unsafe extern "C" fn(
         token: *mut c_void,
@@ -1872,36 +1455,15 @@ pub type pjsip_tp_send_callback = Option<
         bytes_sent: pj_ssize_t,
     ),
 >;
-extern "C" {
-    pub fn pjsip_transport_send(
-        tr: *mut pjsip_transport,
-        tdata: *mut pjsip_tx_data,
-        addr: *const pj_sockaddr_t,
-        addr_len: c_int,
-        token: *mut c_void,
-        cb: pjsip_tp_send_callback,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tpmgr_send_raw(
-        mgr: *mut pjsip_tpmgr,
-        tp_type: pjsip_transport_type_e,
-        sel: *const pjsip_tpselector,
-        tdata: *mut pjsip_tx_data,
-        raw_data: *const c_void,
-        data_len: pj_size_t,
-        addr: *const pj_sockaddr_t,
-        addr_len: c_int,
-        token: *mut c_void,
-        cb: pjsip_tp_send_callback,
-    ) -> pj_status_t;
-}
+
+
 pub const PJSIP_TP_STATE_CONNECTED: pjsip_transport_state = 0;
 pub const PJSIP_TP_STATE_DISCONNECTED: pjsip_transport_state = 1;
 pub const PJSIP_TP_STATE_SHUTDOWN: pjsip_transport_state = 2;
 pub const PJSIP_TP_STATE_DESTROY: pjsip_transport_state = 3;
 pub type pjsip_transport_state = u32;
 pub type pjsip_tp_state_listener_key = c_void;
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_transport_state_info {
@@ -1909,6 +1471,7 @@ pub struct pjsip_transport_state_info {
     pub ext_info: *mut c_void,
     pub user_data: *mut c_void,
 }
+
 pub type pjsip_tp_state_callback = Option<
     unsafe extern "C" fn(
         tp: *mut pjsip_transport,
@@ -1916,30 +1479,9 @@ pub type pjsip_tp_state_callback = Option<
         info: *const pjsip_transport_state_info,
     ),
 >;
-extern "C" {
-    pub fn pjsip_tpmgr_set_state_cb(
-        mgr: *mut pjsip_tpmgr,
-        cb: pjsip_tp_state_callback,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tpmgr_get_state_cb(mgr: *const pjsip_tpmgr) -> pjsip_tp_state_callback;
-}
-extern "C" {
-    pub fn pjsip_transport_add_state_listener(
-        tp: *mut pjsip_transport,
-        cb: pjsip_tp_state_callback,
-        user_data: *mut c_void,
-        key: *mut *mut pjsip_tp_state_listener_key,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_transport_remove_state_listener(
-        tp: *mut pjsip_transport,
-        key: *mut pjsip_tp_state_listener_key,
-        user_data: *const c_void,
-    ) -> pj_status_t;
-}
+
+
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_tp_dropped_data {
@@ -1948,80 +1490,11 @@ pub struct pjsip_tp_dropped_data {
     pub len: pj_size_t,
     pub status: pj_status_t,
 }
-pub type pjsip_tp_on_rx_dropped_cb =
-    Option<unsafe extern "C" fn(data: *mut pjsip_tp_dropped_data)>;
-extern "C" {
-    pub fn pjsip_tpmgr_set_drop_data_cb(
-        mgr: *mut pjsip_tpmgr,
-        cb: pjsip_tp_on_rx_dropped_cb,
-    ) -> pj_status_t;
-}
-pub type pjsip_endpt_exit_callback =
-    Option<unsafe extern "C" fn(endpt: *mut pjsip_endpoint)>;
-extern "C" {
-    pub fn pjsip_endpt_create(
-        pf: *mut pj_pool_factory,
-        name: *const c_char,
-        endpt: *mut *mut pjsip_endpoint,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_destroy(endpt: *mut pjsip_endpoint);
-}
-extern "C" {
-    pub fn pjsip_endpt_name(endpt: *const pjsip_endpoint) -> *const pj_str_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_handle_events(
-        endpt: *mut pjsip_endpoint,
-        max_timeout: *const pj_time_val,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_handle_events2(
-        endpt: *mut pjsip_endpoint,
-        max_timeout: *const pj_time_val,
-        count: *mut c_uint,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_schedule_timer_dbg(
-        endpt: *mut pjsip_endpoint,
-        entry: *mut pj_timer_entry,
-        delay: *const pj_time_val,
-        src_file: *const c_char,
-        src_line: c_int,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_schedule_timer_w_grp_lock_dbg(
-        endpt: *mut pjsip_endpoint,
-        entry: *mut pj_timer_entry,
-        delay: *const pj_time_val,
-        id_val: c_int,
-        grp_lock: *mut pj_grp_lock_t,
-        src_file: *const c_char,
-        src_line: c_int,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_cancel_timer(endpt: *mut pjsip_endpoint, entry: *mut pj_timer_entry);
-}
-extern "C" {
-    pub fn pjsip_endpt_get_timer_heap(endpt: *mut pjsip_endpoint) -> *mut pj_timer_heap_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_register_module(
-        endpt: *mut pjsip_endpoint,
-        module: *mut pjsip_module,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_unregister_module(
-        endpt: *mut pjsip_endpoint,
-        module: *mut pjsip_module,
-    ) -> pj_status_t;
-}
+
+pub type pjsip_tp_on_rx_dropped_cb = Option<unsafe extern "C" fn(data: *mut pjsip_tp_dropped_data)>;
+pub type pjsip_endpt_exit_callback = Option<unsafe extern "C" fn(endpt: *mut pjsip_endpoint)>;
+
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_process_rdata_param {
@@ -2030,137 +1503,8 @@ pub struct pjsip_process_rdata_param {
     pub idx_after_start: c_uint,
     pub silent: pj_bool_t,
 }
-extern "C" {
-    pub fn pjsip_process_rdata_param_default(p: *mut pjsip_process_rdata_param);
-}
-extern "C" {
-    pub fn pjsip_endpt_process_rx_data(
-        endpt: *mut pjsip_endpoint,
-        rdata: *mut pjsip_rx_data,
-        p: *mut pjsip_process_rdata_param,
-        p_handled: *mut pj_bool_t,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_create_pool(
-        endpt: *mut pjsip_endpoint,
-        pool_name: *const c_char,
-        initial: pj_size_t,
-        increment: pj_size_t,
-    ) -> *mut pj_pool_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_release_pool(endpt: *mut pjsip_endpoint, pool: *mut pj_pool_t);
-}
-extern "C" {
-    pub fn pjsip_endpt_create_tdata(
-        endpt: *mut pjsip_endpoint,
-        p_tdata: *mut *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_create_resolver(
-        endpt: *mut pjsip_endpoint,
-        p_resv: *mut *mut pj_dns_resolver,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_set_resolver(
-        endpt: *mut pjsip_endpoint,
-        resv: *mut pj_dns_resolver,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_set_ext_resolver(
-        endpt: *mut pjsip_endpoint,
-        ext_res: *mut pjsip_ext_resolver,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_get_resolver(endpt: *mut pjsip_endpoint) -> *mut pj_dns_resolver;
-}
-extern "C" {
-    pub fn pjsip_endpt_resolve(
-        endpt: *mut pjsip_endpoint,
-        pool: *mut pj_pool_t,
-        target: *mut pjsip_host_info,
-        token: *mut c_void,
-        cb: pjsip_resolver_callback,
-    );
-}
-extern "C" {
-    pub fn pjsip_endpt_get_tpmgr(endpt: *mut pjsip_endpoint) -> *mut pjsip_tpmgr;
-}
-extern "C" {
-    pub fn pjsip_endpt_get_ioqueue(endpt: *mut pjsip_endpoint) -> *mut pj_ioqueue_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_acquire_transport(
-        endpt: *mut pjsip_endpoint,
-        type_: pjsip_transport_type_e,
-        remote: *const pj_sockaddr_t,
-        addr_len: c_int,
-        sel: *const pjsip_tpselector,
-        p_tp: *mut *mut pjsip_transport,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_acquire_transport2(
-        endpt: *mut pjsip_endpoint,
-        type_: pjsip_transport_type_e,
-        remote: *const pj_sockaddr_t,
-        addr_len: c_int,
-        sel: *const pjsip_tpselector,
-        tdata: *mut pjsip_tx_data,
-        p_tp: *mut *mut pjsip_transport,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_get_capability(
-        endpt: *mut pjsip_endpoint,
-        htype: c_int,
-        hname: *const pj_str_t,
-    ) -> *const pjsip_hdr;
-}
-extern "C" {
-    pub fn pjsip_endpt_has_capability(
-        endpt: *mut pjsip_endpoint,
-        htype: c_int,
-        hname: *const pj_str_t,
-        token: *const pj_str_t,
-    ) -> pj_bool_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_add_capability(
-        endpt: *mut pjsip_endpoint,
-        mod_: *mut pjsip_module,
-        htype: c_int,
-        hname: *const pj_str_t,
-        count: c_uint,
-        tags: *const pj_str_t,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_get_request_headers(e: *mut pjsip_endpoint) -> *const pjsip_hdr;
-}
-extern "C" {
-    pub fn pjsip_endpt_dump(endpt: *mut pjsip_endpoint, detail: pj_bool_t);
-}
-extern "C" {
-    pub fn pjsip_endpt_atexit(
-        endpt: *mut pjsip_endpoint,
-        func: pjsip_endpt_exit_callback,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_log_error(
-        endpt: *mut pjsip_endpoint,
-        sender: *const c_char,
-        error_code: pj_status_t,
-        format: *const c_char,
-        ...
-    );
-}
+
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_target {
@@ -2171,125 +1515,21 @@ pub struct pjsip_target {
     pub code: pjsip_status_code,
     pub reason: pj_str_t,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_target_set {
     pub head: pjsip_target,
     pub current: *mut pjsip_target,
 }
+
 pub const PJSIP_REDIRECT_REJECT: pjsip_redirect_op = 0;
 pub const PJSIP_REDIRECT_ACCEPT: pjsip_redirect_op = 1;
 pub const PJSIP_REDIRECT_ACCEPT_REPLACE: pjsip_redirect_op = 2;
 pub const PJSIP_REDIRECT_PENDING: pjsip_redirect_op = 3;
 pub const PJSIP_REDIRECT_STOP: pjsip_redirect_op = 4;
 pub type pjsip_redirect_op = u32;
-extern "C" {
-    pub fn pjsip_target_set_add_uri(
-        tset: *mut pjsip_target_set,
-        pool: *mut pj_pool_t,
-        uri: *const pjsip_uri,
-        q1000: c_int,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_target_set_add_from_msg(
-        tset: *mut pjsip_target_set,
-        pool: *mut pj_pool_t,
-        msg: *const pjsip_msg,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_target_set_get_next(tset: *const pjsip_target_set) -> *mut pjsip_target;
-}
-extern "C" {
-    pub fn pjsip_target_set_set_current(
-        tset: *mut pjsip_target_set,
-        target: *mut pjsip_target,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_target_assign_status(
-        target: *mut pjsip_target,
-        pool: *mut pj_pool_t,
-        status_code: c_int,
-        reason: *const pj_str_t,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_create_request(
-        endpt: *mut pjsip_endpoint,
-        method: *const pjsip_method,
-        target: *const pj_str_t,
-        from: *const pj_str_t,
-        to: *const pj_str_t,
-        contact: *const pj_str_t,
-        call_id: *const pj_str_t,
-        cseq: c_int,
-        text: *const pj_str_t,
-        p_tdata: *mut *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_create_request_from_hdr(
-        endpt: *mut pjsip_endpoint,
-        method: *const pjsip_method,
-        target: *const pjsip_uri,
-        from: *const pjsip_from_hdr,
-        to: *const pjsip_to_hdr,
-        contact: *const pjsip_contact_hdr,
-        call_id: *const pjsip_cid_hdr,
-        cseq: c_int,
-        text: *const pj_str_t,
-        p_tdata: *mut *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_create_response(
-        endpt: *mut pjsip_endpoint,
-        rdata: *const pjsip_rx_data,
-        st_code: c_int,
-        st_text: *const pj_str_t,
-        p_tdata: *mut *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_create_ack(
-        endpt: *mut pjsip_endpoint,
-        tdata: *const pjsip_tx_data,
-        rdata: *const pjsip_rx_data,
-        ack: *mut *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_create_cancel(
-        endpt: *mut pjsip_endpoint,
-        tdata: *const pjsip_tx_data,
-        p_tdata: *mut *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_get_dest_info(
-        target_uri: *const pjsip_uri,
-        request_uri: *const pjsip_uri,
-        pool: *mut pj_pool_t,
-        dest_info: *mut pjsip_host_info,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_get_request_dest(
-        tdata: *const pjsip_tx_data,
-        dest_info: *mut pjsip_host_info,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_process_route_set(
-        tdata: *mut pjsip_tx_data,
-        dest_info: *mut pjsip_host_info,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_restore_strict_route_set(tdata: *mut pjsip_tx_data);
-}
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsip_send_state {
@@ -2301,41 +1541,10 @@ pub struct pjsip_send_state {
         unsafe extern "C" fn(arg1: *mut pjsip_send_state, sent: pj_ssize_t, cont: *mut pj_bool_t),
     >,
 }
-pub type pjsip_send_callback = Option<
-    unsafe extern "C" fn(st: *mut pjsip_send_state, sent: pj_ssize_t, cont: *mut pj_bool_t),
->;
-extern "C" {
-    pub fn pjsip_endpt_send_request_stateless(
-        endpt: *mut pjsip_endpoint,
-        tdata: *mut pjsip_tx_data,
-        token: *mut c_void,
-        cb: pjsip_send_callback,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_send_raw(
-        endpt: *mut pjsip_endpoint,
-        tp_type: pjsip_transport_type_e,
-        sel: *const pjsip_tpselector,
-        raw_data: *const c_void,
-        data_len: pj_size_t,
-        addr: *const pj_sockaddr_t,
-        addr_len: c_int,
-        token: *mut c_void,
-        cb: pjsip_tp_send_callback,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_send_raw_to_uri(
-        endpt: *mut pjsip_endpoint,
-        dst_uri: *const pj_str_t,
-        sel: *const pjsip_tpselector,
-        raw_data: *const c_void,
-        data_len: pj_size_t,
-        token: *mut c_void,
-        cb: pjsip_tp_send_callback,
-    ) -> pj_status_t;
-}
+
+pub type pjsip_send_callback = Option<unsafe extern "C" fn(st: *mut pjsip_send_state, sent: pj_ssize_t, cont: *mut pj_bool_t)>;
+
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_response_addr {
@@ -2344,89 +1553,15 @@ pub struct pjsip_response_addr {
     pub addr_len: c_int,
     pub dst_host: pjsip_host_info,
 }
-extern "C" {
-    pub fn pjsip_get_response_addr(
-        pool: *mut pj_pool_t,
-        rdata: *mut pjsip_rx_data,
-        res_addr: *mut pjsip_response_addr,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_send_response(
-        endpt: *mut pjsip_endpoint,
-        res_addr: *mut pjsip_response_addr,
-        tdata: *mut pjsip_tx_data,
-        token: *mut c_void,
-        cb: pjsip_send_callback,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_send_response2(
-        endpt: *mut pjsip_endpoint,
-        rdata: *mut pjsip_rx_data,
-        tdata: *mut pjsip_tx_data,
-        token: *mut c_void,
-        cb: pjsip_send_callback,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_respond_stateless(
-        endpt: *mut pjsip_endpoint,
-        rdata: *mut pjsip_rx_data,
-        st_code: c_int,
-        st_text: *const pj_str_t,
-        hdr_list: *const pjsip_hdr,
-        body: *const pjsip_msg_body,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_respond(
-        endpt: *mut pjsip_endpoint,
-        tsx_user: *mut pjsip_module,
-        rdata: *mut pjsip_rx_data,
-        st_code: c_int,
-        st_text: *const pj_str_t,
-        hdr_list: *const pjsip_hdr,
-        body: *const pjsip_msg_body,
-        p_tsx: *mut *mut pjsip_transaction,
-    ) -> pj_status_t;
-}
-pub type pjsip_endpt_send_callback = Option<
-    unsafe extern "C" fn(token: *mut c_void, e: *mut pjsip_event),
->;
-extern "C" {
-    pub fn pjsip_endpt_send_request(
-        endpt: *mut pjsip_endpoint,
-        tdata: *mut pjsip_tx_data,
-        timeout: pj_int32_t,
-        token: *mut c_void,
-        cb: pjsip_endpt_send_callback,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_create_request_fwd(
-        endpt: *mut pjsip_endpoint,
-        rdata: *mut pjsip_rx_data,
-        uri: *const pjsip_uri,
-        branch: *const pj_str_t,
-        options: c_uint,
-        tdata: *mut *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_endpt_create_response_fwd(
-        endpt: *mut pjsip_endpoint,
-        rdata: *mut pjsip_rx_data,
-        options: c_uint,
-        tdata: *mut *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_calculate_branch_id(rdata: *mut pjsip_rx_data) -> pj_str_t;
-}
+
+
+pub type pjsip_endpt_send_callback = Option<unsafe extern "C" fn(token: *mut c_void, e: *mut pjsip_event)>;
+
+
 pub const PJSIP_UDP_TRANSPORT_KEEP_SOCKET: u32 = 1;
 pub const PJSIP_UDP_TRANSPORT_DESTROY_SOCKET: u32 = 2;
 pub type _bindgen_ty_15 = u32;
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_udp_transport_cfg {
@@ -2438,123 +1573,9 @@ pub struct pjsip_udp_transport_cfg {
     pub qos_params: pj_qos_params,
     pub sockopt_params: pj_sockopt_params,
 }
-extern "C" {
-    pub fn pjsip_udp_transport_cfg_default(
-        cfg: *mut pjsip_udp_transport_cfg,
-        af: c_int,
-    );
-}
-extern "C" {
-    pub fn pjsip_udp_transport_start2(
-        endpt: *mut pjsip_endpoint,
-        cfg: *const pjsip_udp_transport_cfg,
-        p_transport: *mut *mut pjsip_transport,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_udp_transport_start(
-        endpt: *mut pjsip_endpoint,
-        local: *const pj_sockaddr_in,
-        a_name: *const pjsip_host_port,
-        async_cnt: c_uint,
-        p_transport: *mut *mut pjsip_transport,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_udp_transport_start6(
-        endpt: *mut pjsip_endpoint,
-        local: *const pj_sockaddr_in6,
-        a_name: *const pjsip_host_port,
-        async_cnt: c_uint,
-        p_transport: *mut *mut pjsip_transport,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_udp_transport_attach(
-        endpt: *mut pjsip_endpoint,
-        sock: pj_sock_t,
-        a_name: *const pjsip_host_port,
-        async_cnt: c_uint,
-        p_transport: *mut *mut pjsip_transport,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_udp_transport_attach2(
-        endpt: *mut pjsip_endpoint,
-        type_: pjsip_transport_type_e,
-        sock: pj_sock_t,
-        a_name: *const pjsip_host_port,
-        async_cnt: c_uint,
-        p_transport: *mut *mut pjsip_transport,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_udp_transport_get_socket(transport: *mut pjsip_transport) -> pj_sock_t;
-}
-extern "C" {
-    pub fn pjsip_udp_transport_pause(
-        transport: *mut pjsip_transport,
-        option: c_uint,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_udp_transport_restart(
-        transport: *mut pjsip_transport,
-        option: c_uint,
-        sock: pj_sock_t,
-        local: *const pj_sockaddr_in,
-        a_name: *const pjsip_host_port,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_udp_transport_restart2(
-        transport: *mut pjsip_transport,
-        option: c_uint,
-        sock: pj_sock_t,
-        local: *const pj_sockaddr,
-        a_name: *const pjsip_host_port,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_loop_start(
-        endpt: *mut pjsip_endpoint,
-        transport: *mut *mut pjsip_transport,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_loop_set_discard(
-        tp: *mut pjsip_transport,
-        discard: pj_bool_t,
-        prev_value: *mut pj_bool_t,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_loop_set_failure(
-        tp: *mut pjsip_transport,
-        fail_flag: c_int,
-        prev_value: *mut c_int,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_loop_set_recv_delay(
-        tp: *mut pjsip_transport,
-        delay: c_uint,
-        prev_value: *mut c_uint,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_loop_set_send_callback_delay(
-        tp: *mut pjsip_transport,
-        delay: c_uint,
-        prev_value: *mut c_uint,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_loop_set_delay(
-        tp: *mut pjsip_transport,
-        delay: c_uint,
-    ) -> pj_status_t;
-}
+
+
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_tcp_transport_cfg {
@@ -2568,53 +1589,8 @@ pub struct pjsip_tcp_transport_cfg {
     pub sockopt_params: pj_sockopt_params,
     pub initial_timeout: c_uint,
 }
-extern "C" {
-    pub fn pjsip_tcp_transport_cfg_default(
-        cfg: *mut pjsip_tcp_transport_cfg,
-        af: c_int,
-    );
-}
-extern "C" {
-    pub fn pjsip_tcp_transport_start(
-        endpt: *mut pjsip_endpoint,
-        local: *const pj_sockaddr_in,
-        async_cnt: c_uint,
-        p_factory: *mut *mut pjsip_tpfactory,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tcp_transport_start2(
-        endpt: *mut pjsip_endpoint,
-        local: *const pj_sockaddr_in,
-        a_name: *const pjsip_host_port,
-        async_cnt: c_uint,
-        p_factory: *mut *mut pjsip_tpfactory,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tcp_transport_start3(
-        endpt: *mut pjsip_endpoint,
-        cfg: *const pjsip_tcp_transport_cfg,
-        p_factory: *mut *mut pjsip_tpfactory,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tcp_transport_get_socket(transport: *mut pjsip_transport) -> pj_sock_t;
-}
-extern "C" {
-    pub fn pjsip_tcp_transport_lis_start(
-        factory: *mut pjsip_tpfactory,
-        local: *const pj_sockaddr,
-        a_name: *const pjsip_host_port,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tcp_transport_restart(
-        factory: *mut pjsip_tpfactory,
-        local: *const pj_sockaddr,
-        a_name: *const pjsip_host_port,
-    ) -> pj_status_t;
-}
+
+
 pub const PJSIP_SSL_UNSPECIFIED_METHOD: pjsip_ssl_method = 0;
 pub const PJSIP_SSLV2_METHOD: pjsip_ssl_method = 20;
 pub const PJSIP_SSLV3_METHOD: pjsip_ssl_method = 30;
@@ -2624,6 +1600,7 @@ pub const PJSIP_TLSV1_2_METHOD: pjsip_ssl_method = 33;
 pub const PJSIP_TLSV1_3_METHOD: pjsip_ssl_method = 34;
 pub const PJSIP_SSLV23_METHOD: pjsip_ssl_method = 23;
 pub type pjsip_ssl_method = u32;
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_tls_on_accept_fail_param {
@@ -2632,6 +1609,7 @@ pub struct pjsip_tls_on_accept_fail_param {
     pub status: pj_status_t,
     pub last_native_err: pj_status_t,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_tls_setting {
@@ -2665,54 +1643,20 @@ pub struct pjsip_tls_setting {
     pub on_accept_fail_cb:
         Option<unsafe extern "C" fn(param: *const pjsip_tls_on_accept_fail_param)>,
 }
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsip_tls_state_info {
     pub ssl_sock_info: *mut pj_ssl_sock_info,
 }
-extern "C" {
-    pub fn pjsip_tls_setting_wipe_keys(opt: *mut pjsip_tls_setting);
-}
-extern "C" {
-    pub fn pjsip_tls_transport_start(
-        endpt: *mut pjsip_endpoint,
-        opt: *const pjsip_tls_setting,
-        local: *const pj_sockaddr_in,
-        a_name: *const pjsip_host_port,
-        async_cnt: c_uint,
-        p_factory: *mut *mut pjsip_tpfactory,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tls_transport_start2(
-        endpt: *mut pjsip_endpoint,
-        opt: *const pjsip_tls_setting,
-        local: *const pj_sockaddr,
-        a_name: *const pjsip_host_port,
-        async_cnt: c_uint,
-        p_factory: *mut *mut pjsip_tpfactory,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tls_transport_lis_start(
-        factory: *mut pjsip_tpfactory,
-        local: *const pj_sockaddr,
-        a_name: *const pjsip_host_port,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tls_transport_restart(
-        factory: *mut pjsip_tpfactory,
-        local: *const pj_sockaddr,
-        a_name: *const pjsip_host_port,
-    ) -> pj_status_t;
-}
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_common_credential {
     pub realm: pj_str_t,
     pub other_param: pjsip_param,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_digest_credential {
@@ -2728,6 +1672,7 @@ pub struct pjsip_digest_credential {
     pub qop: pj_str_t,
     pub nc: pj_str_t,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_pgp_credential {
@@ -2738,6 +1683,7 @@ pub struct pjsip_pgp_credential {
     pub signed_by: pj_str_t,
     pub nonce: pj_str_t,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_oauth_credential {
@@ -2746,6 +1692,7 @@ pub struct pjsip_oauth_credential {
     pub username: pj_str_t,
     pub token: pj_str_t,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_authorization_hdr {
@@ -2758,6 +1705,7 @@ pub struct pjsip_authorization_hdr {
     pub scheme: pj_str_t,
     pub credential: pjsip_authorization_hdr__bindgen_ty_1,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_authorization_hdr__bindgen_ty_1 {
@@ -2768,20 +1716,16 @@ pub struct pjsip_authorization_hdr__bindgen_ty_1 {
     pub bindgen_union_field: [u64; 26usize],
 }
 pub type pjsip_proxy_authorization_hdr = pjsip_authorization_hdr;
-extern "C" {
-    pub fn pjsip_authorization_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_authorization_hdr;
-}
-extern "C" {
-    pub fn pjsip_proxy_authorization_hdr_create(
-        pool: *mut pj_pool_t,
-    ) -> *mut pjsip_proxy_authorization_hdr;
-}
+
+
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_common_challenge {
     pub realm: pj_str_t,
     pub other_param: pjsip_param,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_digest_challenge {
@@ -2794,6 +1738,7 @@ pub struct pjsip_digest_challenge {
     pub algorithm: pj_str_t,
     pub qop: pj_str_t,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_pgp_challenge {
@@ -2804,6 +1749,7 @@ pub struct pjsip_pgp_challenge {
     pub pubalgorithm: pj_str_t,
     pub nonce: pj_str_t,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_www_authenticate_hdr {
@@ -2816,6 +1762,7 @@ pub struct pjsip_www_authenticate_hdr {
     pub scheme: pj_str_t,
     pub challenge: pjsip_www_authenticate_hdr__bindgen_ty_1,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_www_authenticate_hdr__bindgen_ty_1 {
@@ -2824,26 +1771,20 @@ pub struct pjsip_www_authenticate_hdr__bindgen_ty_1 {
     pub pgp: __BindgenUnionField<pjsip_pgp_challenge>,
     pub bindgen_union_field: [u64; 19usize],
 }
+
 pub type pjsip_proxy_authenticate_hdr = pjsip_www_authenticate_hdr;
-extern "C" {
-    pub fn pjsip_www_authenticate_hdr_create(
-        pool: *mut pj_pool_t,
-    ) -> *mut pjsip_www_authenticate_hdr;
-}
-extern "C" {
-    pub fn pjsip_proxy_authenticate_hdr_create(
-        pool: *mut pj_pool_t,
-    ) -> *mut pjsip_proxy_authenticate_hdr;
-}
+
 pub const PJSIP_CRED_DATA_PLAIN_PASSWD: pjsip_cred_data_type = 0;
 pub const PJSIP_CRED_DATA_DIGEST: pjsip_cred_data_type = 1;
 pub const PJSIP_CRED_DATA_EXT_AKA: pjsip_cred_data_type = 16;
 pub type pjsip_cred_data_type = u32;
+
 pub const PJSIP_AUTH_QOP_NONE: pjsip_auth_qop_type = 0;
 pub const PJSIP_AUTH_QOP_AUTH: pjsip_auth_qop_type = 1;
 pub const PJSIP_AUTH_QOP_AUTH_INT: pjsip_auth_qop_type = 2;
 pub const PJSIP_AUTH_QOP_UNKNOWN: pjsip_auth_qop_type = 3;
 pub type pjsip_auth_qop_type = u32;
+
 pub type pjsip_cred_cb = Option<
     unsafe extern "C" fn(
         pool: *mut pj_pool_t,
@@ -2853,6 +1794,7 @@ pub type pjsip_cred_cb = Option<
         auth: *mut pjsip_digest_credential,
     ) -> pj_status_t,
 >;
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_cred_info {
@@ -2863,12 +1805,14 @@ pub struct pjsip_cred_info {
     pub data: pj_str_t,
     pub ext: pjsip_cred_info__bindgen_ty_1,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_cred_info__bindgen_ty_1 {
     pub aka: __BindgenUnionField<pjsip_cred_info__bindgen_ty_1__bindgen_ty_1>,
     pub bindgen_union_field: [u64; 7usize],
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_cred_info__bindgen_ty_1__bindgen_ty_1 {
@@ -2877,6 +1821,7 @@ pub struct pjsip_cred_info__bindgen_ty_1__bindgen_ty_1 {
     pub amf: pj_str_t,
     pub cb: pjsip_cred_cb,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_cached_auth_hdr {
@@ -2885,6 +1830,7 @@ pub struct pjsip_cached_auth_hdr {
     pub method: pjsip_method,
     pub hdr: *mut pjsip_authorization_hdr,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_cached_auth {
@@ -2899,19 +1845,15 @@ pub struct pjsip_cached_auth {
     pub cnonce: pj_str_t,
     pub last_chal: *mut pjsip_www_authenticate_hdr,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_auth_clt_pref {
     pub initial_auth: pj_bool_t,
     pub algorithm: pj_str_t,
 }
-extern "C" {
-    pub fn pjsip_auth_clt_pref_dup(
-        pool: *mut pj_pool_t,
-        dst: *mut pjsip_auth_clt_pref,
-        src: *const pjsip_auth_clt_pref,
-    );
-}
+
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_auth_clt_sess {
@@ -2922,19 +1864,9 @@ pub struct pjsip_auth_clt_sess {
     pub cred_info: *mut pjsip_cred_info,
     pub cached_auth: pjsip_cached_auth,
 }
-extern "C" {
-    pub fn pjsip_cred_info_dup(
-        pool: *mut pj_pool_t,
-        dst: *mut pjsip_cred_info,
-        src: *const pjsip_cred_info,
-    );
-}
-extern "C" {
-    pub fn pjsip_cred_info_cmp(
-        cred1: *const pjsip_cred_info,
-        cred2: *const pjsip_cred_info,
-    ) -> c_int;
-}
+
+
+
 pub type pjsip_auth_lookup_cred = Option<
     unsafe extern "C" fn(
         pool: *mut pj_pool_t,
@@ -2943,6 +1875,7 @@ pub type pjsip_auth_lookup_cred = Option<
         cred_info: *mut pjsip_cred_info,
     ) -> pj_status_t,
 >;
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_auth_lookup_cred_param {
@@ -2950,6 +1883,7 @@ pub struct pjsip_auth_lookup_cred_param {
     pub acc_name: pj_str_t,
     pub rdata: *mut pjsip_rx_data,
 }
+
 pub type pjsip_auth_lookup_cred2 = Option<
     unsafe extern "C" fn(
         pool: *mut pj_pool_t,
@@ -2957,6 +1891,7 @@ pub type pjsip_auth_lookup_cred2 = Option<
         cred_info: *mut pjsip_cred_info,
     ) -> pj_status_t,
 >;
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_auth_srv {
@@ -2965,66 +1900,7 @@ pub struct pjsip_auth_srv {
     pub lookup: pjsip_auth_lookup_cred,
     pub lookup2: pjsip_auth_lookup_cred2,
 }
-extern "C" {
-    pub fn pjsip_auth_clt_init(
-        sess: *mut pjsip_auth_clt_sess,
-        endpt: *mut pjsip_endpoint,
-        pool: *mut pj_pool_t,
-        options: c_uint,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_auth_clt_deinit(sess: *mut pjsip_auth_clt_sess) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_auth_clt_clone(
-        pool: *mut pj_pool_t,
-        sess: *mut pjsip_auth_clt_sess,
-        rhs: *const pjsip_auth_clt_sess,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_auth_clt_set_credentials(
-        sess: *mut pjsip_auth_clt_sess,
-        cred_cnt: c_int,
-        c: *const pjsip_cred_info,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_auth_clt_set_prefs(
-        sess: *mut pjsip_auth_clt_sess,
-        p: *const pjsip_auth_clt_pref,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_auth_clt_get_prefs(
-        sess: *mut pjsip_auth_clt_sess,
-        p: *mut pjsip_auth_clt_pref,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_auth_clt_init_req(
-        sess: *mut pjsip_auth_clt_sess,
-        tdata: *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_auth_clt_reinit_req(
-        sess: *mut pjsip_auth_clt_sess,
-        rdata: *const pjsip_rx_data,
-        old_request: *mut pjsip_tx_data,
-        new_request: *mut *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_auth_srv_init(
-        pool: *mut pj_pool_t,
-        auth_srv: *mut pjsip_auth_srv,
-        realm: *const pj_str_t,
-        lookup: pjsip_auth_lookup_cred,
-        options: c_uint,
-    ) -> pj_status_t;
-}
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsip_auth_srv_init_param {
@@ -3032,43 +1908,7 @@ pub struct pjsip_auth_srv_init_param {
     pub lookup2: pjsip_auth_lookup_cred2,
     pub options: c_uint,
 }
-extern "C" {
-    pub fn pjsip_auth_srv_init2(
-        pool: *mut pj_pool_t,
-        auth_srv: *mut pjsip_auth_srv,
-        param: *const pjsip_auth_srv_init_param,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_auth_srv_verify(
-        auth_srv: *mut pjsip_auth_srv,
-        rdata: *mut pjsip_rx_data,
-        status_code: *mut c_int,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_auth_srv_challenge(
-        auth_srv: *mut pjsip_auth_srv,
-        qop: *const pj_str_t,
-        nonce: *const pj_str_t,
-        opaque: *const pj_str_t,
-        stale: pj_bool_t,
-        tdata: *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_auth_create_digest(
-        result: *mut pj_str_t,
-        nonce: *const pj_str_t,
-        nc: *const pj_str_t,
-        cnonce: *const pj_str_t,
-        qop: *const pj_str_t,
-        uri: *const pj_str_t,
-        realm: *const pj_str_t,
-        cred_info: *const pjsip_cred_info,
-        method: *const pj_str_t,
-    );
-}
+
 pub const PJSIP_TSX_STATE_NULL: pjsip_tsx_state_e = 0;
 pub const PJSIP_TSX_STATE_CALLING: pjsip_tsx_state_e = 1;
 pub const PJSIP_TSX_STATE_TRYING: pjsip_tsx_state_e = 2;
@@ -3079,6 +1919,7 @@ pub const PJSIP_TSX_STATE_TERMINATED: pjsip_tsx_state_e = 6;
 pub const PJSIP_TSX_STATE_DESTROYED: pjsip_tsx_state_e = 7;
 pub const PJSIP_TSX_STATE_MAX: pjsip_tsx_state_e = 8;
 pub type pjsip_tsx_state_e = u32;
+
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct pjsip_transaction {
@@ -3100,9 +1941,7 @@ pub struct pjsip_transaction {
     pub state: pjsip_tsx_state_e,
     pub handle_200resp: c_int,
     pub tracing: c_int,
-    pub state_handler: Option<
-        unsafe extern "C" fn(arg1: *mut pjsip_transaction, arg2: *mut pjsip_event) -> pj_status_t,
-    >,
+    pub state_handler: Option<unsafe extern "C" fn(arg1: *mut pjsip_transaction, arg2: *mut pjsip_event) -> pj_status_t>,
     pub transport: *mut pjsip_transport,
     pub is_reliable: pj_bool_t,
     pub addr: pj_sockaddr,
@@ -3119,117 +1958,9 @@ pub struct pjsip_transaction {
     pub timeout_timer: pj_timer_entry,
     pub mod_data: [*mut c_void; 32usize],
 }
-extern "C" {
-    pub fn pjsip_tsx_layer_init_module(endpt: *mut pjsip_endpoint) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tsx_layer_instance() -> *mut pjsip_module;
-}
-extern "C" {
-    pub fn pjsip_tsx_layer_destroy() -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tsx_layer_get_tsx_count() -> c_uint;
-}
-extern "C" {
-    pub fn pjsip_tsx_layer_find_tsx(
-        key: *const pj_str_t,
-        lock: pj_bool_t,
-    ) -> *mut pjsip_transaction;
-}
-extern "C" {
-    pub fn pjsip_tsx_layer_find_tsx2(
-        key: *const pj_str_t,
-        add_ref: pj_bool_t,
-    ) -> *mut pjsip_transaction;
-}
-extern "C" {
-    pub fn pjsip_tsx_create_uac(
-        tsx_user: *mut pjsip_module,
-        tdata: *mut pjsip_tx_data,
-        p_tsx: *mut *mut pjsip_transaction,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tsx_create_uac2(
-        tsx_user: *mut pjsip_module,
-        tdata: *mut pjsip_tx_data,
-        grp_lock: *mut pj_grp_lock_t,
-        p_tsx: *mut *mut pjsip_transaction,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tsx_create_uas(
-        tsx_user: *mut pjsip_module,
-        rdata: *mut pjsip_rx_data,
-        p_tsx: *mut *mut pjsip_transaction,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tsx_create_uas2(
-        tsx_user: *mut pjsip_module,
-        rdata: *mut pjsip_rx_data,
-        grp_lock: *mut pj_grp_lock_t,
-        p_tsx: *mut *mut pjsip_transaction,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tsx_set_transport(
-        tsx: *mut pjsip_transaction,
-        sel: *const pjsip_tpselector,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tsx_recv_msg(tsx: *mut pjsip_transaction, rdata: *mut pjsip_rx_data);
-}
-extern "C" {
-    pub fn pjsip_tsx_send_msg(
-        tsx: *mut pjsip_transaction,
-        tdata: *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tsx_retransmit_no_state(
-        tsx: *mut pjsip_transaction,
-        tdata: *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tsx_create_key(
-        pool: *mut pj_pool_t,
-        key: *mut pj_str_t,
-        role: pjsip_role_e,
-        method: *const pjsip_method,
-        rdata: *const pjsip_rx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tsx_terminate(
-        tsx: *mut pjsip_transaction,
-        code: c_int,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tsx_stop_retransmit(tsx: *mut pjsip_transaction) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_tsx_set_timeout(
-        tsx: *mut pjsip_transaction,
-        millisec: c_uint,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_rdata_get_tsx(rdata: *mut pjsip_rx_data) -> *mut pjsip_transaction;
-}
-extern "C" {
-    pub fn pjsip_tsx_layer_dump(detail: pj_bool_t);
-}
-extern "C" {
-    pub fn pjsip_tsx_state_str(state: pjsip_tsx_state_e) -> *const c_char;
-}
-extern "C" {
-    pub fn pjsip_role_name(role: pjsip_role_e) -> *const c_char;
-}
+
+
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pjsip_ua_init_param {
@@ -3240,44 +1971,7 @@ pub struct pjsip_ua_init_param {
         ) -> *mut pjsip_dialog,
     >,
 }
-extern "C" {
-    pub fn pjsip_ua_init_module(
-        endpt: *mut pjsip_endpoint,
-        prm: *const pjsip_ua_init_param,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_ua_instance() -> *mut pjsip_user_agent;
-}
-extern "C" {
-    pub fn pjsip_ua_get_dlg_set_count() -> pj_uint32_t;
-}
-extern "C" {
-    pub fn pjsip_ua_find_dialog(
-        call_id: *const pj_str_t,
-        local_tag: *const pj_str_t,
-        remote_tag: *const pj_str_t,
-        lock_dialog: pj_bool_t,
-    ) -> *mut pjsip_dialog;
-}
-extern "C" {
-    pub fn pjsip_ua_destroy() -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_ua_dump(detail: pj_bool_t);
-}
-extern "C" {
-    pub fn pjsip_ua_get_endpt(ua: *mut pjsip_user_agent) -> *mut pjsip_endpoint;
-}
-extern "C" {
-    pub fn pjsip_ua_register_dlg(ua: *mut pjsip_user_agent, dlg: *mut pjsip_dialog) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_ua_unregister_dlg(
-        ua: *mut pjsip_user_agent,
-        dlg: *mut pjsip_dialog,
-    ) -> pj_status_t;
-}
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct pjsip_dlg_party {
@@ -3288,13 +1982,16 @@ pub struct pjsip_dlg_party {
     pub first_cseq: pj_int32_t,
     pub cseq: pj_int32_t,
 }
+
 pub const PJSIP_DIALOG_STATE_NULL: pjsip_dialog_state = 0;
 pub const PJSIP_DIALOG_STATE_ESTABLISHED: pjsip_dialog_state = 1;
 pub type pjsip_dialog_state = u32;
+
 pub const PJSIP_DIALOG_CAP_UNSUPPORTED: pjsip_dialog_cap_status = 0;
 pub const PJSIP_DIALOG_CAP_SUPPORTED: pjsip_dialog_cap_status = 1;
 pub const PJSIP_DIALOG_CAP_UNKNOWN: pjsip_dialog_cap_status = 2;
 pub type pjsip_dialog_cap_status = u32;
+
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct pjsip_dialog {
@@ -3340,207 +2037,365 @@ pub struct pjsip_dlg_create_uac_param {
     pub target: pj_str_t,
     pub grp_lock: *mut pj_grp_lock_t,
 }
+
 extern "C" {
+    pub static mut pjsip_sip_cfg_var: pjsip_cfg_t;
+    pub fn pjsip_strerror(status: pj_status_t, buffer: *mut c_char, bufsize: pj_size_t) -> pj_str_t;
+    pub fn pjsip_param_find(param_list: *const pjsip_param,name: *const pj_str_t) -> *mut pjsip_param;
+    pub fn pjsip_param_cmp(param_list1: *const pjsip_param, param_list2: *const pjsip_param, ig_nf: pj_bool_t) -> c_int;
+    pub fn pjsip_param_clone(pool: *mut pj_pool_t, dst_list: *mut pjsip_param, src_list: *const pjsip_param);
+    pub fn pjsip_param_shallow_clone(pool: *mut pj_pool_t, dst_list: *mut pjsip_param, src_list: *const pjsip_param);
+    pub fn pjsip_param_print_on(param_list: *const pjsip_param, buf: *mut c_char, size: pj_size_t, pname_unres: *const pj_cis_t, pvalue_unres: *const pj_cis_t, sep: c_int) -> pj_ssize_t;
+    pub fn pjsip_sip_uri_create(pool: *mut pj_pool_t, secure: pj_bool_t) -> *mut pjsip_sip_uri;
+    pub fn pjsip_sip_uri_set_secure(uri: *mut pjsip_sip_uri, secure: pj_bool_t);
+    pub fn pjsip_sip_uri_init(url: *mut pjsip_sip_uri, secure: pj_bool_t);
+    pub fn pjsip_sip_uri_assign(pool: *mut pj_pool_t, url: *mut pjsip_sip_uri, rhs: *const pjsip_sip_uri);
+    pub fn pjsip_name_addr_create(pool: *mut pj_pool_t) -> *mut pjsip_name_addr;
+    pub fn pjsip_name_addr_init(name_addr: *mut pjsip_name_addr);
+    pub fn pjsip_name_addr_assign(pool: *mut pj_pool_t, addr: *mut pjsip_name_addr, rhs: *const pjsip_name_addr);
+    pub fn pjsip_other_uri_create(pool: *mut pj_pool_t) -> *mut pjsip_other_uri;
+    pub fn pjsip_tel_uri_create(pool: *mut pj_pool_t) -> *mut pjsip_tel_uri;
+    pub fn pjsip_tel_nb_cmp(nb1: *const pj_str_t, nb2: *const pj_str_t) -> c_int;
+    pub static pjsip_invite_method: pjsip_method;
+    pub static pjsip_cancel_method: pjsip_method;
+    pub static pjsip_ack_method: pjsip_method;
+    pub static pjsip_bye_method: pjsip_method;
+    pub static pjsip_register_method: pjsip_method;
+    pub static pjsip_options_method: pjsip_method;
+    pub fn pjsip_get_invite_method() -> *const pjsip_method;
+    pub fn pjsip_get_cancel_method() -> *const pjsip_method;
+    pub fn pjsip_get_ack_method() -> *const pjsip_method;
+    pub fn pjsip_get_bye_method() -> *const pjsip_method;
+    pub fn pjsip_get_register_method() -> *const pjsip_method;
+    pub fn pjsip_get_options_method() -> *const pjsip_method;
+    pub fn pjsip_method_init(m: *mut pjsip_method, pool: *mut pj_pool_t, str_: *const pj_str_t);
+    pub fn pjsip_method_init_np(m: *mut pjsip_method, str_: *mut pj_str_t);
+    pub fn pjsip_method_set(m: *mut pjsip_method, id: pjsip_method_e);
+    pub fn pjsip_method_copy(pool: *mut pj_pool_t, method: *mut pjsip_method, rhs: *const pjsip_method);
+    pub fn pjsip_method_cmp(m1: *const pjsip_method, m2: *const pjsip_method) -> c_int;
+    pub fn pjsip_hdr_clone(pool: *mut pj_pool_t, hdr: *const c_void) -> *mut c_void;
+    pub fn pjsip_hdr_shallow_clone(pool: *mut pj_pool_t, hdr: *const c_void) -> *mut c_void;
+    pub fn pjsip_hdr_print_on(hdr: *mut c_void, buf: *mut c_char, len: pj_size_t) -> c_int;
+    pub fn pjsip_get_status_text(status_code: c_int) -> *const pj_str_t;
+    pub fn pjsip_media_type_init(mt: *mut pjsip_media_type, type_: *mut pj_str_t, subtype: *mut pj_str_t);
+    pub fn pjsip_media_type_init2(mt: *mut pjsip_media_type, type_: *mut c_char, subtype: *mut c_char);
+    pub fn pjsip_media_type_cmp(mt1: *const pjsip_media_type, mt2: *const pjsip_media_type, cmp_param: c_int) -> c_int;
+    pub fn pjsip_media_type_cp(pool: *mut pj_pool_t, dst: *mut pjsip_media_type, src: *const pjsip_media_type);
+    pub fn pjsip_media_type_print(buf: *mut c_char, len: c_uint, mt: *const pjsip_media_type) -> c_int;
+    pub fn pjsip_print_text_body(msg_body: *mut pjsip_msg_body, buf: *mut c_char, size: pj_size_t) -> c_int;
+    pub fn pjsip_clone_text_data(pool: *mut pj_pool_t, data: *const c_void, len: c_uint) -> *mut c_void;
+    pub fn pjsip_msg_body_copy(pool: *mut pj_pool_t, dst_body: *mut pjsip_msg_body, src_body: *const pjsip_msg_body) -> pj_status_t;
+    pub fn pjsip_msg_body_clone(pool: *mut pj_pool_t, body: *const pjsip_msg_body) -> *mut pjsip_msg_body;
+    pub fn pjsip_msg_body_create(pool: *mut pj_pool_t, type_: *const pj_str_t, subtype: *const pj_str_t, text: *const pj_str_t) -> *mut pjsip_msg_body;
+    pub fn pjsip_msg_create(pool: *mut pj_pool_t, type_: pjsip_msg_type_e) -> *mut pjsip_msg;
+    pub fn pjsip_msg_clone(pool: *mut pj_pool_t, msg: *const pjsip_msg) -> *mut pjsip_msg;
+    pub fn pjsip_msg_find_hdr(msg: *const pjsip_msg, type_: pjsip_hdr_e, start: *const c_void) -> *mut c_void;
+    pub fn pjsip_msg_find_hdr_by_name(msg: *const pjsip_msg, name: *const pj_str_t, start: *const c_void) -> *mut c_void;
+    pub fn pjsip_msg_find_hdr_by_names(msg: *const pjsip_msg, name: *const pj_str_t, sname: *const pj_str_t, start: *const c_void) -> *mut c_void;
+    pub fn pjsip_msg_find_remove_hdr(msg: *mut pjsip_msg, hdr: pjsip_hdr_e, start: *mut c_void) -> *mut c_void;
+    pub fn pjsip_msg_print(msg: *const pjsip_msg, buf: *mut c_char, size: pj_size_t) -> pj_ssize_t;
+    pub fn pjsip_generic_string_hdr_create(pool: *mut pj_pool_t, hname: *const pj_str_t, hvalue: *const pj_str_t) -> *mut pjsip_generic_string_hdr;
+    pub fn pjsip_generic_string_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void, hname: *const pj_str_t, hvalue: *const pj_str_t) -> *mut pjsip_generic_string_hdr;
+    pub fn pjsip_generic_string_hdr_init2(h: *mut pjsip_generic_string_hdr, hname: *mut pj_str_t, hvalue: *mut pj_str_t);
+    pub fn pjsip_generic_int_hdr_create(pool: *mut pj_pool_t, hname: *const pj_str_t, hvalue: c_uint) -> *mut pjsip_generic_int_hdr;
+    pub fn pjsip_generic_int_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void, hname: *const pj_str_t, value: c_uint) -> *mut pjsip_generic_int_hdr;
+    pub fn pjsip_generic_array_hdr_create(pool: *mut pj_pool_t, hname: *const pj_str_t) -> *mut pjsip_generic_array_hdr;
+    pub fn pjsip_generic_array_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void, hname: *const pj_str_t) -> *mut pjsip_generic_array_hdr;
+    pub fn pjsip_accept_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_accept_hdr;
+    pub fn pjsip_accept_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_accept_hdr;
+    pub fn pjsip_allow_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_allow_hdr;
+    pub fn pjsip_allow_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_allow_hdr;
+    pub fn pjsip_cid_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_cid_hdr;
+    pub fn pjsip_cid_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_cid_hdr;
+    pub fn pjsip_clen_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_clen_hdr;
+    pub fn pjsip_clen_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_clen_hdr;
+    pub fn pjsip_cseq_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_cseq_hdr;
+    pub fn pjsip_cseq_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_cseq_hdr;
+    pub fn pjsip_contact_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_contact_hdr;
+    pub fn pjsip_contact_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_contact_hdr;
+    pub fn pjsip_ctype_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_ctype_hdr;
+    pub fn pjsip_ctype_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_ctype_hdr;
+    pub fn pjsip_expires_hdr_create(pool: *mut pj_pool_t, value: c_uint) -> *mut pjsip_expires_hdr;
+    pub fn pjsip_expires_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void, value: c_uint) -> *mut pjsip_expires_hdr;
+    pub fn pjsip_from_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_from_hdr;
+    pub fn pjsip_from_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_from_hdr;
+    pub fn pjsip_to_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_to_hdr;
+    pub fn pjsip_to_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_to_hdr;
+    pub fn pjsip_fromto_hdr_set_from(hdr: *mut pjsip_fromto_hdr) -> *mut pjsip_from_hdr;
+    pub fn pjsip_fromto_hdr_set_to(hdr: *mut pjsip_fromto_hdr) -> *mut pjsip_to_hdr;
+    pub fn pjsip_max_fwd_hdr_create(pool: *mut pj_pool_t, value: c_uint) -> *mut pjsip_max_fwd_hdr;
+    pub fn pjsip_max_fwd_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void, value: c_uint) -> *mut pjsip_max_fwd_hdr;
+    pub fn pjsip_min_expires_hdr_create(pool: *mut pj_pool_t, value: c_uint) -> *mut pjsip_min_expires_hdr;
+    pub fn pjsip_min_expires_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void, value: c_uint) -> *mut pjsip_min_expires_hdr;
+    pub fn pjsip_rr_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_rr_hdr;
+    pub fn pjsip_rr_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_rr_hdr;
+    pub fn pjsip_route_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_route_hdr;
+    pub fn pjsip_route_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_route_hdr;
+    pub fn pjsip_routing_hdr_set_rr(r: *mut pjsip_routing_hdr) -> *mut pjsip_rr_hdr;
+    pub fn pjsip_routing_hdr_set_route(r: *mut pjsip_routing_hdr) -> *mut pjsip_route_hdr;
+    pub static mut PJSIP_SYN_ERR_EXCEPTION: c_int;
+    pub static mut PJSIP_EINVAL_ERR_EXCEPTION: c_int;
+    pub fn pjsip_require_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_require_hdr;
+    pub fn pjsip_require_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_require_hdr;
+    pub fn pjsip_retry_after_hdr_create(pool: *mut pj_pool_t, value: c_int) -> *mut pjsip_retry_after_hdr;
+    pub fn pjsip_retry_after_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void, value: c_int) -> *mut pjsip_retry_after_hdr;
+    pub fn pjsip_supported_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_supported_hdr;
+    pub fn pjsip_supported_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_supported_hdr;
+    pub fn pjsip_unsupported_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_unsupported_hdr;
+    pub fn pjsip_unsupported_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_unsupported_hdr;
+    pub fn pjsip_via_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_via_hdr;
+    pub fn pjsip_via_hdr_init(pool: *mut pj_pool_t, mem: *mut c_void) -> *mut pjsip_via_hdr;
+    pub fn pjsip_warning_hdr_create(pool: *mut pj_pool_t, code: c_int, host: *const pj_str_t, text: *const pj_str_t) -> *mut pjsip_warning_hdr;
+    pub fn pjsip_warning_hdr_create_from_status(pool: *mut pj_pool_t, host: *const pj_str_t, status: pj_status_t) -> *mut pjsip_warning_hdr;
+    pub fn pjsip_multipart_create(pool: *mut pj_pool_t, ctype: *const pjsip_media_type, boundary: *const pj_str_t) -> *mut pjsip_msg_body;
+    pub fn pjsip_multipart_create_part(pool: *mut pj_pool_t) -> *mut pjsip_multipart_part;
+    pub fn pjsip_multipart_clone_part(pool: *mut pj_pool_t, part: *const pjsip_multipart_part) -> *mut pjsip_multipart_part;
+    pub fn pjsip_multipart_add_part(pool: *mut pj_pool_t, mp: *mut pjsip_msg_body, part: *mut pjsip_multipart_part) -> pj_status_t;
+    pub fn pjsip_multipart_get_first_part(mp: *const pjsip_msg_body) -> *mut pjsip_multipart_part;
+    pub fn pjsip_multipart_get_next_part(mp: *const pjsip_msg_body, part: *mut pjsip_multipart_part) -> *mut pjsip_multipart_part;
+    pub fn pjsip_multipart_find_part(mp: *const pjsip_msg_body, content_type: *const pjsip_media_type, start: *const pjsip_multipart_part) -> *mut pjsip_multipart_part;
+    pub fn pjsip_multipart_parse(pool: *mut pj_pool_t, buf: *mut c_char, len: pj_size_t, ctype: *const pjsip_media_type, options: c_uint) -> *mut pjsip_msg_body;
+    pub fn pjsip_multipart_get_raw(mp: *mut pjsip_msg_body, boundary: *mut pj_str_t, raw_data: *mut pj_str_t) -> pj_status_t;
+    pub fn pjsip_register_hdr_parser(hname: *const c_char, hshortname: *const c_char, fptr: pjsip_parse_hdr_func) -> pj_status_t;
+    pub fn pjsip_register_uri_parser(scheme: *mut c_char, func: pjsip_parse_uri_func) -> pj_status_t;
+    pub fn pjsip_parse_uri(pool: *mut pj_pool_t, buf: *mut c_char, size: pj_size_t, options: c_uint) -> *mut pjsip_uri;
+    pub fn pjsip_parse_status_line(buf: *mut c_char, size: pj_size_t, status_line: *mut pjsip_status_line) -> pj_status_t;
+    pub fn pjsip_parse_msg(pool: *mut pj_pool_t, buf: *mut c_char, size: pj_size_t, err_list: *mut pjsip_parser_err_report) -> *mut pjsip_msg;
+    pub fn pjsip_parse_rdata(buf: *mut c_char, size: pj_size_t, rdata: *mut pjsip_rx_data) -> *mut pjsip_msg;
+    pub fn pjsip_find_msg(buf: *const c_char, size: pj_size_t, is_datagram: pj_bool_t, msg_size: *mut pj_size_t) -> pj_status_t;
+    pub fn pjsip_parse_hdr(pool: *mut pj_pool_t, hname: *const pj_str_t, line: *mut c_char, size: pj_size_t, parsed_len: *mut c_int) -> *mut c_void;
+    pub fn pjsip_parse_headers(pool: *mut pj_pool_t, input: *mut c_char, size: pj_size_t, hlist: *mut pjsip_hdr, options: c_uint) -> pj_status_t;
+    pub fn pjsip_parser_const() -> *const pjsip_parser_const_t;
+    pub fn pjsip_parse_param_imp(scanner: *mut pj_scanner, pool: *mut pj_pool_t, pname: *mut pj_str_t, pvalue: *mut pj_str_t, opt: c_uint);
+    pub fn pjsip_parse_uri_param_imp(scanner: *mut pj_scanner, pool: *mut pj_pool_t, pname: *mut pj_str_t, pvalue: *mut pj_str_t, opt: c_uint);
+    pub fn pjsip_concat_param_imp(param: *mut pj_str_t, pool: *mut pj_pool_t, pname: *const pj_str_t, pvalue: *const pj_str_t, sepchar: c_int);
+    pub fn pjsip_parse_end_hdr_imp(scanner: *mut pj_scanner);
+    pub fn pjsip_parse_generic_array_hdr_imp(hdr: *mut pjsip_generic_array_hdr, scanner: *mut pj_scanner);
+    pub fn pjsip_event_str(e: pjsip_event_id_e) -> *const c_char;
+    pub fn pjsip_resolver_create(pool: *mut pj_pool_t, p_res: *mut *mut pjsip_resolver_t) -> pj_status_t;
+    pub fn pjsip_resolver_set_resolver(res: *mut pjsip_resolver_t, dns_res: *mut pj_dns_resolver) -> pj_status_t;
+    pub fn pjsip_resolver_set_ext_resolver(res: *mut pjsip_resolver_t, ext_res: *mut pjsip_ext_resolver) -> pj_status_t;
+    pub fn pjsip_resolver_get_resolver(res: *mut pjsip_resolver_t) -> *mut pj_dns_resolver;
+    pub fn pjsip_resolver_destroy(resolver: *mut pjsip_resolver_t);
+    pub fn pjsip_resolve(resolver: *mut pjsip_resolver_t, pool: *mut pj_pool_t, target: *const pjsip_host_info, token: *mut c_void, cb: pjsip_resolver_callback);
+    pub fn pjsip_transport_register_type(tp_flag: c_uint, tp_name: *const c_char, def_port: c_int, p_tp_type: *mut c_int) -> pj_status_t;
+    pub fn pjsip_transport_get_type_from_name(name: *const pj_str_t) -> pjsip_transport_type_e;
+    pub fn pjsip_transport_get_type_from_flag(flag: c_uint) -> pjsip_transport_type_e;
+    pub fn pjsip_transport_type_get_af(type_: pjsip_transport_type_e) -> c_int;
+    pub fn pjsip_transport_get_flag_from_type(type_: pjsip_transport_type_e) -> c_uint;
+    pub fn pjsip_transport_get_default_port_for_type(type_: pjsip_transport_type_e) -> c_int;
+    pub fn pjsip_transport_get_type_name(t: pjsip_transport_type_e) -> *const c_char;
+    pub fn pjsip_transport_get_type_desc(t: pjsip_transport_type_e) -> *const c_char;
+    pub fn pjsip_tpselector_add_ref(sel: *mut pjsip_tpselector);
+    pub fn pjsip_tpselector_dec_ref(sel: *mut pjsip_tpselector);
+    pub fn pjsip_rx_data_get_info(rdata: *mut pjsip_rx_data) -> *mut c_char;
+    pub fn pjsip_rx_data_clone(src: *const pjsip_rx_data, flags: c_uint, p_rdata: *mut *mut pjsip_rx_data) -> pj_status_t;
+    pub fn pjsip_rx_data_free_cloned(rdata: *mut pjsip_rx_data) -> pj_status_t;
+    pub fn pjsip_tx_data_create(mgr: *mut pjsip_tpmgr, tdata: *mut *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_tx_data_add_ref(tdata: *mut pjsip_tx_data);
+    pub fn pjsip_tx_data_dec_ref(tdata: *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_tx_data_encode(tdata: *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_tx_data_is_valid(tdata: *mut pjsip_tx_data) -> pj_bool_t;
+    pub fn pjsip_tx_data_invalidate_msg(tdata: *mut pjsip_tx_data);
+    pub fn pjsip_tx_data_get_info(tdata: *mut pjsip_tx_data) -> *mut c_char;
+    pub fn pjsip_tx_data_set_transport(tdata: *mut pjsip_tx_data, sel: *const pjsip_tpselector) -> pj_status_t;
+    pub fn pjsip_tx_data_clone(src: *const pjsip_tx_data, flags: c_uint, p_rdata: *mut *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_transport_register(mgr: *mut pjsip_tpmgr, tp: *mut pjsip_transport) -> pj_status_t;
+    pub fn pjsip_transport_shutdown(tp: *mut pjsip_transport) -> pj_status_t;
+    pub fn pjsip_transport_shutdown2(tp: *mut pjsip_transport, force: pj_bool_t) -> pj_status_t;
+    pub fn pjsip_transport_destroy(tp: *mut pjsip_transport) -> pj_status_t;
+    pub fn pjsip_transport_add_ref(tp: *mut pjsip_transport) -> pj_status_t;
+    pub fn pjsip_transport_dec_ref(tp: *mut pjsip_transport) -> pj_status_t;
+    pub fn pjsip_tpmgr_receive_packet(mgr: *mut pjsip_tpmgr, rdata: *mut pjsip_rx_data) -> pj_ssize_t;
+    pub fn pjsip_tpmgr_register_tpfactory(mgr: *mut pjsip_tpmgr, tpf: *mut pjsip_tpfactory) -> pj_status_t;
+    pub fn pjsip_tpmgr_unregister_tpfactory(mgr: *mut pjsip_tpmgr, tpf: *mut pjsip_tpfactory) -> pj_status_t;
+    pub fn pjsip_tpmgr_create(pool: *mut pj_pool_t, endpt: *mut pjsip_endpoint, rx_cb: pjsip_rx_callback, tx_cb: pjsip_tx_callback, p_mgr: *mut *mut pjsip_tpmgr) -> pj_status_t;
+    pub fn pjsip_tpmgr_find_local_addr(tpmgr: *mut pjsip_tpmgr, pool: *mut pj_pool_t, type_: pjsip_transport_type_e, sel: *const pjsip_tpselector, ip_addr: *mut pj_str_t, port: *mut c_int) -> pj_status_t;
+    pub fn pjsip_tpmgr_fla2_param_default(prm: *mut pjsip_tpmgr_fla2_param);
+    pub fn pjsip_tpmgr_find_local_addr2(tpmgr: *mut pjsip_tpmgr, pool: *mut pj_pool_t, prm: *mut pjsip_tpmgr_fla2_param) -> pj_status_t;
+    pub fn pjsip_tpmgr_get_transport_count(mgr: *mut pjsip_tpmgr) -> c_uint;
+    pub fn pjsip_tpmgr_destroy(mgr: *mut pjsip_tpmgr) -> pj_status_t;
+    pub fn pjsip_tpmgr_dump_transports(mgr: *mut pjsip_tpmgr);
+    pub fn pjsip_tpmgr_acquire_transport(mgr: *mut pjsip_tpmgr, type_: pjsip_transport_type_e, remote: *const pj_sockaddr_t, addr_len: c_int, sel: *const pjsip_tpselector, tp: *mut *mut pjsip_transport) -> pj_status_t;
+    pub fn pjsip_tpmgr_acquire_transport2(mgr: *mut pjsip_tpmgr, type_: pjsip_transport_type_e, remote: *const pj_sockaddr_t, addr_len: c_int, sel: *const pjsip_tpselector, tdata: *mut pjsip_tx_data, tp: *mut *mut pjsip_transport) -> pj_status_t;
+    pub fn pjsip_transport_send(tr: *mut pjsip_transport, tdata: *mut pjsip_tx_data, addr: *const pj_sockaddr_t, addr_len: c_int, token: *mut c_void, cb: pjsip_tp_send_callback) -> pj_status_t;
+    pub fn pjsip_tpmgr_send_raw(mgr: *mut pjsip_tpmgr, tp_type: pjsip_transport_type_e, sel: *const pjsip_tpselector, tdata: *mut pjsip_tx_data, raw_data: *const c_void, data_len: pj_size_t, addr: *const pj_sockaddr_t, addr_len: c_int, token: *mut c_void, cb: pjsip_tp_send_callback) -> pj_status_t;
+    pub fn pjsip_tpmgr_set_state_cb(mgr: *mut pjsip_tpmgr, cb: pjsip_tp_state_callback) -> pj_status_t;
+    pub fn pjsip_tpmgr_get_state_cb(mgr: *const pjsip_tpmgr) -> pjsip_tp_state_callback;
+    pub fn pjsip_transport_add_state_listener(tp: *mut pjsip_transport, cb: pjsip_tp_state_callback, user_data: *mut c_void, key: *mut *mut pjsip_tp_state_listener_key) -> pj_status_t;
+    pub fn pjsip_transport_remove_state_listener(tp: *mut pjsip_transport, key: *mut pjsip_tp_state_listener_key, user_data: *const c_void) -> pj_status_t;
+    pub fn pjsip_tpmgr_set_drop_data_cb(mgr: *mut pjsip_tpmgr, cb: pjsip_tp_on_rx_dropped_cb) -> pj_status_t;
+    pub fn pjsip_endpt_create(pf: *mut pj_pool_factory, name: *const c_char, endpt: *mut *mut pjsip_endpoint) -> pj_status_t;
+    pub fn pjsip_endpt_destroy(endpt: *mut pjsip_endpoint);
+    pub fn pjsip_endpt_name(endpt: *const pjsip_endpoint) -> *const pj_str_t;
+    pub fn pjsip_endpt_handle_events(endpt: *mut pjsip_endpoint, max_timeout: *const pj_time_val) -> pj_status_t;
+    pub fn pjsip_endpt_handle_events2(endpt: *mut pjsip_endpoint, max_timeout: *const pj_time_val, count: *mut c_uint) -> pj_status_t;
+    pub fn pjsip_endpt_schedule_timer_dbg(endpt: *mut pjsip_endpoint, entry: *mut pj_timer_entry, delay: *const pj_time_val, src_file: *const c_char, src_line: c_int) -> pj_status_t;
+    pub fn pjsip_endpt_schedule_timer_w_grp_lock_dbg(endpt: *mut pjsip_endpoint, entry: *mut pj_timer_entry, delay: *const pj_time_val, id_val: c_int, grp_lock: *mut pj_grp_lock_t, src_file: *const c_char, src_line: c_int) -> pj_status_t;
+    pub fn pjsip_endpt_cancel_timer(endpt: *mut pjsip_endpoint, entry: *mut pj_timer_entry);
+    pub fn pjsip_endpt_get_timer_heap(endpt: *mut pjsip_endpoint) -> *mut pj_timer_heap_t;
+    pub fn pjsip_endpt_register_module(endpt: *mut pjsip_endpoint, module: *mut pjsip_module) -> pj_status_t;
+    pub fn pjsip_endpt_unregister_module(endpt: *mut pjsip_endpoint, module: *mut pjsip_module) -> pj_status_t;
+    pub fn pjsip_process_rdata_param_default(p: *mut pjsip_process_rdata_param);
+    pub fn pjsip_endpt_process_rx_data(endpt: *mut pjsip_endpoint, rdata: *mut pjsip_rx_data, p: *mut pjsip_process_rdata_param, p_handled: *mut pj_bool_t) -> pj_status_t;
+    pub fn pjsip_endpt_create_pool(endpt: *mut pjsip_endpoint, pool_name: *const c_char, initial: pj_size_t, increment: pj_size_t) -> *mut pj_pool_t;
+    pub fn pjsip_endpt_release_pool(endpt: *mut pjsip_endpoint, pool: *mut pj_pool_t);
+    pub fn pjsip_endpt_create_tdata(endpt: *mut pjsip_endpoint, p_tdata: *mut *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_endpt_create_resolver(endpt: *mut pjsip_endpoint, p_resv: *mut *mut pj_dns_resolver) -> pj_status_t;
+    pub fn pjsip_endpt_set_resolver(endpt: *mut pjsip_endpoint, resv: *mut pj_dns_resolver) -> pj_status_t;
+    pub fn pjsip_endpt_set_ext_resolver(endpt: *mut pjsip_endpoint, ext_res: *mut pjsip_ext_resolver) -> pj_status_t;
+    pub fn pjsip_endpt_get_resolver(endpt: *mut pjsip_endpoint) -> *mut pj_dns_resolver;
+    pub fn pjsip_endpt_resolve(endpt: *mut pjsip_endpoint, pool: *mut pj_pool_t, target: *mut pjsip_host_info, token: *mut c_void, cb: pjsip_resolver_callback);
+    pub fn pjsip_endpt_get_tpmgr(endpt: *mut pjsip_endpoint) -> *mut pjsip_tpmgr;
+    pub fn pjsip_endpt_get_ioqueue(endpt: *mut pjsip_endpoint) -> *mut pj_ioqueue_t;
+    pub fn pjsip_endpt_acquire_transport(endpt: *mut pjsip_endpoint, type_: pjsip_transport_type_e, remote: *const pj_sockaddr_t, addr_len: c_int, sel: *const pjsip_tpselector, p_tp: *mut *mut pjsip_transport) -> pj_status_t;
+    pub fn pjsip_endpt_acquire_transport2(endpt: *mut pjsip_endpoint, type_: pjsip_transport_type_e, remote: *const pj_sockaddr_t, addr_len: c_int, sel: *const pjsip_tpselector, tdata: *mut pjsip_tx_data, p_tp: *mut *mut pjsip_transport) -> pj_status_t;
+    pub fn pjsip_endpt_get_capability(endpt: *mut pjsip_endpoint, htype: c_int, hname: *const pj_str_t) -> *const pjsip_hdr;
+    pub fn pjsip_endpt_has_capability(endpt: *mut pjsip_endpoint, htype: c_int, hname: *const pj_str_t, token: *const pj_str_t) -> pj_bool_t;
+    pub fn pjsip_endpt_add_capability(endpt: *mut pjsip_endpoint, mod_: *mut pjsip_module, htype: c_int, hname: *const pj_str_t, count: c_uint, tags: *const pj_str_t) -> pj_status_t;
+    pub fn pjsip_endpt_get_request_headers(e: *mut pjsip_endpoint) -> *const pjsip_hdr;
+    pub fn pjsip_endpt_dump(endpt: *mut pjsip_endpoint, detail: pj_bool_t);
+    pub fn pjsip_endpt_atexit(endpt: *mut pjsip_endpoint, func: pjsip_endpt_exit_callback) -> pj_status_t;
+    pub fn pjsip_endpt_log_error( endpt: *mut pjsip_endpoint, sender: *const c_char, error_code: pj_status_t, format: *const c_char, ...);
+    pub fn pjsip_target_set_add_uri(tset: *mut pjsip_target_set, pool: *mut pj_pool_t, uri: *const pjsip_uri, q1000: c_int) -> pj_status_t;
+    pub fn pjsip_target_set_add_from_msg(tset: *mut pjsip_target_set, pool: *mut pj_pool_t, msg: *const pjsip_msg) -> pj_status_t;
+    pub fn pjsip_target_set_get_next(tset: *const pjsip_target_set) -> *mut pjsip_target;
+    pub fn pjsip_target_set_set_current(tset: *mut pjsip_target_set, target: *mut pjsip_target) -> pj_status_t;
+    pub fn pjsip_target_assign_status(target: *mut pjsip_target, pool: *mut pj_pool_t, status_code: c_int, reason: *const pj_str_t) -> pj_status_t;
+    pub fn pjsip_endpt_create_request(endpt: *mut pjsip_endpoint, method: *const pjsip_method, target: *const pj_str_t, from: *const pj_str_t, to: *const pj_str_t, contact: *const pj_str_t, call_id: *const pj_str_t, cseq: c_int, text: *const pj_str_t, p_tdata: *mut *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_endpt_create_request_from_hdr(endpt: *mut pjsip_endpoint, method: *const pjsip_method, target: *const pjsip_uri, from: *const pjsip_from_hdr, to: *const pjsip_to_hdr, contact: *const pjsip_contact_hdr, call_id: *const pjsip_cid_hdr, cseq: c_int, text: *const pj_str_t, p_tdata: *mut *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_endpt_create_response(endpt: *mut pjsip_endpoint, rdata: *const pjsip_rx_data, st_code: c_int, st_text: *const pj_str_t, p_tdata: *mut *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_endpt_create_ack(endpt: *mut pjsip_endpoint, tdata: *const pjsip_tx_data, rdata: *const pjsip_rx_data, ack: *mut *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_endpt_create_cancel(endpt: *mut pjsip_endpoint, tdata: *const pjsip_tx_data, p_tdata: *mut *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_get_dest_info(target_uri: *const pjsip_uri, request_uri: *const pjsip_uri, pool: *mut pj_pool_t, dest_info: *mut pjsip_host_info) -> pj_status_t;
+    pub fn pjsip_get_request_dest(tdata: *const pjsip_tx_data, dest_info: *mut pjsip_host_info) -> pj_status_t;
+    pub fn pjsip_process_route_set(tdata: *mut pjsip_tx_data, dest_info: *mut pjsip_host_info) -> pj_status_t;
+    pub fn pjsip_restore_strict_route_set(tdata: *mut pjsip_tx_data);
+    pub fn pjsip_endpt_send_request_stateless(endpt: *mut pjsip_endpoint, tdata: *mut pjsip_tx_data, token: *mut c_void, cb: pjsip_send_callback) -> pj_status_t;
+    pub fn pjsip_endpt_send_raw(endpt: *mut pjsip_endpoint, tp_type: pjsip_transport_type_e, sel: *const pjsip_tpselector, raw_data: *const c_void, data_len: pj_size_t, addr: *const pj_sockaddr_t, addr_len: c_int, token: *mut c_void, cb: pjsip_tp_send_callback) -> pj_status_t;
+    pub fn pjsip_endpt_send_raw_to_uri(endpt: *mut pjsip_endpoint, dst_uri: *const pj_str_t, sel: *const pjsip_tpselector, raw_data: *const c_void, data_len: pj_size_t, token: *mut c_void, cb: pjsip_tp_send_callback) -> pj_status_t;
+    pub fn pjsip_get_response_addr(pool: *mut pj_pool_t, rdata: *mut pjsip_rx_data, res_addr: *mut pjsip_response_addr) -> pj_status_t;
+    pub fn pjsip_endpt_send_response(endpt: *mut pjsip_endpoint, res_addr: *mut pjsip_response_addr, tdata: *mut pjsip_tx_data, token: *mut c_void, cb: pjsip_send_callback) -> pj_status_t;
+    pub fn pjsip_endpt_send_response2(endpt: *mut pjsip_endpoint, rdata: *mut pjsip_rx_data, tdata: *mut pjsip_tx_data, token: *mut c_void, cb: pjsip_send_callback) -> pj_status_t;
+    pub fn pjsip_endpt_respond_stateless(endpt: *mut pjsip_endpoint, rdata: *mut pjsip_rx_data, st_code: c_int, st_text: *const pj_str_t, hdr_list: *const pjsip_hdr, body: *const pjsip_msg_body) -> pj_status_t;
+    pub fn pjsip_endpt_respond(endpt: *mut pjsip_endpoint, tsx_user: *mut pjsip_module, rdata: *mut pjsip_rx_data, st_code: c_int, st_text: *const pj_str_t, hdr_list: *const pjsip_hdr, body: *const pjsip_msg_body, p_tsx: *mut *mut pjsip_transaction) -> pj_status_t;
+    pub fn pjsip_endpt_send_request(endpt: *mut pjsip_endpoint, tdata: *mut pjsip_tx_data, timeout: pj_int32_t, token: *mut c_void, cb: pjsip_endpt_send_callback) -> pj_status_t;
+    pub fn pjsip_endpt_create_request_fwd(endpt: *mut pjsip_endpoint, rdata: *mut pjsip_rx_data, uri: *const pjsip_uri, branch: *const pj_str_t, options: c_uint, tdata: *mut *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_endpt_create_response_fwd(endpt: *mut pjsip_endpoint, rdata: *mut pjsip_rx_data, options: c_uint, tdata: *mut *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_calculate_branch_id(rdata: *mut pjsip_rx_data) -> pj_str_t;
+    pub fn pjsip_udp_transport_cfg_default(cfg: *mut pjsip_udp_transport_cfg, af: c_int);
+    pub fn pjsip_udp_transport_start2(endpt: *mut pjsip_endpoint, cfg: *const pjsip_udp_transport_cfg, p_transport: *mut *mut pjsip_transport) -> pj_status_t;
+    pub fn pjsip_udp_transport_start(endpt: *mut pjsip_endpoint, local: *const pj_sockaddr_in, a_name: *const pjsip_host_port, async_cnt: c_uint, p_transport: *mut *mut pjsip_transport) -> pj_status_t;
+    pub fn pjsip_udp_transport_start6(endpt: *mut pjsip_endpoint, local: *const pj_sockaddr_in6, a_name: *const pjsip_host_port, async_cnt: c_uint, p_transport: *mut *mut pjsip_transport) -> pj_status_t;
+    pub fn pjsip_udp_transport_attach(endpt: *mut pjsip_endpoint, sock: pj_sock_t, a_name: *const pjsip_host_port, async_cnt: c_uint, p_transport: *mut *mut pjsip_transport) -> pj_status_t;
+    pub fn pjsip_udp_transport_attach2(endpt: *mut pjsip_endpoint, type_: pjsip_transport_type_e, sock: pj_sock_t, a_name: *const pjsip_host_port, async_cnt: c_uint, p_transport: *mut *mut pjsip_transport) -> pj_status_t;
+    pub fn pjsip_udp_transport_get_socket(transport: *mut pjsip_transport) -> pj_sock_t;
+    pub fn pjsip_udp_transport_pause(transport: *mut pjsip_transport, option: c_uint) -> pj_status_t;
+    pub fn pjsip_udp_transport_restart(transport: *mut pjsip_transport, option: c_uint, sock: pj_sock_t, local: *const pj_sockaddr_in, a_name: *const pjsip_host_port) -> pj_status_t;
+    pub fn pjsip_udp_transport_restart2(transport: *mut pjsip_transport, option: c_uint, sock: pj_sock_t, local: *const pj_sockaddr, a_name: *const pjsip_host_port) -> pj_status_t;
+    pub fn pjsip_loop_start(endpt: *mut pjsip_endpoint, transport: *mut *mut pjsip_transport) -> pj_status_t;
+    pub fn pjsip_loop_set_discard(tp: *mut pjsip_transport, discard: pj_bool_t, prev_value: *mut pj_bool_t) -> pj_status_t;
+    pub fn pjsip_loop_set_failure(tp: *mut pjsip_transport, fail_flag: c_int, prev_value: *mut c_int) -> pj_status_t;
+    pub fn pjsip_loop_set_recv_delay(tp: *mut pjsip_transport, delay: c_uint, prev_value: *mut c_uint) -> pj_status_t;
+    pub fn pjsip_loop_set_send_callback_delay(tp: *mut pjsip_transport, delay: c_uint, prev_value: *mut c_uint) -> pj_status_t;
+    pub fn pjsip_loop_set_delay(tp: *mut pjsip_transport, delay: c_uint) -> pj_status_t;
+    pub fn pjsip_tcp_transport_cfg_default(cfg: *mut pjsip_tcp_transport_cfg, af: c_int);
+    pub fn pjsip_tcp_transport_start(endpt: *mut pjsip_endpoint, local: *const pj_sockaddr_in, async_cnt: c_uint, p_factory: *mut *mut pjsip_tpfactory) -> pj_status_t;
+    pub fn pjsip_tcp_transport_start2(endpt: *mut pjsip_endpoint, local: *const pj_sockaddr_in, a_name: *const pjsip_host_port, async_cnt: c_uint, p_factory: *mut *mut pjsip_tpfactory) -> pj_status_t;
+    pub fn pjsip_tcp_transport_start3(endpt: *mut pjsip_endpoint, cfg: *const pjsip_tcp_transport_cfg, p_factory: *mut *mut pjsip_tpfactory) -> pj_status_t;
+    pub fn pjsip_tcp_transport_get_socket(transport: *mut pjsip_transport) -> pj_sock_t;
+    pub fn pjsip_tcp_transport_lis_start(factory: *mut pjsip_tpfactory, local: *const pj_sockaddr, a_name: *const pjsip_host_port) -> pj_status_t;
+    pub fn pjsip_tcp_transport_restart(factory: *mut pjsip_tpfactory, local: *const pj_sockaddr, a_name: *const pjsip_host_port) -> pj_status_t;
+    pub fn pjsip_tls_setting_wipe_keys(opt: *mut pjsip_tls_setting);
+    pub fn pjsip_tls_transport_start(endpt: *mut pjsip_endpoint, opt: *const pjsip_tls_setting, local: *const pj_sockaddr_in, a_name: *const pjsip_host_port, async_cnt: c_uint, p_factory: *mut *mut pjsip_tpfactory) -> pj_status_t;
+    pub fn pjsip_tls_transport_start2(endpt: *mut pjsip_endpoint, opt: *const pjsip_tls_setting, local: *const pj_sockaddr, a_name: *const pjsip_host_port, async_cnt: c_uint, p_factory: *mut *mut pjsip_tpfactory) -> pj_status_t;
+    pub fn pjsip_tls_transport_lis_start(factory: *mut pjsip_tpfactory, local: *const pj_sockaddr, a_name: *const pjsip_host_port) -> pj_status_t;
+    pub fn pjsip_tls_transport_restart(factory: *mut pjsip_tpfactory, local: *const pj_sockaddr, a_name: *const pjsip_host_port) -> pj_status_t;
+    pub fn pjsip_authorization_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_authorization_hdr;
+    pub fn pjsip_proxy_authorization_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_proxy_authorization_hdr;
+    pub fn pjsip_www_authenticate_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_www_authenticate_hdr;
+    pub fn pjsip_proxy_authenticate_hdr_create(pool: *mut pj_pool_t) -> *mut pjsip_proxy_authenticate_hdr;
+    pub fn pjsip_auth_clt_pref_dup(pool: *mut pj_pool_t, dst: *mut pjsip_auth_clt_pref, src: *const pjsip_auth_clt_pref);
+    pub fn pjsip_cred_info_dup(pool: *mut pj_pool_t, dst: *mut pjsip_cred_info, src: *const pjsip_cred_info);
+    pub fn pjsip_cred_info_cmp(cred1: *const pjsip_cred_info, cred2: *const pjsip_cred_info) -> c_int;
+    pub fn pjsip_auth_clt_init(sess: *mut pjsip_auth_clt_sess, endpt: *mut pjsip_endpoint, pool: *mut pj_pool_t, options: c_uint) -> pj_status_t;
+    pub fn pjsip_auth_clt_deinit(sess: *mut pjsip_auth_clt_sess) -> pj_status_t;
+    pub fn pjsip_auth_clt_clone(pool: *mut pj_pool_t, sess: *mut pjsip_auth_clt_sess, rhs: *const pjsip_auth_clt_sess) -> pj_status_t;
+    pub fn pjsip_auth_clt_set_credentials(sess: *mut pjsip_auth_clt_sess, cred_cnt: c_int, c: *const pjsip_cred_info) -> pj_status_t;
+    pub fn pjsip_auth_clt_set_prefs(sess: *mut pjsip_auth_clt_sess, p: *const pjsip_auth_clt_pref) -> pj_status_t;
+    pub fn pjsip_auth_clt_get_prefs(sess: *mut pjsip_auth_clt_sess, p: *mut pjsip_auth_clt_pref) -> pj_status_t;
+    pub fn pjsip_auth_clt_init_req(sess: *mut pjsip_auth_clt_sess, tdata: *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_auth_clt_reinit_req(sess: *mut pjsip_auth_clt_sess, rdata: *const pjsip_rx_data, old_request: *mut pjsip_tx_data, new_request: *mut *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_auth_srv_init(pool: *mut pj_pool_t, auth_srv: *mut pjsip_auth_srv, realm: *const pj_str_t, lookup: pjsip_auth_lookup_cred, options: c_uint) -> pj_status_t;
+    pub fn pjsip_auth_srv_init2(pool: *mut pj_pool_t, auth_srv: *mut pjsip_auth_srv, param: *const pjsip_auth_srv_init_param) -> pj_status_t;
+    pub fn pjsip_auth_srv_verify(auth_srv: *mut pjsip_auth_srv, rdata: *mut pjsip_rx_data, status_code: *mut c_int) -> pj_status_t;
+    pub fn pjsip_auth_srv_challenge(auth_srv: *mut pjsip_auth_srv, qop: *const pj_str_t, nonce: *const pj_str_t, opaque: *const pj_str_t, stale: pj_bool_t, tdata: *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_auth_create_digest(result: *mut pj_str_t, nonce: *const pj_str_t, nc: *const pj_str_t, cnonce: *const pj_str_t, qop: *const pj_str_t, uri: *const pj_str_t, realm: *const pj_str_t, cred_info: *const pjsip_cred_info, method: *const pj_str_t);
+    pub fn pjsip_tsx_layer_init_module(endpt: *mut pjsip_endpoint) -> pj_status_t;
+    pub fn pjsip_tsx_layer_instance() -> *mut pjsip_module;
+    pub fn pjsip_tsx_layer_destroy() -> pj_status_t;
+    pub fn pjsip_tsx_layer_get_tsx_count() -> c_uint;
+    pub fn pjsip_tsx_layer_find_tsx(key: *const pj_str_t, lock: pj_bool_t) -> *mut pjsip_transaction;
+    pub fn pjsip_tsx_layer_find_tsx2(key: *const pj_str_t, add_ref: pj_bool_t) -> *mut pjsip_transaction;
+    pub fn pjsip_tsx_create_uac(tsx_user: *mut pjsip_module, tdata: *mut pjsip_tx_data, p_tsx: *mut *mut pjsip_transaction) -> pj_status_t;
+    pub fn pjsip_tsx_create_uac2(tsx_user: *mut pjsip_module, tdata: *mut pjsip_tx_data, grp_lock: *mut pj_grp_lock_t, p_tsx: *mut *mut pjsip_transaction) -> pj_status_t;
+    pub fn pjsip_tsx_create_uas(tsx_user: *mut pjsip_module, rdata: *mut pjsip_rx_data, p_tsx: *mut *mut pjsip_transaction) -> pj_status_t;
+    pub fn pjsip_tsx_create_uas2(tsx_user: *mut pjsip_module, rdata: *mut pjsip_rx_data, grp_lock: *mut pj_grp_lock_t, p_tsx: *mut *mut pjsip_transaction) -> pj_status_t;
+    pub fn pjsip_tsx_set_transport(tsx: *mut pjsip_transaction, sel: *const pjsip_tpselector) -> pj_status_t;
+    pub fn pjsip_tsx_recv_msg(tsx: *mut pjsip_transaction, rdata: *mut pjsip_rx_data);
+    pub fn pjsip_tsx_send_msg(tsx: *mut pjsip_transaction, tdata: *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_tsx_retransmit_no_state(tsx: *mut pjsip_transaction, tdata: *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_tsx_create_key(pool: *mut pj_pool_t, key: *mut pj_str_t, role: pjsip_role_e, method: *const pjsip_method, rdata: *const pjsip_rx_data) -> pj_status_t;
+    pub fn pjsip_tsx_terminate(tsx: *mut pjsip_transaction, code: c_int) -> pj_status_t;
+    pub fn pjsip_tsx_stop_retransmit(tsx: *mut pjsip_transaction) -> pj_status_t;
+    pub fn pjsip_tsx_set_timeout(tsx: *mut pjsip_transaction, millisec: c_uint) -> pj_status_t;
+    pub fn pjsip_rdata_get_tsx(rdata: *mut pjsip_rx_data) -> *mut pjsip_transaction;
+    pub fn pjsip_tsx_layer_dump(detail: pj_bool_t);
+    pub fn pjsip_tsx_state_str(state: pjsip_tsx_state_e) -> *const c_char;
+    pub fn pjsip_role_name(role: pjsip_role_e) -> *const c_char;
+    pub fn pjsip_ua_init_module(endpt: *mut pjsip_endpoint, prm: *const pjsip_ua_init_param) -> pj_status_t;
+    pub fn pjsip_ua_instance() -> *mut pjsip_user_agent;
+    pub fn pjsip_ua_get_dlg_set_count() -> pj_uint32_t;
+    pub fn pjsip_ua_find_dialog(call_id: *const pj_str_t, local_tag: *const pj_str_t, remote_tag: *const pj_str_t, lock_dialog: pj_bool_t) -> *mut pjsip_dialog;
+    pub fn pjsip_ua_destroy() -> pj_status_t;
+    pub fn pjsip_ua_dump(detail: pj_bool_t);
+    pub fn pjsip_ua_get_endpt(ua: *mut pjsip_user_agent) -> *mut pjsip_endpoint;
+    pub fn pjsip_ua_register_dlg(ua: *mut pjsip_user_agent, dlg: *mut pjsip_dialog) -> pj_status_t;
+    pub fn pjsip_ua_unregister_dlg(ua: *mut pjsip_user_agent, dlg: *mut pjsip_dialog) -> pj_status_t;
     pub fn pjsip_method_creates_dialog(m: *const pjsip_method) -> pj_bool_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_create_uac(
-        ua: *mut pjsip_user_agent,
-        local_uri: *const pj_str_t,
-        local_contact: *const pj_str_t,
-        remote_uri: *const pj_str_t,
-        target: *const pj_str_t,
-        p_dlg: *mut *mut pjsip_dialog,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_create_uac2(
-        create_param: *const pjsip_dlg_create_uac_param,
-        p_dlg: *mut *mut pjsip_dialog,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_create_uas_and_inc_lock(
-        ua: *mut pjsip_user_agent,
-        rdata: *mut pjsip_rx_data,
-        contact: *const pj_str_t,
-        p_dlg: *mut *mut pjsip_dialog,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_set_transport(
-        dlg: *mut pjsip_dialog,
-        sel: *const pjsip_tpselector,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_set_via_sent_by(
-        dlg: *mut pjsip_dialog,
-        via_addr: *mut pjsip_host_port,
-        via_tp: *mut pjsip_transport,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_fork(
-        original_dlg: *const pjsip_dialog,
-        rdata: *const pjsip_rx_data,
-        new_dlg: *mut *mut pjsip_dialog,
-    ) -> pj_status_t;
-}
-extern "C" {
+    pub fn pjsip_dlg_create_uac(ua: *mut pjsip_user_agent, local_uri: *const pj_str_t, local_contact: *const pj_str_t, remote_uri: *const pj_str_t, target: *const pj_str_t, p_dlg: *mut *mut pjsip_dialog) -> pj_status_t;
+    pub fn pjsip_dlg_create_uac2(create_param: *const pjsip_dlg_create_uac_param, p_dlg: *mut *mut pjsip_dialog) -> pj_status_t;
+    pub fn pjsip_dlg_create_uas_and_inc_lock(ua: *mut pjsip_user_agent, rdata: *mut pjsip_rx_data, contact: *const pj_str_t, p_dlg: *mut *mut pjsip_dialog) -> pj_status_t;
+    pub fn pjsip_dlg_set_transport(dlg: *mut pjsip_dialog, sel: *const pjsip_tpselector) -> pj_status_t;
+    pub fn pjsip_dlg_set_via_sent_by(dlg: *mut pjsip_dialog, via_addr: *mut pjsip_host_port, via_tp: *mut pjsip_transport) -> pj_status_t;
+    pub fn pjsip_dlg_fork(original_dlg: *const pjsip_dialog, rdata: *const pjsip_rx_data, new_dlg: *mut *mut pjsip_dialog) -> pj_status_t;
     pub fn pjsip_dlg_terminate(dlg: *mut pjsip_dialog) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_set_route_set(
-        dlg: *mut pjsip_dialog,
-        route_set: *const pjsip_route_hdr,
-    ) -> pj_status_t;
-}
-extern "C" {
+    pub fn pjsip_dlg_set_route_set(dlg: *mut pjsip_dialog, route_set: *const pjsip_route_hdr) -> pj_status_t;
     pub fn pjsip_dlg_inc_session(dlg: *mut pjsip_dialog, mod_: *mut pjsip_module) -> pj_status_t;
-}
-extern "C" {
     pub fn pjsip_dlg_dec_session(dlg: *mut pjsip_dialog, mod_: *mut pjsip_module) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_add_usage(
-        dlg: *mut pjsip_dialog,
-        module: *mut pjsip_module,
-        mod_data: *mut c_void,
-    ) -> pj_status_t;
-}
-extern "C" {
+    pub fn pjsip_dlg_add_usage(dlg: *mut pjsip_dialog, module: *mut pjsip_module, mod_data: *mut c_void) -> pj_status_t;
     pub fn pjsip_dlg_has_usage(dlg: *mut pjsip_dialog, module: *mut pjsip_module) -> pj_bool_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_set_mod_data(
-        dlg: *mut pjsip_dialog,
-        mod_id: c_int,
-        data: *mut c_void,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_get_mod_data(
-        dlg: *mut pjsip_dialog,
-        mod_id: c_int,
-    ) -> *mut c_void;
-}
-extern "C" {
+    pub fn pjsip_dlg_set_mod_data(dlg: *mut pjsip_dialog, mod_id: c_int, data: *mut c_void) -> pj_status_t;
+    pub fn pjsip_dlg_get_mod_data(dlg: *mut pjsip_dialog, mod_id: c_int) -> *mut c_void;
     pub fn pjsip_dlg_inc_lock(dlg: *mut pjsip_dialog);
-}
-extern "C" {
     pub fn pjsip_dlg_try_inc_lock(dlg: *mut pjsip_dialog) -> pj_status_t;
-}
-extern "C" {
     pub fn pjsip_dlg_dec_lock(dlg: *mut pjsip_dialog);
-}
-extern "C" {
     pub fn pjsip_dlg_get_lock(dlg: *mut pjsip_dialog) -> *mut pj_grp_lock_t;
-}
-extern "C" {
     pub fn pjsip_rdata_get_dlg(rdata: *mut pjsip_rx_data) -> *mut pjsip_dialog;
-}
-extern "C" {
     pub fn pjsip_tdata_get_dlg(tdata: *mut pjsip_tx_data) -> *mut pjsip_dialog;
-}
-extern "C" {
     pub fn pjsip_tsx_get_dlg(tsx: *mut pjsip_transaction) -> *mut pjsip_dialog;
-}
-extern "C" {
-    pub fn pjsip_dlg_create_request(
-        dlg: *mut pjsip_dialog,
-        method: *const pjsip_method,
-        cseq: c_int,
-        tdata: *mut *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_send_request(
-        dlg: *mut pjsip_dialog,
-        tdata: *mut pjsip_tx_data,
-        mod_data_id: c_int,
-        mod_data: *mut c_void,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_create_response(
-        dlg: *mut pjsip_dialog,
-        rdata: *mut pjsip_rx_data,
-        st_code: c_int,
-        st_text: *const pj_str_t,
-        tdata: *mut *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_modify_response(
-        dlg: *mut pjsip_dialog,
-        tdata: *mut pjsip_tx_data,
-        st_code: c_int,
-        st_text: *const pj_str_t,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_send_response(
-        dlg: *mut pjsip_dialog,
-        tsx: *mut pjsip_transaction,
-        tdata: *mut pjsip_tx_data,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_respond(
-        dlg: *mut pjsip_dialog,
-        rdata: *mut pjsip_rx_data,
-        st_code: c_int,
-        st_text: *const pj_str_t,
-        hdr_list: *const pjsip_hdr,
-        body: *const pjsip_msg_body,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_remote_has_cap(
-        dlg: *mut pjsip_dialog,
-        htype: c_int,
-        hname: *const pj_str_t,
-        token: *const pj_str_t,
-    ) -> pjsip_dialog_cap_status;
-}
-extern "C" {
-    pub fn pjsip_dlg_get_remote_cap_hdr(
-        dlg: *mut pjsip_dialog,
-        htype: c_int,
-        hname: *const pj_str_t,
-    ) -> *const pjsip_hdr;
-}
-extern "C" {
-    pub fn pjsip_dlg_set_remote_cap_hdr(
-        dlg: *mut pjsip_dialog,
-        cap_hdr: *const pjsip_generic_array_hdr,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_remove_remote_cap_hdr(
-        dlg: *mut pjsip_dialog,
-        htype: c_int,
-        hname: *const pj_str_t,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_update_remote_cap(
-        dlg: *mut pjsip_dialog,
-        msg: *const pjsip_msg,
-        strict: pj_bool_t,
-    ) -> pj_status_t;
-}
-extern "C" {
-    pub fn pjsip_dlg_on_tsx_state(
-        dlg: *mut pjsip_dialog,
-        tsx: *mut pjsip_transaction,
-        e: *mut pjsip_event,
-    );
-}
-extern "C" {
+    pub fn pjsip_dlg_create_request(dlg: *mut pjsip_dialog, method: *const pjsip_method, cseq: c_int, tdata: *mut *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_dlg_send_request(dlg: *mut pjsip_dialog, tdata: *mut pjsip_tx_data, mod_data_id: c_int, mod_data: *mut c_void) -> pj_status_t;
+    pub fn pjsip_dlg_create_response(dlg: *mut pjsip_dialog, rdata: *mut pjsip_rx_data, st_code: c_int, st_text: *const pj_str_t, tdata: *mut *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_dlg_modify_response(dlg: *mut pjsip_dialog, tdata: *mut pjsip_tx_data, st_code: c_int, st_text: *const pj_str_t) -> pj_status_t;
+    pub fn pjsip_dlg_send_response(dlg: *mut pjsip_dialog, tsx: *mut pjsip_transaction, tdata: *mut pjsip_tx_data) -> pj_status_t;
+    pub fn pjsip_dlg_respond(dlg: *mut pjsip_dialog, rdata: *mut pjsip_rx_data, st_code: c_int, st_text: *const pj_str_t, hdr_list: *const pjsip_hdr, body: *const pjsip_msg_body) -> pj_status_t;
+    pub fn pjsip_dlg_remote_has_cap(dlg: *mut pjsip_dialog, htype: c_int, hname: *const pj_str_t, token: *const pj_str_t) -> pjsip_dialog_cap_status;
+    pub fn pjsip_dlg_get_remote_cap_hdr(dlg: *mut pjsip_dialog, htype: c_int, hname: *const pj_str_t) -> *const pjsip_hdr;
+    pub fn pjsip_dlg_set_remote_cap_hdr(dlg: *mut pjsip_dialog, cap_hdr: *const pjsip_generic_array_hdr) -> pj_status_t;
+    pub fn pjsip_dlg_remove_remote_cap_hdr(dlg: *mut pjsip_dialog, htype: c_int, hname: *const pj_str_t) -> pj_status_t;
+    pub fn pjsip_dlg_update_remote_cap(dlg: *mut pjsip_dialog, msg: *const pjsip_msg, strict: pj_bool_t) -> pj_status_t;
+    pub fn pjsip_dlg_on_tsx_state(dlg: *mut pjsip_dialog, tsx: *mut pjsip_transaction, e: *mut pjsip_event);
     pub fn pjsip_dlg_on_rx_request(dlg: *mut pjsip_dialog, rdata: *mut pjsip_rx_data);
-}
-extern "C" {
     pub fn pjsip_dlg_on_rx_response(dlg: *mut pjsip_dialog, rdata: *mut pjsip_rx_data);
 }
