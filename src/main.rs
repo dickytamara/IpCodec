@@ -43,7 +43,6 @@ use gio::prelude::*;
 use helper::{HelperFileSettings, application_config_path};
 use pjproject::{pjnath::TurnTpType, pjsip_ua::SIPInvState, pjsua::{CredentialInfoType, ua::CredentialInfoExt}, prelude::*};
 use pjproject::pjsua::media::UASound;
-use sipcore::SIPCoreEventsExt;
 use systemstat::Duration;
 
 use pjproject::pj;
@@ -162,10 +161,10 @@ fn callback_dialpad_widget(sipua: &mut SIPUserAgent, dialpad: &DialpadWidget) {
         println!("sip_call_addres : {}", sip_address);
 
         match state {
-            CallButtonState::Call => sip.get_context().call(sip_address),
-            CallButtonState::Hangup => sip.get_context().call_hangup(),
-            CallButtonState::Abort => sip.get_context().call_hangup(),
-            CallButtonState::Answer => sip.get_context().call_answer(),
+            CallButtonState::Call => sip.call(sip_address),
+            CallButtonState::Hangup => sip.call_hangup(),
+            CallButtonState::Abort => sip.call_hangup(),
+            CallButtonState::Answer => sip.call_answer(),
             _ => ()
         }
 
@@ -173,7 +172,7 @@ fn callback_dialpad_widget(sipua: &mut SIPUserAgent, dialpad: &DialpadWidget) {
 
     // callback inv state
     let dialpad = dialpad.clone();
-    sipua.get_context().connect_invite( move | state | {
+    sipua.connect_invite( move | state | {
         let dialpad = dialpad.clone();
         glib::source::idle_add( move || {
             match state {
@@ -210,7 +209,7 @@ fn callback_account_widget(sipua: &mut SIPUserAgent, account: &AccountWidget) {
         sipua_clone.acc_cred().set_realm(account_clone.get_realm());
         sipua_clone.acc_cred().set_username(account_clone.get_username());
         sipua_clone.acc_cred().set_data(account_clone.get_password());
-        sipua_clone.get_context().account_connect();
+        sipua_clone.account_connect();
         // sipacc.add(true);
     });
 }
@@ -254,7 +253,7 @@ fn callback_settings_widget(sipua: &mut SIPUserAgent, settings: &SettingsWidget)
     settings.apply_connect_clicked(move |page| {
         match page.unwrap() {
             SettingsCurrentActivePage::Ua => {
-                ua.get_context().auto_answer.set(settings_clone.call.get_autoanswer());
+                ua.set_autoanswer(settings_clone.call.get_autoanswer());
             },
             SettingsCurrentActivePage::Stun => {
                 ua.ua_config().set_stun_srv(

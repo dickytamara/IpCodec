@@ -1633,8 +1633,7 @@ impl UAAccount {
         msg_data: Option<&mut UAMsgData>,
     ) -> Result<call::UACall, i32> {
         unsafe {
-            // let mut call_id = Box::new(-1_i32);
-            let mut call_id = -1_i32;
+            let mut call_id = Box::new(-1_i32);
 
             let opt = match opt {
                 Some(val) => val as *const _,
@@ -1652,13 +1651,13 @@ impl UAAccount {
                 opt,
                 std::ptr::null_mut(),
                 msg_data,
-                &mut call_id as *mut _
+                call_id.as_mut() as *mut _
             );
 
             match utils::check_status(status) {
                 Ok(()) => {
-                    if call_id != -1 {
-                        return Ok(call::UACall::from(call_id));
+                    if *call_id != -1 {
+                        return Ok(call::UACall::from(*call_id));
                     } else {
                         return Err(-1);
                     }

@@ -404,6 +404,12 @@ impl From<i32> for UACall {
     }
 }
 
+impl Into<i32> for UACall {
+    fn into(self) -> i32 {
+        self.id
+    }
+}
+
 
 impl UACall {
 
