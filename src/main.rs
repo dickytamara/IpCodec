@@ -202,7 +202,6 @@ fn callback_account_widget(sipua: &mut SIPUserAgent, account: &AccountWidget) {
     let account_clone = account.clone();
     let sipua_clone = sipua.clone();
     account.on_btn_connect_clicked(move || {
-        // transport.port = 4000;
         sipua_clone.acc_config().set_id(account_clone.get_sip_url());
         sipua_clone.acc_config().set_reg_uri(account_clone.get_registrar_url());
         sipua_clone.acc_cred().set_data_type(CredentialInfoType::PlainText);
@@ -210,7 +209,6 @@ fn callback_account_widget(sipua: &mut SIPUserAgent, account: &AccountWidget) {
         sipua_clone.acc_cred().set_username(account_clone.get_username());
         sipua_clone.acc_cred().set_data(account_clone.get_password());
         sipua_clone.account_connect();
-        // sipacc.add(true);
     });
 }
 

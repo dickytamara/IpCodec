@@ -65,6 +65,7 @@ impl SIPCoreEvents {
 impl SIPCore {
 
     pub fn new() -> Self {
+        // create instance
         pjsua::create().unwrap();
         let mut sipcore = Self {
             ua_config: Box::new(UAConfig::default()),
@@ -102,26 +103,10 @@ impl SIPCore {
 
         // set default event
         sipcore.ua_config.cb.on_call_state = Some(on_call_state);
-        // sipcore.ua_config.borrow_mut().cb.on_stream_destroyed = Some(on_stream_destroyed);
         sipcore.ua_config.cb.on_call_media_state = Some(on_call_media_state);
         sipcore.ua_config.cb.on_incoming_call = Some(on_incoming_call);
-        // sipcore.ua_config.cb.on_call_redirected = Some(on_call_redirected);
-        // sipcore.ua_config.cb.on_dtmf_digit2 = Some(on_dtmf_digit2);
         sipcore.ua_config.cb.on_reg_state = Some(on_reg_state);
-        // sipcore.ua_config.cb.on_incoming_subscribe = Some(on_incoming_subscribe);
-        // sipcore.ua_config.cb.on_buddy_state = Some(on_buddy_state);
-        // sipcore.ua_config.cb.on_buddy_evsub_state = Some(on_buddy_evsub_state);
-        // sipcore.ua_config.cb.on_pager = Some(on_pager);
-        // sipcore.ua_config.cb.on_typing = Some(on_typing);
-        // sipcore.ua_config.cb.on_call_transfer_status = Some(on_call_transfer_status);
-        // sipcore.ua_config.cb.on_call_replaced = Some(on_call_replaced);
-        // sipcore.ua_config.cb.on_nat_detect = Some(on_nat_detect);
-        // sipcore.ua_config.cb.on_mwi_info = Some(on_mwi_info);
-        // sipcore.ua_config.borrow_mut().cb.on_transport_state = Some(on_transport_state);
-        // sipcore.ua_config.cb.on_ice_transport_error = Some(on_ice_transport_error);
-        // sipcore.ua_config.borrow_mut().cb.on_snd_dev_operation = Some(on_snd_dev_operation);
-        // sipcore.ua_config.borrow_mut().cb.on_call_media_event = Some(on_call_media_event);
-        // sipcore.ua_config.borrow_mut().cb.on_ip_change_progress = Some(on_ip_change_progress);
+
 
         // default media config
         sipcore.media_config.set_channel_count(ConfigChannel::Stereo);
@@ -386,66 +371,9 @@ impl SIPCore {
         // }
     }
 
-    // pub fn callback_on_stream_destroyed(&self, call: UACall, strm: *mut MediaStream, stream_idx: c_uint) {
-    //     // println!("OnStreamDestroyed: CallID {}, StreamIDX {}", call_id, stream_idx);
-    // }
-
-    // pub fn callback_on_dtmf_digit2(&self, call: UACall, info: *const UADtmfInfo) {
-    // }
-
-    // pub fn callback_on_call_redirected(&self, call: UACall, target: *const SIPUri, e: *const SIPEvent) -> u32 {
-    //     self.redir_op.get().into()
-    // }
-
     pub fn callback_on_reg_state(&self, acc: UAAccount) {
         // println!("reg_state {}", acc_id);
     }
-
-    // pub fn callback_on_incoming_subscribe(&self, acc: UAAccount, srv_pres: *mut UASrvPres, buddy: UABuddy, from: String, rdata: *mut SIPRxData, code: &mut SIPStatusCode, reason: &mut String, msg_data: *mut UAMsgData)
-    // {
-    // }
-
-    // pub fn callback_on_buddy_state(&self, buddy: UABuddy) {
-    // }
-
-    // pub fn callback_on_buddy_evsub_state(&self, buddy: UABuddy, sub: *mut SIPEvsub, event: *mut SIPEvent) {
-    // }
-
-    // pub fn callback_on_pager(&self, call: UACall, from: String, to: String , contact: String, mime_type: String, body: String) {
-    // }
-
-    // pub fn callback_on_typing(&self, call: UACall, from: String, to: String, contact: String, is_typing: bool) {
-    // }
-
-    // pub fn callback_on_call_transfer_status(&self, call: UACall, st_code: i32, st_text: String, final_: bool, p_cont: &mut bool) {
-    // }
-
-    // pub fn callback_on_call_replaced(&self, old_call: UACall, new_call: UACall) {
-    // }
-
-    // pub fn callback_on_nat_detect(&self, res: *const STUNNatDetectResult) {
-    // }
-
-    // pub fn callback_on_mwi_info(&self, account: UAAccount, mwi_info: *mut UAMwiInfo) {
-    // }
-
-    // pub fn callback_on_transport_state(&self, tp: *mut SIPTransport, state: SIPTransportState, info: *const SIPTransportStateInfo) {
-    // }
-
-    // pub fn callback_on_ice_transport_error(&self, index: i32, op: IceStransOp, status: i32, param: *mut c_void,
-    // ) {
-    // }
-
-    // pub fn callback_on_snd_dev_operation(&self, operation: i32) -> i32 {
-    //     1
-    // }
-
-    // pub fn callback_on_call_media_event(&self, call: UACall, med_idx: u32, event: *mut MediaEvent) {
-    //     println!("Event {}", "skip");
-    // }
-
-    // pub fn callback_on_ip_change_progress(&self, op: UAIpChangeOp, status: i32, info: *const UAIpChangeOpInfo) {
-    // }
 
 }
 
@@ -481,6 +409,7 @@ impl SIPCoreEventsExt for SIPCore {
 //             str_null as *const _,
 //             tdata as *mut _,
 //         );
+
 //         if status != PJ_SUCCESS as i32 {
 //             return;
 //         }
@@ -636,12 +565,6 @@ unsafe extern "C" fn on_call_state(call_id: i32, e: *mut SIPEvent) {
     .callback_on_call_state(UACall::from(call_id), e);
 }
 
-/// on_stream_destroyed(pjsua_call_id, pjmedia_stream, stream_idx)
-// unsafe extern "C" fn on_stream_destroyed(call_id: i32, strm: *mut MediaStream, stream_idx: u32) {
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_stream_destroyed(UACall::from(call_id), strm, stream_idx);
-// }
-
 // on_incoming_call(acc_id, call_id, rdata)
 unsafe extern "C" fn on_incoming_call( acc_id: i32, call_id: i32, rdata: *mut SIPRxData) {
     SIP_CORE.as_mut().unwrap()
@@ -654,193 +577,8 @@ unsafe extern "C" fn on_call_media_state(call_id: i32) {
     .callback_on_call_media_state(UACall::from(call_id));
 }
 
-// on_dtmf_digit2(call_id, info)
-// unsafe extern "C" fn on_dtmf_digit2(call_id: i32, info: *const UADtmfInfo) {
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_dtmf_digit2(UACall::from(call_id), info)
-// }
-
-// on_call_redirected(call_id, target, e) -> pjsip_redirect_op
-// unsafe extern "C" fn on_call_redirected( call_id: i32, target: *const SIPUri, e: *const SIPEvent) -> u32 {
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_call_redirected(UACall::from(call_id), target, e)
-// }
-
 /// on_reg_state(acc_id)
 unsafe extern "C" fn on_reg_state(acc_id: i32) {
     SIP_CORE.as_ref().unwrap()
     .callback_on_reg_state(UAAccount::from(acc_id));
 }
-
-// On Incomming Subscribe
-// unsafe extern "C" fn on_incoming_subscribe(
-//     acc_id: i32,
-//     srv_pres: *mut UASrvPres,
-//     buddy_id: i32,
-//     from: *const PJStr,
-//     rdata: *mut SIPRxData,
-//     code: *mut u32,
-//     reason: *mut PJStr,
-//     msg_data: *mut UAMsgData,
-// ) {
-//     // convert to enum
-//     let mut sip_code = SIPStatusCode::try_from(*code.clone()).expect("Error Convert SIPStatusCode");
-//     let mut reason_str = from.as_ref().unwrap().to_string();
-
-
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_incoming_subscribe(
-//         UAAccount::from(acc_id),
-//         srv_pres,
-//         UABuddy::from(buddy_id),
-//         from.as_ref().unwrap().to_string(),
-//         rdata,
-//         &mut sip_code,
-//         &mut reason_str,
-//         msg_data
-//     );
-
-//     // convert back and return.
-//     *code = sip_code.into();
-//     *reason = PJStr::from_string(reason_str);
-// }
-
-// on_buddy_state(buddy_id)
-// unsafe extern "C" fn on_buddy_state(buddy_id: i32) {
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_buddy_state(UABuddy::from(buddy_id));
-// }
-
-// on_buddy_evsub_state(buddy_id, sub, event)
-// unsafe extern "C" fn on_buddy_evsub_state(buddy_id: i32, sub: *mut SIPEvsub, event: *mut SIPEvent) {
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_buddy_evsub_state(UABuddy::from(buddy_id), sub, event);
-// }
-
-// On Pager
-// unsafe extern "C" fn on_pager(
-//     call_id: i32,
-//     from: *const PJStr,
-//     to: *const PJStr,
-//     contact: *const PJStr,
-//     mime_type: *const PJStr,
-//     body: *const PJStr,
-// ) {
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_pager(
-//         UACall::from(call_id),
-//         from.as_ref().unwrap().to_string(),
-//         to.as_ref().unwrap().to_string(),
-//         contact.as_ref().unwrap().to_string(),
-//         mime_type.as_ref().unwrap().to_string(),
-//         body.as_ref().unwrap().to_string()
-//     );
-// }
-
-// on Typing
-// unsafe extern "C" fn on_typing(
-//     call_id: i32,
-//     from: *const PJStr,
-//     to: *const PJStr,
-//     contact: *const PJStr,
-//     is_typing: i32,
-// ) {
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_typing(
-//         UACall::from(call_id),
-//         from.as_ref().unwrap().to_string(),
-//         to.as_ref().unwrap().to_string(),
-//         contact.as_ref().unwrap().to_string(),
-//         check_boolean(is_typing)
-//     );
-// }
-
-// On Call transfer status
-// unsafe extern "C" fn on_call_transfer_status(
-//     call_id: i32,
-//     st_code: i32,
-//     st_text: *const PJStr,
-//     final_: i32,
-//     p_cont: *mut i32,
-// ) {
-//     let mut pcont = check_boolean(*p_cont);
-
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_call_transfer_status(
-//         UACall::from(call_id),
-//         st_code,
-//         st_text.as_ref().unwrap().to_string(),
-//         check_boolean(final_),
-//         &mut pcont
-//     );
-
-//     *p_cont = boolean_to_pjbool(pcont);
-// }
-
-// (old_call_id: pjsua_call_id, new_call_id: pjsua_call_id)
-// unsafe extern "C" fn on_call_replaced(old_call_id: i32, new_call_id: i32) {
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_call_replaced(
-//         UACall::from(old_call_id),
-//         UACall::from(new_call_id)
-//     );
-// }
-
-// On NAT detect
-// unsafe extern "C" fn on_nat_detect(res: *const STUNNatDetectResult) {
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_nat_detect(res);
-// }
-
-// On MWI info
-// unsafe extern "C" fn on_mwi_info(acc_id: i32, mwi_info: *mut UAMwiInfo) {
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_mwi_info(UAAccount::from(acc_id), mwi_info);
-// }
-
-// On Transport state
-// unsafe extern "C" fn on_transport_state(tp: *mut SIPTransport, state: u32, info: *const SIPTransportStateInfo) {
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_transport_state(
-//         tp,
-//         SIPTransportState::try_from(state).unwrap(),
-//         info
-//     );
-// }
-
-// On ICE transport error
-// unsafe extern "C" fn on_ice_transport_error(index: i32, op: u32, status: i32, param: *mut c_void) {
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_ice_transport_error(
-//         index,
-//         IceStransOp::try_from(op).unwrap(),
-//         status,
-//         param
-//     );
-// }
-
-// Sound device operation
-// unsafe extern "C" fn on_snd_dev_operation(operation: i32) -> i32 {
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_snd_dev_operation(operation)
-// }
-
-// Call media event
-// unsafe extern "C" fn on_call_media_event(call_id: i32, med_idx: u32, event: *mut MediaEvent) {
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_call_media_event(
-//         UACall::from(call_id),
-//         med_idx,
-//         event
-//     );
-// }
-
-// IP change progress
-// unsafe extern "C" fn on_ip_change_progress(op: u32, status: i32, info: *const UAIpChangeOpInfo) {
-//     SIP_CORE.as_ref().unwrap()
-//     .callback_on_ip_change_progress(
-//         UAIpChangeOp::try_from(op).unwrap(),
-//         status,
-//         info
-//     );
-// }
