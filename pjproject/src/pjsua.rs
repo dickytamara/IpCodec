@@ -12,6 +12,7 @@ use super::prelude::*;
 use super::utils;
 
 
+use std::convert::TryFrom;
 use std::os::raw::{c_void};
 use std::ffi::CString;
 use std::ptr;
@@ -397,8 +398,11 @@ pub fn destroy () -> Result<(), i32> {
     unsafe { utils::check_status(pjsua_sys::pjsua_destroy()) }
 }
 
-pub fn get_state () -> pjsua_state {
-    unsafe { pjsua_sys::pjsua_get_state() }
+pub fn get_state () -> UAState {
+    unsafe {
+        UAState::try_from(pjsua_sys::pjsua_get_state()).unwrap()
+    }
+
 }
 
 pub fn destroy2 (flags: u32) -> Result<(), i32> {

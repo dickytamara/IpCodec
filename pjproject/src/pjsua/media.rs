@@ -759,10 +759,10 @@ impl UAMediaConfigExt for UAMediaConfig {
 impl AutoDefault<UAMediaConfig> for UAMediaConfig {
     fn default() -> Self {
         unsafe {
-            let mut cfg = UAMediaConfig::new();
-            pjsua_sys::pjsua_media_config_default(&mut cfg as *mut _);
+            let mut cfg = Box::new(UAMediaConfig::new());
+            pjsua_sys::pjsua_media_config_default(cfg.as_mut() as *mut _);
 
-            cfg
+            *cfg
         }
     }
 } 

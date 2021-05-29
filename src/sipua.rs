@@ -40,19 +40,19 @@ impl SIPUserAgent {
         }
     }
 
-    pub fn log_config(&self) -> RefMut<UALoggingConfig> {
+    pub fn log_config(&self) -> RefMut<Box<UALoggingConfig>> {
         unsafe {
             SIP_CORE.as_ref().unwrap().log_config.borrow_mut()
         }
     }
 
-    pub fn ua_config(&self) -> RefMut<UAConfig> {
+    pub fn ua_config(&self) -> RefMut<Box<UAConfig>> {
         unsafe {
             SIP_CORE.as_ref().unwrap().ua_config.borrow_mut()
         }
     }
 
-    pub fn media_config(&self) -> RefMut<UAMediaConfig> {
+    pub fn media_config(&self) -> RefMut<Box<UAMediaConfig>> {
         unsafe {
             SIP_CORE.as_ref().unwrap().media_config.borrow_mut()
         }

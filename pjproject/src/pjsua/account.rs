@@ -1372,7 +1372,7 @@ impl UAAccount {
     pub fn get_config (&self) -> Result<Box<UAAccConfig>, i32> {
         unsafe {
             let pool = pool_create("tmp-pool");
-            let mut acc_cfg = Box::new(UAAccConfig::default());
+            let mut acc_cfg = Box::new(UAAccConfig::new());
 
             let status = pjsua_sys::pjsua_acc_get_config(self.id, pool, acc_cfg.as_mut() as *mut _);
 
@@ -1629,11 +1629,12 @@ impl UAAccount {
 
     pub fn call(&self,
         dst_uri: String,
-        opt: Option<&UACallSetting>,
-        msg_data: Option<&UAMsgData>,
+        opt: Option<&mut UACallSetting>,
+        msg_data: Option<&mut UAMsgData>,
     ) -> Result<call::UACall, i32> {
         unsafe {
-            let mut call_id = Box::new(-1_i32);
+            // let mut call_id = Box::new(-1_i32);
+            let mut call_id = -1_i32;
 
             let opt = match opt {
                 Some(val) => val as *const _,
@@ -1651,13 +1652,13 @@ impl UAAccount {
                 opt,
                 std::ptr::null_mut(),
                 msg_data,
-                call_id.as_mut() as *mut _
+                &mut call_id as *mut _
             );
 
             match utils::check_status(status) {
                 Ok(()) => {
-                    if *call_id != -1 {
-                        return Ok(call::UACall::from(*call_id));
+                    if call_id != -1 {
+                        return Ok(call::UACall::from(call_id));
                     } else {
                         return Err(-1);
                     }

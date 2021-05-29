@@ -544,10 +544,10 @@ impl UAConfigExt for UAConfig {
 impl AutoDefault<UAConfig> for UAConfig {
     fn default() -> Self {
         unsafe {
-            let mut cfg = UAConfig::new();
-            pjsua_sys::pjsua_config_default(&mut cfg as *mut _);
+            let mut cfg = Box::new(UAConfig::new());
+            pjsua_sys::pjsua_config_default(cfg.as_mut() as *mut _);
 
-            cfg
+            *cfg
         }
     }
 }

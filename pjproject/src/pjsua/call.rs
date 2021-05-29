@@ -384,6 +384,16 @@ impl AutoDefault<UACallSetting> for UACallSetting {
     }
 }
 
+impl AutoDefault<UAMsgData> for UAMsgData {
+    fn default() -> Self {
+        unsafe {
+            let mut ret = Box::new(UAMsgData::new());
+            pjsua_sys::pjsua_msg_data_init(ret.as_mut() as *mut _);
+            *ret
+        }
+    }
+}
+
 
 #[derive(Clone, Copy)]
 pub struct UACall { id: i32 }
