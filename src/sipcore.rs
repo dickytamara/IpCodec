@@ -40,9 +40,8 @@ pub struct SIPCore {
     pub input_dev: i32,
     pub output_dev: i32,
     current_call: Option<UACall>,
-    pub auto_answer: bool,
     events: Rc<RefCell<SIPCoreEvents>>,
-    pub no_refersub: bool,
+    pub auto_answer: bool,
     pub compact_form: bool,
 }
 
@@ -89,7 +88,6 @@ impl SIPCore {
             current_call: None,
             auto_answer: false,
             events: Rc::new(RefCell::new(SIPCoreEvents::new())),
-            no_refersub: false,
             compact_form: false,
             no_udp: false,
             no_tcp: false,

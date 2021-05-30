@@ -1,5 +1,6 @@
 use pjproject::pjsip_ua::SIPInvState;
 use pjproject::pjsua::{CredentialInfo, UAAccConfig, UAConfig, UALoggingConfig, UAMediaConfig};
+use pjproject::prelude::UAConfigExt;
 
 use super::sipcore::*;
 use std::ops::Drop;
@@ -63,9 +64,9 @@ impl SIPUserAgent {
         }
     }
 
-    pub fn set_no_refersub(&self, value: bool) {
+    pub fn set_force_lr(&self, value: bool) {
         unsafe {
-            SIP_CORE.as_mut().unwrap().no_refersub = value;
+            SIP_CORE.as_mut().unwrap().ua_config.set_force_lr(value);
         }
     }
 

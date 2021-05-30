@@ -1192,57 +1192,6 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="lbl_ua_no_refersub">
-                                <property name="width-request">187</property>
-                                <property name="height-request">34</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="label" translatable="yes">Suppress event subscription 
-when transferring calls :</property>
-                              </object>
-                              <packing>
-                                <property name="x">21</property>
-                                <property name="y">78</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSwitch" id="swt_ua_no_refersub">
-                                <property name="width-request">50</property>
-                                <property name="height-request">26</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                              </object>
-                              <packing>
-                                <property name="x">222</property>
-                                <property name="y">85</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="lbl_ua_compact_form">
-                                <property name="width-request">177</property>
-                                <property name="height-request">20</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="label" translatable="yes">Minimize SIP message size :</property>
-                              </object>
-                              <packing>
-                                <property name="x">22</property>
-                                <property name="y">141</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSwitch" id="swt_ua_compact_form">
-                                <property name="width-request">50</property>
-                                <property name="height-request">26</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                              </object>
-                              <packing>
-                                <property name="x">223</property>
-                                <property name="y">135</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkLabel" id="lbl_ua_no_forcelr">
                                 <property name="width-request">184</property>
                                 <property name="height-request">34</property>

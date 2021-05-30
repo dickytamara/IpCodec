@@ -41,7 +41,7 @@ mod settings_tls;
 use gtk::prelude::*;
 use gio::prelude::*;
 use helper::{HelperFileSettings, application_config_path};
-use pjproject::{pjnath::TurnTpType, pjsip_ua::SIPInvState, pjsua::{CredentialInfoType, ua::CredentialInfoExt}, prelude::*};
+use pjproject::{pjnath::{IceSessTrickle, TurnTpType}, pjsip_ua::SIPInvState, pjsua::{CredentialInfoType, ua::CredentialInfoExt}, prelude::*};
 use pjproject::pjsua::media::UASound;
 use systemstat::Duration;
 
@@ -252,6 +252,7 @@ fn callback_settings_widget(sipua: &mut SIPUserAgent, settings: &SettingsWidget)
         match page.unwrap() {
             SettingsCurrentActivePage::Ua => {
                 ua.set_autoanswer(settings_clone.call.get_autoanswer());
+                ua.set_force_lr(settings_clone.call.get_no_forcelr());
             },
             SettingsCurrentActivePage::Stun => {
                 ua.ua_config().set_stun_srv(
@@ -264,6 +265,7 @@ fn callback_settings_widget(sipua: &mut SIPUserAgent, settings: &SettingsWidget)
             SettingsCurrentActivePage::Turn => {
                 if settings_clone.turn.get_use_turn() {
                     if !settings_clone.turn.get_server().is_empty() {
+
                         ua.media_config().set_enable_turn(true);
                         ua.media_config().set_turn_server(settings_clone.turn.get_server());
                         ua.media_config().set_turn_auth_cred(
@@ -272,9 +274,16 @@ fn callback_settings_widget(sipua: &mut SIPUserAgent, settings: &SettingsWidget)
                             Some(CredentialInfoType::PlainText),
                             Some(settings_clone.turn.get_password()),
                             None);
-                        // TODO: check code bellow
-                        ua.media_config().set_turn_conn_type(TurnTpType::Udp);
 
+                        // TODO: check code bellow
+                        let tp_type = match settings_clone.turn.get_transport() {
+                            1 => TurnTpType::Udp,
+                            2 => TurnTpType::Tcp,
+                            3 => TurnTpType::Tls,
+                            _ => TurnTpType::Udp
+                        };
+
+                        ua.media_config().set_turn_conn_type(tp_type);
 
                     } else {
                         ua.media_config().set_enable_turn(false);
@@ -282,7 +291,27 @@ fn callback_settings_widget(sipua: &mut SIPUserAgent, settings: &SettingsWidget)
                 }
             },
             SettingsCurrentActivePage::Ice => {
+                if settings_clone.ice.get_use_ice() {
 
+                } else {
+                    ua.media_config().set_enable_ice(settings_clone.ice.get_use_ice());
+                    ua.media_config().set_ice_no_rtcp(settings_clone.ice.get_no_rtcp());
+                    ua.media_config().set_ice_max_host_cands(settings_clone.ice.get_max_hosts() as i32);
+
+                    let trickle_method = match settings_clone.ice.get_trickle_method() {
+                        1 => IceSessTrickle::Disabled,
+                        2 => IceSessTrickle::Half,
+                        3 => IceSessTrickle::Full,
+                        _ => IceSessTrickle::Disabled
+                    };
+
+                    ua.media_config().set_ice_opt(
+                        Some(settings_clone.ice.get_aggressive()),
+                        None,
+                        None,
+                        Some(trickle_method)
+                    );
+                }
             },
             SettingsCurrentActivePage::Audio => {
 
@@ -315,7 +344,6 @@ fn callback_settings_widget(sipua: &mut SIPUserAgent, settings: &SettingsWidget)
 fn callback_codec_widget(sipua: &mut SIPUserAgent, settings: &CodecWidget) {
 
 }
-
 
 fn main() {
     gtk::init()
