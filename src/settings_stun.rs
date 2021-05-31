@@ -190,68 +190,52 @@ impl SettingsStunWidget {
         } else { None }
     }
 
-    pub fn set_username1(&self, value: String) {
-        self.ctx.borrow_mut().ent_username1.set_text(value.as_str());
+    pub fn set_cred1(&self, user: String, password: String) {
+        self.ctx.borrow_mut().ent_username1.set_text(user.as_str());
+        self.ctx.borrow_mut().ent_password1.set_text(password.as_str());
     }
 
-    pub fn get_username1(&self) -> String {
-        self.ctx.borrow().ent_username1.get_text().to_string().clone()
+    pub fn get_cred1(&self) -> (String, String) {
+        (
+            self.ctx.borrow().ent_username1.get_text().to_string(),
+            self.ctx.borrow().ent_password1.get_text().to_string()
+        )
     }
 
-    pub fn set_username2(&self, value: String) {
-        self.ctx.borrow_mut().ent_username2.set_text(value.as_str());
+    pub fn set_cred2(&self, user: String, password: String) {
+        self.ctx.borrow_mut().ent_username2.set_text(user.as_str());
+        self.ctx.borrow_mut().ent_password2.set_text(password.as_str());
     }
 
-    pub fn get_username2(&self) -> String {
-        self.ctx.borrow().ent_username2.get_text().to_string().clone()
+    pub fn get_cred2(&self) -> (String, String) {
+        (
+            self.ctx.borrow().ent_username2.get_text().to_string(),
+            self.ctx.borrow().ent_password2.get_text().to_string()
+        )
     }
 
-    pub fn set_username3(&self, value: String) {
-        self.ctx.borrow_mut().ent_username3.set_text(value.as_str());
+    pub fn set_cred3(&self, user: String, password: String) {
+        self.ctx.borrow_mut().ent_username3.set_text(user.as_str());
+        self.ctx.borrow_mut().ent_password3.set_text(password.as_str());
     }
 
-    pub fn get_username3(&self) -> String {
-        self.ctx.borrow().ent_username3.get_text().to_string().clone()
+    pub fn get_cred3(&self) -> (String, String) {
+        (
+            self.ctx.borrow().ent_username3.get_text().to_string(),
+            self.ctx.borrow().ent_password3.get_text().to_string()
+        )
     }
 
-    pub fn set_username4(&self, value: String) {
-        self.ctx.borrow_mut().ent_username4.set_text(value.as_str());
+    pub fn set_cred4(&self, user: String, password: String) {
+        self.ctx.borrow_mut().ent_username4.set_text(user.as_str());
+        self.ctx.borrow_mut().ent_password4.set_text(password.as_str());
     }
 
-    pub fn get_username4(&self) -> String {
-        self.ctx.borrow().ent_username4.get_text().to_string().clone()
-    }
-
-    pub fn set_password1(&self, value: String) {
-        self.ctx.borrow_mut().ent_password1.set_text(value.as_str());
-    }
-
-    pub fn get_password1(&self) -> String {
-        self.ctx.borrow().ent_password1.get_text().to_string().clone()
-    }
-
-    pub fn set_password2(&self, value: String) {
-        self.ctx.borrow_mut().ent_password2.set_text(value.as_str());
-    }
-
-    pub fn get_password2(&self) -> String {
-        self.ctx.borrow().ent_password2.get_text().to_string().clone()
-    }
-
-    pub fn set_password3(&self, value: String) {
-        self.ctx.borrow_mut().ent_password3.set_text(value.as_str());
-    }
-
-    pub fn get_password3(&self) -> String {
-        self.ctx.borrow().ent_password3.get_text().to_string().clone()
-    }
-
-    pub fn set_password4(&self, value: String) {
-        self.ctx.borrow_mut().ent_password4.set_text(value.as_str());
-    }
-
-    pub fn get_password4(&self) -> String {
-        self.ctx.borrow().ent_password4.get_text().to_string().clone()
+    pub fn get_cred4(&self) -> (String, String) {
+        (
+            self.ctx.borrow().ent_username4.get_text().to_string(),
+            self.ctx.borrow().ent_password4.get_text().to_string()
+        )
     }
 
     pub fn set_state_server1(&self, value: bool) {
@@ -298,14 +282,14 @@ impl HelperFileSettings for SettingsStunWidget {
         self.set_server2(config.get("stun", "server2").unwrap_or(String::new()));
         self.set_server3(config.get("stun", "server3").unwrap_or(String::new()));
         self.set_server4(config.get("stun", "server4").unwrap_or(String::new()));
-        self.set_username1(config.get("stun", "username1").unwrap_or(String::new()));
-        self.set_username2(config.get("stun", "username2").unwrap_or(String::new()));
-        self.set_username3(config.get("stun", "username3").unwrap_or(String::new()));
-        self.set_username4(config.get("stun", "username4").unwrap_or(String::new()));
-        self.set_password1(config.get("stun", "password1").unwrap_or(String::new()));
-        self.set_password2(config.get("stun", "password2").unwrap_or(String::new()));
-        self.set_password3(config.get("stun", "password3").unwrap_or(String::new()));
-        self.set_password4(config.get("stun", "password4").unwrap_or(String::new()));
+        // self.set_username1(config.get("stun", "username1").unwrap_or(String::new()));
+        // self.set_username2(config.get("stun", "username2").unwrap_or(String::new()));
+        // self.set_username3(config.get("stun", "username3").unwrap_or(String::new()));
+        // self.set_username4(config.get("stun", "username4").unwrap_or(String::new()));
+        // self.set_password1(config.get("stun", "password1").unwrap_or(String::new()));
+        // self.set_password2(config.get("stun", "password2").unwrap_or(String::new()));
+        // self.set_password3(config.get("stun", "password3").unwrap_or(String::new()));
+        // self.set_password4(config.get("stun", "password4").unwrap_or(String::new()));
         self.set_state_server1(config.get("stun", "state_server1").unwrap_or(String::from("false")).parse().unwrap());
         self.set_state_server2(config.get("stun", "state_server2").unwrap_or(String::from("false")).parse().unwrap());
         self.set_state_server3(config.get("stun", "state_server3").unwrap_or(String::from("false")).parse().unwrap());
@@ -320,14 +304,14 @@ impl HelperFileSettings for SettingsStunWidget {
         config.set("stun", "server2", Some(self.ctx.borrow().ent_server2.to_string()));
         config.set("stun", "server3", Some(self.ctx.borrow().ent_server3.to_string()));
         config.set("stun", "server4", Some(self.ctx.borrow().ent_server4.to_string()));
-        config.set("stun", "username1", Some(self.get_username1()));
-        config.set("stun", "username2", Some(self.get_username2()));
-        config.set("stun", "username3", Some(self.get_username3()));
-        config.set("stun", "username4", Some(self.get_username4()));
-        config.set("stun", "password1", Some(self.get_password1()));
-        config.set("stun", "password2", Some(self.get_password2()));
-        config.set("stun", "password3", Some(self.get_password3()));
-        config.set("stun", "password4", Some(self.get_password4()));
+        // config.set("stun", "username1", Some(self.get_username1()));
+        // config.set("stun", "username2", Some(self.get_username2()));
+        // config.set("stun", "username3", Some(self.get_username3()));
+        // config.set("stun", "username4", Some(self.get_username4()));
+        // config.set("stun", "password1", Some(self.get_password1()));
+        // config.set("stun", "password2", Some(self.get_password2()));
+        // config.set("stun", "password3", Some(self.get_password3()));
+        // config.set("stun", "password4", Some(self.get_password4()));
         config.set("stun", "state_server1", Some(self.get_state_server1().to_string()));
         config.set("stun", "state_server2", Some(self.get_state_server2().to_string()));
         config.set("stun", "state_server3", Some(self.get_state_server3().to_string()));

@@ -106,9 +106,9 @@ impl SIPUserAgent {
         }
     }
 
-    pub fn acc_cred(&self) -> CredentialInfo {
+    pub fn acc_cred(&self) -> &mut Box<CredentialInfo> {
         unsafe {
-            SIP_CORE.as_mut().unwrap().default_acc_cred
+            &mut SIP_CORE.as_mut().unwrap().default_acc_cred
         }
     }
 

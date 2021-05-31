@@ -24,7 +24,7 @@ pub struct SIPCore {
     pub default_transport_config: UATransportConfig,
     pub default_rtp_config: UATransportConfig,
     pub default_acc_config: Box<UAAccConfig>,
-    pub default_acc_cred: CredentialInfo,
+    pub default_acc_cred: Box<CredentialInfo>,
     pub default_acc: Option<UAAccount>,
     pub default_call_setting: UACallSetting,
     def_pool: Option<Box::<*mut PJPool>>, // this pool mostlly unused.
@@ -73,7 +73,7 @@ impl SIPCore {
             default_transport_config: UATransportConfig::default(),
             default_rtp_config: UATransportConfig::default(),
             default_acc_config: Box::new(UAAccConfig::default()),
-            default_acc_cred: CredentialInfo::new(),
+            default_acc_cred: Box::new(CredentialInfo::new()),
             default_acc: None,
             default_call_setting: UACallSetting::default(),
             def_pool: None,
@@ -216,6 +216,12 @@ impl SIPCore {
     }
 
     pub fn restart(&mut self) {
+        match self.def_pool {
+            Some(ref mut pool) => {
+                pjsua::pool_release(**pool);
+            }, None => ()
+        };
+
         self.stop();
         self.start();
     }
@@ -232,7 +238,7 @@ impl SIPCore {
 
         if ! self.default_acc_config.get_id().is_empty() {
             let cred = self.default_acc_cred.clone();
-            self.default_acc_config.set_cred_info(cred).unwrap();
+            self.default_acc_config.set_cred_info(*cred).unwrap();
             let acc = UAAccount::new(&self.default_acc_config, true).unwrap();
             self.default_acc = Some(acc);
         }

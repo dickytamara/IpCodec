@@ -41,14 +41,16 @@ mod settings_tls;
 use gtk::prelude::*;
 use gio::prelude::*;
 use helper::{HelperFileSettings, application_config_path};
-use pjproject::{pjnath::{IceSessTrickle, TurnTpType}, pjsip_ua::SIPInvState, pjsua::{CredentialInfoType, ua::CredentialInfoExt}, prelude::*};
+use pjproject::{pjmedia::MediaEchoFlag, pjnath::{IceSessTrickle, TurnTpType}, pjsip_ua::SIPInvState, pjsua::{CredentialInfo, CredentialInfoType, EncodingQuality, ua::CredentialInfoExt}, prelude::*};
 use pjproject::pjsua::media::UASound;
 use systemstat::Duration;
 
 use pjproject::pj;
 // use pjnath_sys::*;
 
-use std::{cell::RefCell, env, rc::Rc, thread};
+use std::{cell::{RefCell}, convert::{TryFrom, TryInto}, env, rc::Rc, thread};
+use std::sync::Arc;
+use std::sync::atomic;
 use std::include_str;
 
 
@@ -70,38 +72,68 @@ use sipua::*;
 use crate::dialpad::CallButtonState;
 enum SignalLevel { Level( (u32, u32, u32, u32)) }
 
-/// update receive transmit level bar
-fn thread_update_level_bar(rx_widget_clone: AudioLineWidget, tx_widget_clone: AudioLineWidget) {
+#[derive(Clone)]
+pub struct AudioLevelThread {
+    rx_widget: Rc<AudioLineWidget>,
+    tx_widget: Rc<AudioLineWidget>,
+    active: Arc<atomic::AtomicBool>,
+}
 
-    // sender, receiver more clear to read
-    let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+impl AudioLevelThread {
 
-    thread::spawn(move || {
-        let mut desc= [0i64;64usize];
-
-        // register main thread
-        if !pj::thread::PJThread::thread_is_registered() {
-            pj::thread::PJThread::thread_register(None, &mut desc).unwrap();
+    fn new(rx_widget: &AudioLineWidget, tx_widget: &AudioLineWidget) -> Self {
+        Self {
+            rx_widget: Rc::new(rx_widget.clone()),
+            tx_widget: Rc::new(tx_widget.clone()),
+            active: Arc::new(atomic::AtomicBool::new(false))
         }
+    }
 
-        loop {
-            thread::sleep(Duration::from_millis(40));
+    pub fn start(&self) {
 
-            let _ = sender.send(SignalLevel::Level(UASound::default().get_msignal_level().unwrap()));
-        }
-    });
+        self.active.store(true, std::sync::atomic::Ordering::Relaxed);
 
-    // TODO: fix thread attach.
-    receiver.attach(None, move |level| {
-        match level {
-            SignalLevel::Level((tx_l,tx_r, rx_l, rx_r)) => {
-                rx_widget_clone.set_level_bar(rx_l, rx_r);
-                tx_widget_clone.set_level_bar(tx_l, tx_r);
+        // sender, receiver more clear to read
+        let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+
+        let is_active = self.active.clone();
+        thread::spawn(move || {
+            let mut desc= [0i64;64usize];
+
+            // register main thread
+            if !pj::thread::PJThread::thread_is_registered() {
+                pj::thread::PJThread::thread_register(None, &mut desc).unwrap();
             }
-        }
 
-        glib::Continue(true)
-    });
+            loop {
+                if is_active.load(atomic::Ordering::Relaxed) {
+                    thread::sleep(Duration::from_millis(40));
+                    let _ = sender.send(
+                        SignalLevel::Level(UASound::default().get_msignal_level().unwrap()));
+                } else {
+                    break
+                }
+            }
+        });
+
+        let rx_widget = self.rx_widget.clone();
+        let tx_widget = self.tx_widget.clone();
+        receiver.attach(None, move |level| {
+            match level {
+                SignalLevel::Level((tx_l,tx_r, rx_l, rx_r)) => {
+                    rx_widget.set_level_bar(rx_l, rx_r);
+                    tx_widget.set_level_bar(tx_l, tx_r);
+                }
+            }
+
+            glib::Continue(true)
+        });
+    }
+
+    pub fn stop(&self) {
+        self.active.store(false, std::sync::atomic::Ordering::Relaxed)
+    }
+
 }
 
 // calback audio line transmit receive
@@ -212,7 +244,7 @@ fn callback_account_widget(sipua: &mut SIPUserAgent, account: &AccountWidget) {
     });
 }
 
-fn callback_settings_widget(sipua: &mut SIPUserAgent, settings: &SettingsWidget) {
+fn callback_settings_widget(sipua: &mut SIPUserAgent, settings: &SettingsWidget, audio_thread: &AudioLevelThread) {
 
     // save setting for each tab
     let settings_clone = settings.clone();
@@ -248,6 +280,7 @@ fn callback_settings_widget(sipua: &mut SIPUserAgent, settings: &SettingsWidget)
     // apply configuration for each tab
     let settings_clone = settings.clone();
     let ua = sipua.clone();
+    let audio_level_clone = audio_thread.clone();
     settings.apply_connect_clicked(move |page| {
         match page.unwrap() {
             SettingsCurrentActivePage::Ua => {
@@ -261,6 +294,46 @@ fn callback_settings_widget(sipua: &mut SIPUserAgent, settings: &SettingsWidget)
                     settings_clone.stun.get_server3(),
                     settings_clone.stun.get_server4()
                 );
+
+                let mut creds: Vec<CredentialInfo> = Vec::new();
+
+                let (user, password) = settings_clone.stun.get_cred1();
+                if !user.is_empty() && !password.is_empty() && settings_clone.stun.get_server1().is_some() {
+                    let mut info = CredentialInfo::new();
+                    info.set_username(user);
+                    info.set_data_type(CredentialInfoType::PlainText);
+                    info.set_data(password);
+                    creds.push(info);
+                }
+
+                let (user, password) = settings_clone.stun.get_cred2();
+                if !user.is_empty() && !password.is_empty() && settings_clone.stun.get_server2().is_some() {
+                    let mut info = CredentialInfo::new();
+                    info.set_username(user);
+                    info.set_data_type(CredentialInfoType::PlainText);
+                    info.set_data(password);
+                    creds.push(info);
+                }
+
+                let (user, password) = settings_clone.stun.get_cred3();
+                if !user.is_empty() && !password.is_empty() && settings_clone.stun.get_server3().is_some() {
+                    let mut info = CredentialInfo::new();
+                    info.set_username(user);
+                    info.set_data_type(CredentialInfoType::PlainText);
+                    info.set_data(password);
+                    creds.push(info);
+                }
+
+                let (user, password) = settings_clone.stun.get_cred4();
+                if !user.is_empty() && !password.is_empty() && settings_clone.stun.get_server4().is_some() {
+                    let mut info = CredentialInfo::new();
+                    info.set_username(user);
+                    info.set_data_type(CredentialInfoType::PlainText);
+                    info.set_data(password);
+                    creds.push(info);
+                }
+
+                ua.ua_config().set_cred_info(creds);
             },
             SettingsCurrentActivePage::Turn => {
                 if settings_clone.turn.get_use_turn() {
@@ -291,33 +364,45 @@ fn callback_settings_widget(sipua: &mut SIPUserAgent, settings: &SettingsWidget)
                 }
             },
             SettingsCurrentActivePage::Ice => {
-                if settings_clone.ice.get_use_ice() {
-
-                } else {
-                    ua.media_config().set_enable_ice(settings_clone.ice.get_use_ice());
-                    ua.media_config().set_ice_no_rtcp(settings_clone.ice.get_no_rtcp());
-                    ua.media_config().set_ice_max_host_cands(settings_clone.ice.get_max_hosts() as i32);
-
-                    let trickle_method = match settings_clone.ice.get_trickle_method() {
-                        1 => IceSessTrickle::Disabled,
-                        2 => IceSessTrickle::Half,
-                        3 => IceSessTrickle::Full,
-                        _ => IceSessTrickle::Disabled
-                    };
-
-                    ua.media_config().set_ice_opt(
-                        Some(settings_clone.ice.get_aggressive()),
-                        None,
-                        None,
-                        Some(trickle_method)
-                    );
-                }
+                ua.media_config().set_enable_ice(settings_clone.ice.get_use_ice());
+                ua.media_config().set_ice_no_rtcp(settings_clone.ice.get_no_rtcp());
+                ua.media_config().set_ice_max_host_cands(settings_clone.ice.get_max_hosts() as i32);
+                let trickle_method = match settings_clone.ice.get_trickle_method() {
+                    1 => IceSessTrickle::Disabled,
+                    2 => IceSessTrickle::Half,
+                    3 => IceSessTrickle::Full,
+                    _ => IceSessTrickle::Disabled
+                };
+                ua.media_config().set_ice_opt(
+                    Some(settings_clone.ice.get_aggressive()),
+                    None,
+                    None,
+                    Some(trickle_method)
+                );
             },
             SettingsCurrentActivePage::Audio => {
+                ua.media_config().set_jb_max(settings_clone.audio.get_jb_max() as i32);
+                ua.media_config().set_ptime((settings_clone.audio.get_ptime() as i32).try_into().unwrap());
 
+                let encoding_quality =
+                    EncodingQuality::try_from(settings_clone.audio.get_quality() as u32).unwrap();
+
+                ua.media_config().set_quality(encoding_quality);
+                ua.media_config().set_no_vad(settings_clone.audio.get_no_vad());
+                ua.media_config().set_ec_tail_len(settings_clone.audio.get_ec_tail_len() as u32);
+
+                let ec_options = match settings_clone.audio.get_ec_options() {
+                    1 => MediaEchoFlag::Default,
+                    2 => MediaEchoFlag::Speex,
+                    3 => MediaEchoFlag::Supresor,
+                    4 => MediaEchoFlag::Webrtc,
+                    _ => MediaEchoFlag::Default,
+                };
+                ua.media_config().set_ec_options(ec_options)
             },
             SettingsCurrentActivePage::Media => {
-
+                ua.acc_config().set_enable_rtcp_mux(settings_clone.media.get_rtcp_multiplexing());
+                // todo srtp:: keying options
             },
             SettingsCurrentActivePage::Proxy => {
                 ua.ua_config().set_outbound_proxy(
@@ -336,8 +421,9 @@ fn callback_settings_widget(sipua: &mut SIPUserAgent, settings: &SettingsWidget)
                 )
             }
         }
-
+        audio_level_clone.stop();
         ua.restart();
+        audio_level_clone.start();
     });
 }
 
@@ -367,6 +453,8 @@ fn main() {
 
     let rx_widget = audio_line::create_transmit_widget(&builder);
     let tx_widget = audio_line::create_receive_widget(&builder);
+    let audio_thread = AudioLevelThread::new(&rx_widget, &tx_widget);
+
     let maintab_widget= MaintabWidget::new(&builder);
     let statusbar_widget = StatusbarWidget::new(&builder);
     let headerbar_widget = HeaderWidget::new(&builder);
@@ -375,11 +463,12 @@ fn main() {
     let settings_widget= SettingsWidget::new(&builder);
     let codec_widget = CodecWidget::new(&builder);
 
+
     // set callback
     callback_audio_line_widget(rx_level, tx_level, &rx_widget, &tx_widget);
     callback_dialpad_widget(&mut sipua, &dialpad_widget);
     callback_account_widget(&mut sipua, &account_widget);
-    callback_settings_widget(&mut sipua, &settings_widget);
+    callback_settings_widget(&mut sipua, &settings_widget, &audio_thread);
     callback_codec_widget(&mut sipua, &codec_widget);
 
     // test call data
@@ -417,9 +506,11 @@ fn main() {
 
     // thread procedure to update level bar
     // Transmit and Receive
-    thread_update_level_bar(rx_widget.clone(), tx_widget.clone());
+    // thread_update_level_bar(rx_widget.clone(), tx_widget.clone());
+    audio_thread.start();
 
     // sub testing gui
     application.run(&env::args().collect::<Vec<_>>());
 
+    audio_thread.stop();
 }

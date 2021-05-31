@@ -483,11 +483,22 @@ impl UAConfigExt for UAConfig {
     }
 
     fn set_cred_info(&mut self, value: Vec<CredentialInfo>) {
-        todo!()
+        for (index , info) in value.iter().enumerate() {
+            self.cred_info[index] = info.to_owned();
+            self.cred_count = (index +1) as u32;
+        }
     }
 
     fn get_cred_info(&self) -> Vec<CredentialInfo> {
-        todo!()
+        let mut creds: Vec<CredentialInfo> = Vec::new();
+
+        let index = (self.cred_count -1) as usize;
+
+        for idx in 0..index {
+            creds.push(self.cred_info[idx].clone());
+        }
+
+        creds
     }
 
     fn set_user_agent(&mut self, value: String) {
