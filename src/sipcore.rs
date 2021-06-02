@@ -1,4 +1,4 @@
-use pjproject::{pjsip_ua::SIPInvState, pjsua::{call::UACall}, prelude::*};
+use pjproject::{pjsip, pjsip_ua::SIPInvState, pjsua::{call::UACall}, prelude::*};
 use pjproject::prelude::AutoDefault;
 use pjproject::pj::*;
 use pjproject::pjsip::*;
@@ -479,87 +479,93 @@ impl SIPCoreEventsExt for SIPCore {
 // }
 
 unsafe extern "C" fn on_rx_request(rdata: *mut SIPRxData) -> i32 {
-    println!("OnRxRequest");
-    // base rx request handle undefined state.
-    // let mut tdata: *mut pjsip_tx_data = &mut pjsip_tx_data::new() as *mut _;
-    // let status_code: pjsip_status_code;
-    // let status: pj_status_t;
 
-    // // let mut rdata = rdata;
-    // let msg = (*rdata).msg_info.msg;
-    // let method = &(*msg).line.req.as_ref().method;
+    // pjsip_tx_data *tdata;
+    // pjsip_status_code status_code;
+    // pj_status_t status;
 
-    // if pjsip::method_cmp(&method, &pjsip_ack_method) == 0 {
-    //     return PJ_TRUE as pj_status_t;
+    let status_code: SIPStatusCode;
+    let rdata: Box<*mut SIPRxData> = Box::new(rdata);
+    let tdata: Box<*mut SIPTxData> = Box::new(std::ptr::null_mut());
+
+    /* Don't respond to ACK! */
+    // if (pjsip_method_cmp(&rdata->msg_info.msg->line.req.method, &pjsip_ack_method) == 0)
+	// return PJ_TRUE;
+
+    // Don't respond to ACK
+    let ack_method = pjsip::ack_method();
+    if pjsip::method_cmp(&(*((**rdata).msg_info.msg)).line.req.as_ref().method, &ack_method) == 0 {
+        return 0
+    }
+
+    /* Simple registrar */
+    // if (pjsip_method_cmp(&rdata->msg_info.msg->line.req.method, &pjsip_register_method) == 0)
+    // {
+    //     simple_registrar(rdata);
+    //     return PJ_TRUE;
     // }
 
-    // if pjsip::method_cmp(&method , &pjsip_register_method) == 0 {
-    //     // call simple registrar pjsip_tx_data
-    //     simple_registrar(rdata as *mut _);
-    //     return PJ_TRUE as pj_status_t;
-    // }
+    // Simple registrar
+    let register_method = pjsip::register_method();
+    if pjsip::method_cmp(&(*((**rdata).msg_info.msg)).line.req.as_ref().method, &register_method) == 0 {
+        // TODO: sip simple register
+        return 0
+    }
 
-    // let mmethod = &pjsip_simple_sys::pjsip_notify_method;
-    // if pjsip::method_cmp(&method, &mmethod) == 0 {
+    /* Create basic response. */
+    // if (pjsip_method_cmp(&rdata->msg_info.msg->line.req.method, &pjsip_notify_method) == 0)
+    // {
+    //     /* Unsolicited NOTIFY's, send with Bad Request */
     //     status_code = PJSIP_SC_BAD_REQUEST;
     // } else {
+    //     /* Probably unknown method */
     //     status_code = PJSIP_SC_METHOD_NOT_ALLOWED;
     // }
 
-    // status = pjsip_endpt_create_response(
-    //     pjsua_get_pjsip_endpt(),
-    //     rdata,
-    //     status_code as c_int,
-    //     ptr::null_mut() as *const _,
-    //     &mut tdata as *mut _,
-    // );
+    // Create basic response
+    let notify_method = pjsip::register_method();
+    if pjsip::method_cmp(&(*((**rdata).msg_info.msg)).line.req.as_ref().method, &notify_method) == 0 {
+        // Unsolicited NOTIFY's, send with Bad Request
+        status_code = SIPStatusCode::BadRequest;
+    } else {
+        // Probably unknown method
+        status_code = SIPStatusCode::MethodNotallowed;
+    }
 
-    // if status != PJ_SUCCESS as pj_status_t {
-    //     return PJ_TRUE as pj_status_t;
+    // status = pjsip_endpt_create_response(pjsua_get_pjsip_endpt(), rdata, status_code, NULL, &tdata);
+    // if (status != PJ_SUCCESS) {
+    //     pjsua_perror(THIS_FILE, "Unable to create response", status);
+    //     return PJ_TRUE;
     // }
 
-    // let msg = (*tdata).msg;
-    // let ahdr: *mut pjsip_hdr = &mut (*msg).hdr as *mut _;
+    // pjsip::endpt_create_response(pjsua::get_pjsip_endpt(), rdata, status_code, None).unwrap();
 
-    // if status_code == PJSIP_SC_METHOD_NOT_ALLOWED {
-
-
-    //     let cap_hdr = pjsip_endpt_get_capability(
-    //         pjsua_get_pjsip_endpt(),
-    //         PJSIP_H_ALLOW as i32,
-    //         ptr::null() as *const _,
-    //     );
-
-    //     if !cap_hdr.is_null() {
-    //         let hdr_clone = pjsip_hdr_clone((*tdata).pool, cap_hdr as *const _) as *const pjsip_hdr;
-
-    //         pj_list_insert_before(
-    //             ahdr as *mut _ ,
-    //             hdr_clone as *mut _,
-    //         );
+    /* Add Allow if we're responding with 405 */
+    // if (status_code == PJSIP_SC_METHOD_NOT_ALLOWED) {
+    //     const pjsip_hdr *cap_hdr;
+    //     cap_hdr = pjsip_endpt_get_capability(pjsua_get_pjsip_endpt(), PJSIP_H_ALLOW, NULL);
+    //     if (cap_hdr) {
+    //         pjsip_msg_add_hdr(tdata->msg, (pjsip_hdr *)pjsip_hdr_clone(tdata->pool, cap_hdr));
     //     }
     // }
 
-    // // add user-agent header
-    // let mut ua = pj_str_t::from_string(String::from("User-Agent"));
-    // let mut agent = pj_str_t::from_string(String::from("IpCodec"));
+    /* Add User-Agent header */
+    // {
+    //     pj_str_t user_agent;
+    //     char tmp[80];
+    //     const pj_str_t USER_AGENT = { "User-Agent", 10};
+    //     pjsip_hdr *h;
 
-    // let h = pjsip_generic_string_hdr_create(
-    //     (*tdata).pool,
-    //     &mut ua as *const _,
-    //     &mut agent as *const _,
-    // ) as *mut pjsip_hdr;
+    //     pj_ansi_snprintf(tmp, sizeof(tmp), "PJSUA v%s/%s", pj_get_version(), PJ_OS_NAME);
+    //     pj_strdup2_with_null(tdata->pool, &user_agent, tmp);
 
-    // pj_list_insert_before(ahdr as *mut _, h as *mut _);
+    //     h = (pjsip_hdr*) pjsip_generic_string_hdr_create(tdata->pool, &USER_AGENT, &user_agent);
+    //     pjsip_msg_add_hdr(tdata->msg, h);
+    // }
 
-    // pjsip_endpt_send_response2(pjsua::get_pjsip_endpt(),
-    //     rdata,
-    //     tdata,
-    //     ptr::null_mut(),
-    //     None
-    // );
+    // pjsip_endpt_send_response2(pjsua_get_pjsip_endpt(), rdata, tdata, NULL, NULL);
 
-    // PJ_TRUE as pj_status_t
+    // return PJ_TRUE;
     0
 }
 

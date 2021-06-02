@@ -1,9 +1,6 @@
 
 use utils::{FromString, ToString};
 use std::convert::TryFrom;
-
-use crate::pjsua;
-
 use super::*;
 
 
@@ -34,7 +31,7 @@ pub trait SIPModuleExt {
     ///
     /// # Parameters
     /// endpt The endpoint instance.
-    fn connect_load(&mut self, callback: Option<unsafe extern "C" fn(endpt: *mut SIPEndpoint) -> i32>);
+    fn connect_load(&mut self, callback: Option<unsafe extern "C" fn(endpt: *mut pjsip_sys::pjsip_endpoint) -> i32>);
     /// Optional function to be called to start the module. This function will be called by
     /// endpoint during module registration. If the value is NULL, then it's equal to
     /// returning PJ_SUCCESS.
@@ -166,15 +163,15 @@ impl SIPModuleExt for SIPModule {
 
 pub trait SIPModuleOps {
         // pj_status_t 	pjsip_endpt_register_module (pjsip_endpoint *endpt, pjsip_module *module)
-        fn register(module: &mut SIPModule) {
-            endpt_register_module(pjsua::get_pjsip_endpt(), module)
-            .expect("SIPModule::pjsip_endpt_register_module");
-        }
+        // fn register(module: &mut SIPModule) {
+        //     endpt_register_module(pjsua::get_pjsip_endpt(), module)
+        //     .expect("SIPModule::pjsip_endpt_register_module");
+        // }
         // pj_status_t 	pjsip_endpt_unregister_module (pjsip_endpoint *endpt, pjsip_module *module)
-        fn unregister(module: &mut SIPModule) {
-            endpt_unregister_module(pjsua::get_pjsip_endpt(), module)
-            .expect("SIPModule::pjsip_endpt_unregister_module");
-        }
+        // fn unregister(module: &mut SIPModule) {
+        //     endpt_unregister_module(pjsua::get_pjsip_endpt(), module)
+        //     .expect("SIPModule::pjsip_endpt_unregister_module");
+        // }
     
         // void 	pjsip_process_rdata_param_default (pjsip_process_rdata_param *p)
         // pj_status_t 	pjsip_endpt_process_rx_data (pjsip_endpoint *endpt, pjsip_rx_data *rdata, pjsip_process_rdata_param *p, pj_bool_t *p_handled)

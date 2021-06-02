@@ -4,18 +4,15 @@
 
 
 pub mod auto;
+pub mod endpoint;
 pub mod core;
 
 use pj_sys::*;
-use pjlib_util_sys::*;
-use pjsip_sys::*;
 
+use pjsip_sys::*;
 use super::utils;
-use super::utils::check_status;
 
 use num_enum::*;
-
-use std::{ffi::CString};
 
 // pub type pjsip_cfg_t = pjsip_cfg_t;
 // pub type pjsip_cfg_t__bindgen_ty_1 = pjsip_cfg_t__bindgen_ty_1;
@@ -24,7 +21,7 @@ use std::{ffi::CString};
 // pub type pjsip_cfg_t__bindgen_ty_4 = pjsip_cfg_t__bindgen_ty_4;
 // pub type pjsip_cfg_t__bindgen_ty_5 = pjsip_cfg_t__bindgen_ty_5;
 // pub type pjsip_tpmgr = pjsip_tpmgr;
-pub type SIPEndpoint = pjsip_endpoint;
+// pub type SIPEndpoint = pjsip_endpoint;
 // pub type pjsip_resolver_t = pjsip_resolver_t;
 // pub type pjsip_buffer = pjsip_buffer;
 // pub type pjsip_host_port = pjsip_host_port;
@@ -82,7 +79,7 @@ pub type SIPRxData = pjsip_rx_data;
 // pub type pjsip_rx_data__bindgen_ty_3 = pjsip_rx_data__bindgen_ty_3;
 // pub type pjsip_rx_data__bindgen_ty_4 = pjsip_rx_data__bindgen_ty_4;
 // pub type pjsip_tx_data_op_key = pjsip_tx_data_op_key;
-// pub type pjsip_tx_data = pjsip_tx_data;
+pub type SIPTxData = pjsip_tx_data;
 // pub type pjsip_tx_data__bindgen_ty_1 = pjsip_tx_data__bindgen_ty_1;
 // pub type pjsip_tx_data__bindgen_ty_2 = pjsip_tx_data__bindgen_ty_2;
 // pub type pjsip_transport_key = pjsip_transport_key;
@@ -470,120 +467,43 @@ pub enum SIPDialogCapStatus {
 
 
 // function helper
-// const pjsip_method * 	pjsip_get_invite_method (void)
-// const pjsip_method * 	pjsip_get_cancel_method (void)
-// const pjsip_method * 	pjsip_get_ack_method (void)
-// const pjsip_method * 	pjsip_get_bye_method (void)
-// const pjsip_method * 	pjsip_get_register_method (void)
-// const pjsip_method * 	pjsip_get_options_method (void)
+
 // void 	pjsip_method_init (pjsip_method *m, pj_pool_t *pool, const pj_str_t *str)
 // void 	pjsip_method_init_np (pjsip_method *m, pj_str_t *str)
 // void 	pjsip_method_set (pjsip_method *m, pjsip_method_e id)
 // void 	pjsip_method_copy (pj_pool_t *pool, pjsip_method *method, const pjsip_method *rhs)
 // int 	pjsip_method_cmp (const pjsip_method *m1, const pjsip_method *m2)
+
 pub fn method_cmp(m1: &pjsip_method, m2: &pjsip_method) -> i32 {
     unsafe {
         pjsip_method_cmp(m1 as *const _, m2 as *const _)
     }
 }
 
-pub fn endpt_create(pf: *mut pj_pool_factory, name: String, endpt: &mut Box<*mut SIPEndpoint>) -> Result<(), i32> {
-    let name = CString::new(name.as_str()).expect("pjsip_endpt_create").into_raw();
-    unsafe { check_status( pjsip_endpt_create(pf, name as *const _, endpt.as_mut() as *mut _)) }
+
+
+// pub fn pjsip_endpt_create_response(endpt: *mut pjsip_endpoint, rdata: *const pjsip_rx_data, st_code: c_int, st_text: *const pj_str_t, p_tdata: *mut *mut pjsip_tx_data) -> pj_status_t;
+
+pub fn invite_method() -> pjsip_method {
+    unsafe { pjsip_sys::pjsip_invite_method }
 }
 
-pub fn endpt_destroy(endpt: &mut SIPEndpoint) {
-    unsafe { pjsip_endpt_destroy(endpt as *mut _); }
+pub fn cancel_method() -> pjsip_method {
+    unsafe { pjsip_sys::pjsip_cancel_method }
 }
 
-// const pj_str_t * 	pjsip_endpt_name (const SIPEndpoint *endpt)
-
-pub fn endpt_handle_events(endpt: &mut SIPEndpoint, max_timeout: &mut pj_time_val) -> Result<(), i32> {
-    unsafe {
-        check_status( pjsip_endpt_handle_events(endpt as *mut _, max_timeout as *const _))
-    }
+pub fn ack_method() -> pjsip_method {
+    unsafe { pjsip_sys::pjsip_ack_method }
 }
 
-pub fn endpt_handle_events2(endpt: &mut SIPEndpoint, max_timeout: &mut pj_time_val, count: &mut u32) -> Result<(), i32> {
-    unsafe {
-        check_status(pjsip_endpt_handle_events2(endpt as *mut _, max_timeout as *const _, count as *mut _))}
+pub fn bye_method() -> pjsip_method {
+    unsafe { pjsip_sys::pjsip_bye_method }
 }
 
-// pj_status_t 	pjsip_endpt_schedule_timer (SIPEndpoint *endpt, pj_timer_entry *entry, const pj_time_val *delay)
-// pub fn enpt_schedule_timer(endpt: &mut SIPEndpoint, entry: &mut pj_timer_entry, delay: &mut pj_time_val) -> Result<(), i32> {
-//     unsafe {
-//         check_status(
-//             pjsip_endpt_schedule_timer_dbg(
-
-//             )
-//         )
-//     }
-// }
-
-// pj_status_t 	pjsip_endpt_schedule_timer_w_grp_lock (SIPEndpoint *endpt, pj_timer_entry *entry, const pj_time_val *delay, int id_val, pj_grp_lock_t *grp_lock)
-
-pub fn endpt_cancel_timer(endpt: &mut SIPEndpoint, entry: &mut pj_timer_entry) {
-    unsafe { pjsip_endpt_cancel_timer(endpt as *mut _, entry as *mut _) }
+pub fn register_method() -> pjsip_method {
+    unsafe { pjsip_sys::pjsip_register_method }
 }
 
-pub fn endpt_get_timer_heap(endpt: &mut SIPEndpoint) -> *mut pj_timer_heap_t {
-    unsafe { pjsip_endpt_get_timer_heap(endpt as *mut _) }
+pub fn options_method() -> pjsip_method {
+    unsafe { pjsip_sys::pjsip_options_method }
 }
-
-pub fn endpt_register_module(endpt: *mut SIPEndpoint, module: &mut pjsip_module) -> Result<(), i32> {
-    unsafe { check_status( pjsip_endpt_register_module(endpt, module as *mut _)) }
-}
-
-pub fn endpt_unregister_module(endpt: *mut SIPEndpoint, module: &mut pjsip_module) -> Result<(), i32> {
-    unsafe { check_status(pjsip_endpt_unregister_module(endpt, module as *mut _)) }
-}
-
-// void 	pjsip_process_rdata_param_default (pjsip_process_rdata_param *p)
-pub fn process_rdata_param_default(p: &mut pjsip_process_rdata_param) {
-    unsafe { pjsip_process_rdata_param_default(p as *mut _); }
-}
-
-// pj_status_t 	pjsip_endpt_process_rx_data (SIPEndpoint *endpt, pjsip_rx_data *rdata, pjsip_process_rdata_param *p, pj_bool_t *p_handled)
-// pj_pool_t * 	pjsip_endpt_create_pool (SIPEndpoint *endpt, const char *pool_name, pj_size_t initial, pj_size_t increment)
-// void 	pjsip_endpt_release_pool (SIPEndpoint *endpt, pj_pool_t *pool)
-// pjsip_transaction * 	pjsip_endpt_find_tsx (SIPEndpoint *endpt, const pj_str_t *key)
-
-// void 	pjsip_endpt_register_tsx (SIPEndpoint *endpt, pjsip_transaction *tsx)
-// void 	pjsip_endpt_destroy_tsx (SIPEndpoint *endpt, pjsip_transaction *tsx)
-
-// pj_status_t 	pjsip_endpt_create_tdata (SIPEndpoint *endpt, pjsip_tx_data **p_tdata)
-pub fn endpt_create_tdata(endpt: &mut SIPEndpoint, p_tdata: &mut Box<*mut pjsip_tx_data> ) -> Result<(), i32> {
-    unsafe {
-        check_status( pjsip_endpt_create_tdata( endpt as *mut _, (p_tdata.as_mut() as *mut _) as *mut _))
-    }
-}
-
-// pj_status_t 	pjsip_endpt_create_resolver (SIPEndpoint *endpt, pj_dns_resolver **p_resv)
-pub fn endpt_create_resolver(endpt: &mut SIPEndpoint, p_resv: &mut Box<*mut pjsip_tx_data>) -> Result<(), i32> {
-    unsafe {
-        check_status( pjsip_endpt_create_resolver( endpt as *mut _, (p_resv.as_mut() as *mut _) as *mut _))
-    }
-}
-
-// pj_status_t 	pjsip_endpt_set_resolver (SIPEndpoint *endpt, pj_dns_resolver *resv)
-pub fn endpt_set_resolver(endpt: &mut SIPEndpoint, resv: &mut pj_dns_resolver) -> Result<(), i32> {
-    unsafe { check_status(pjsip_endpt_set_resolver( endpt as *mut _, resv as *mut _)) }
-}
-
-// pj_status_t 	pjsip_endpt_set_ext_resolver (SIPEndpoint *endpt, pjsip_ext_resolver *ext_res)
-pub fn endpt_set_ext_resolver(endpt: &mut SIPEndpoint, ext_res: &mut pjsip_ext_resolver) -> Result<(), i32> {
-    unsafe { check_status( pjsip_endpt_set_ext_resolver( endpt as *mut _, ext_res as *mut _))}
-}
-
-// pj_dns_resolver * 	pjsip_endpt_get_resolver (pjsip_endpoint *endpt)
-// void 	pjsip_endpt_resolve (pjsip_endpoint *endpt, pj_pool_t *pool, pjsip_host_info *target, void *token, pjsip_resolver_callback *cb)
-// pjsip_tpmgr * 	pjsip_endpt_get_tpmgr (pjsip_endpoint *endpt)
-// pj_ioqueue_t * 	pjsip_endpt_get_ioqueue (pjsip_endpoint *endpt)
-// pj_status_t 	pjsip_endpt_acquire_transport (pjsip_endpoint *endpt, pjsip_transport_type_e type, const pj_sockaddr_t *remote, int addr_len, const pjsip_tpselector *sel, pjsip_transport **p_tp)
-// pj_status_t 	pjsip_endpt_acquire_transport2 (pjsip_endpoint *endpt, pjsip_transport_type_e type, const pj_sockaddr_t *remote, int addr_len, const pjsip_tpselector *sel, pjsip_tx_data *tdata, pjsip_transport **p_tp)
-// const pjsip_hdr * 	pjsip_endpt_get_capability (pjsip_endpoint *endpt, int htype, const pj_str_t *hname)
-// pj_bool_t 	pjsip_endpt_has_capability (pjsip_endpoint *endpt, int htype, const pj_str_t *hname, const pj_str_t *token)
-// pj_status_t 	pjsip_endpt_add_capability (pjsip_endpoint *endpt, pjsip_module *mod, int htype, const pj_str_t *hname, unsigned count, const pj_str_t tags[])
-// const pjsip_hdr * 	pjsip_endpt_get_request_headers (pjsip_endpoint *e)
-// void 	pjsip_endpt_dump (pjsip_endpoint *endpt, pj_bool_t detail)
-// pj_status_t 	pjsip_endpt_atexit (pjsip_endpoint *endpt, pjsip_endpt_exit_callback func)
