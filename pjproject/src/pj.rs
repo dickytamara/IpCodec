@@ -3,6 +3,7 @@ use pj_sys::*;
 use num_enum::*;
 
 pub mod auto;
+pub mod pool;
 pub mod thread;
 
 
