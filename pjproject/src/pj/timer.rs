@@ -60,22 +60,35 @@ impl PJTimerHeap {
     }
 
     // pj_status_t 	pj_timer_heap_schedule (pj_timer_heap_t *ht, pj_timer_entry *entry, const pj_time_val *delay)
-    pub fn schedule(&self, entry: &mut Box<*mut pj_timer_entry>, delay: &mut Box<*const pj_time_val>) -> Result<(), i32> {
+    pub fn schedule(&self, entry: &PJTimerEntry, delay: &mut Box<*const pj_time_val>) -> Result<(), i32> {
         unsafe {
-            check_status(pj_timer_heap_schedule_dbg(*self.ctx, **entry, **delay, std::ptr::null_mut(), 0))
+            check_status(pj_timer_heap_schedule_dbg(*self.ctx, *entry.ctx, **delay, std::ptr::null_mut(), 0))
         }
     }
 
     // pj_status_t 	pj_timer_heap_schedule_w_grp_lock (pj_timer_heap_t *ht, pj_timer_entry *entry, const pj_time_val *delay, int id_val, pj_grp_lock_t *grp_lock)
+    pub fn schedule_w_grp_lock(&self, entry: &PJTimerEntry, delay: &mut pj_time_val, id_val: i32, grp_lock: &mut Box<*mut pj_grp_lock_t>) -> Result<(), i32> {
+        unsafe {
+            check_status(pj_timer_heap_schedule_w_grp_lock_dbg(
+                *self.ctx,
+                *entry.ctx,
+                delay as *const _,
+                id_val,
+                **grp_lock,
+                std::ptr::null(),
+                0
+            ))
+        }
+    }
 
     // int 	pj_timer_heap_cancel (pj_timer_heap_t *ht, pj_timer_entry *entry)
-    pub fn cancel(&self, entry: &mut Box<*mut pj_timer_entry>) -> i32 {
-        unsafe { pj_timer_heap_cancel(*self.ctx, **entry) }
+    pub fn cancel(&self, entry: &PJTimerEntry) -> i32 {
+        unsafe { pj_timer_heap_cancel(*self.ctx, *entry.ctx) }
     }
 
     // int 	pj_timer_heap_cancel_if_active (pj_timer_heap_t *ht, pj_timer_entry *entry, int id_val)
-    pub fn cancel_if_active(&self, entry: &mut Box<*mut pj_timer_entry>, id_val: i32) -> i32 {
-        unsafe { pj_timer_heap_cancel_if_active(*self.ctx, **entry, id_val) }
+    pub fn cancel_if_active(&self, entry: &PJTimerEntry, id_val: i32) -> i32 {
+        unsafe { pj_timer_heap_cancel_if_active(*self.ctx, *entry.ctx, id_val) }
     }
 
     // pj_size_t 	pj_timer_heap_count (pj_timer_heap_t *ht)
@@ -96,6 +109,10 @@ impl PJTimerHeap {
 }
 
 impl PJTimerEntry {
+
+    fn new() -> Self {
+        Self { ctx: Box::new(&mut pj_timer_entry::new() as *mut _) }
+    }
 
     // pj_timer_entry * 	pj_timer_entry_init (pj_timer_entry *entry, int id, void *user_data, pj_timer_heap_callback *cb)
     pub fn init(&self, id: i32, user_data: &mut Box<*mut c_void>, cb: pj_timer_heap_callback) -> Self {

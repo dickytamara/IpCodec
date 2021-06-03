@@ -794,14 +794,10 @@ pub struct pj_symbianos_params {
     pub rhostresolver6: *mut c_void,
 }
 
-
-
 pub const PJ_MUTEX_DEFAULT: pj_mutex_type_e = 0;
 pub const PJ_MUTEX_SIMPLE: pj_mutex_type_e = 1;
 pub const PJ_MUTEX_RECURSE: pj_mutex_type_e = 2;
 pub type pj_mutex_type_e = u32;
-
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -816,8 +812,8 @@ pub type pj_main_func_ptr = ::std::option::Option<
     ) -> c_int,
 >;
 
-pub type pj_pool_callback =
-    ::std::option::Option<unsafe extern "C" fn(pool: *mut pj_pool_t, size: pj_size_t)>;
+pub type pj_pool_callback = ::std::option::Option<unsafe extern "C" fn(pool: *mut pj_pool_t, size: pj_size_t)>;
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct pj_pool_block {
