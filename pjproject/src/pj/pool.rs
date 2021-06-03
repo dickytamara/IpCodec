@@ -1,40 +1,57 @@
 
 
-use std::ffi::{CStr, c_void};
+use std::ffi::{CStr, CString, c_void};
 
 use pj_sys::*;
 
-pub struct PJPool { ctx: Box<*mut pj_pool_t> }
+pub struct PJPool { pub ctx: Box<*mut pj_pool_t>, }
 
-impl From<*mut pj_pool_t> for PJPool {
-    fn from(ptr: *mut pj_pool_t) -> Self {
-        Self{ ctx: Box::new(ptr) }
+impl From<Box<*mut pj_pool_t>> for PJPool {
+    fn from(ptr: Box<*mut pj_pool_t>) -> Self {
+        Self{ ctx: ptr }
     }
 }
 
 impl PJPool {
 
-    // pool_t * 	pj_pool_create (pj_pool_factory *factory, const char *name, pj_size_t initial_size, pj_size_t increment_size, pj_pool_callback *callback)
-    // pub fn create() -> Self {
+    // pj_pool_create
+    pub fn create(
+        factory: &mut Box<*mut pj_pool_factory>,
+        name: String,
+        initial_size: u64,
+        increment_size: u64,
+        callback: pj_pool_callback
+    ) -> Self {
+        unsafe {
+            let mut name = CString::new(name.as_str()).unwrap().as_ptr();
+            let pool = pj_pool_create(
+                **factory,
+                name,
+                initial_size,
+                increment_size,
+                callback
+            );
 
-    // }
+            PJPool::from(Box::new(pool))
+        }
+    }
 
-    // void 	pj_pool_release (pj_pool_t *pool)
+    // pj_pool_release
     pub fn release(self) {
         unsafe { pj_pool_release(*self.ctx) }
     }
 
-    // void 	pj_pool_safe_release (pj_pool_t **ppool)
+    // pj_pool_safe_release
     pub fn safe_release(self) {
         unsafe { pj_pool_safe_release(*self.ctx as *mut _) }
     }
 
-    // void 	pj_pool_secure_release (pj_pool_t **ppool)
+    // pj_pool_secure_release
     pub fn secure_release(self) {
         unsafe { pj_pool_secure_release(*self.ctx as *mut _) }
     }
 
-    // const char * 	pj_pool_getobjname (const pj_pool_t *pool)
+    // pj_pool_getobjname
     pub fn getobjname(&self) -> String {
         unsafe {
             let result = pj_pool_getobjname(*self.ctx);
@@ -42,27 +59,27 @@ impl PJPool {
         }
     }
 
-    // void 	pj_pool_reset (pj_pool_t *pool)
+    // pj_pool_reset
     pub fn reset(&self) {
         unsafe { pj_pool_reset(*self.ctx) }
     }
 
-    // pj_size_t 	pj_pool_get_capacity (pj_pool_t *pool)
+    // pj_pool_get_capacity
     pub fn get_capacity(&self) -> u64 {
         unsafe { pj_pool_get_capacity(*self.ctx) }
     }
 
-    // pj_size_t 	pj_pool_get_used_size (pj_pool_t *pool)
+    // pj_pool_get_used_size
     pub fn get_used_size(&self) -> u64 {
         unsafe { pj_pool_get_used_size(*self.ctx) }
     }
 
-    // void * 	pj_pool_alloc (pj_pool_t *pool, pj_size_t size)
+    // pj_pool_alloc
     pub fn alloc(&self, size: u64) -> Box<*mut c_void> {
         unsafe { Box::new(pj_pool_alloc(*self.ctx, size)) }
     }
 
-    // void * 	pj_pool_calloc (pj_pool_t *pool, pj_size_t count, pj_size_t elem)
+    // pj_pool_calloc
     pub fn calloc(&self, count: u64, elem: u64) -> Box<*mut c_void> {
         unsafe { Box::new(pj_pool_calloc(*self.ctx, count, elem)) }
     }
@@ -73,11 +90,11 @@ impl PJPool {
     //     unsafe { Box::new(pj_pool_zalloc(*self.ctx, size)) }
     // }
 
-    // void * 	pj_pool_alloc_from_block (pj_pool_block *block, pj_size_t size)
+    // pj_pool_alloc_from_block
     pub fn alloc_from_block(block: &mut Box<*mut pj_pool_block>, size: u64) -> Box<*mut c_void> {
         unsafe { Box::new(pj_pool_alloc_from_block(**block, size)) }
     }
-    // void * 	pj_pool_allocate_find (pj_pool_t *pool, pj_size_t size)
+    // pj_pool_allocate_find
     pub fn allocate_find(&self, size: u64) -> Box<*mut c_void> {
         unsafe { Box::new(pj_pool_allocate_find(*self.ctx, size)) }
     }

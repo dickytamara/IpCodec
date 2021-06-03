@@ -6,11 +6,8 @@ use pjsip_simple_sys::{pjrpid_element, pjsip_evsub_state};
 use pjsip_sys::{PJSIP_MAX_TRANSPORTS, pjsip_endpoint, pjsip_method, pjsip_rx_data, pjsip_tpfactory, pjsip_transport, pjsip_tx_data};
 use pjsua_sys::*;
 
-use crate::pj::PJPool;
-
 use super::prelude::*;
 use super::utils;
-
 
 use std::convert::TryFrom;
 use std::os::raw::{c_void};

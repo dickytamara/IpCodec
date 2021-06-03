@@ -1,11 +1,13 @@
 
+use std::ffi::{CStr, CString, c_void};
+
 use pj_sys::*;
 
 use crate::utils::{check_boolean, check_status};
 
-pub struct PJThread {
-    ctx: Box<*mut pj_thread_t>
-}
+use super::PJPool;
+
+pub struct PJThread { pub ctx: Box<*mut pj_thread_t> }
 
 impl From<Box<*mut pj_thread_t>> for PJThread {
     fn from(thread: Box<*mut pj_thread_t>) -> Self {
@@ -15,7 +17,32 @@ impl From<Box<*mut pj_thread_t>> for PJThread {
 
 impl PJThread {
 
-// pj_status_t 	pj_thread_create (pj_pool_t *pool, const char *thread_name, pj_thread_proc *proc, void *arg, pj_size_t stack_size, unsigned flags, pj_thread_t **thread)
+    // pj_thread_create
+    pub fn thread_create(
+        pool: &PJPool,
+        thread_name: String,
+        proc_: pj_thread_proc,
+        arg: &mut Box<*mut c_void>,
+        stack_size: u64,
+        flags: u32
+    ) -> Result<PJThread, i32> {
+        unsafe {
+            let thread: Box<*mut pj_thread_t> = Box::new(std::ptr::null_mut());
+            let thread_name = CString::new(thread_name.as_str()).unwrap().as_ptr();
+
+            let status = check_status(pj_thread_create(
+                *pool.ctx, thread_name, proc_, **arg,
+                stack_size, flags, *thread as *mut _
+            ));
+
+            match status {
+                Ok(()) => {
+                    return Ok(PJThread::from(thread))
+                },
+                Err(e) => return Err(e)
+            }
+        }
+    }
 
     pub fn thread_register(thread_name: Option<String>, desc: &mut pj_thread_desc) -> Result<Self, i32> {
         unsafe {
@@ -64,13 +91,19 @@ impl PJThread {
         unsafe { pj_thread_get_prio_max(*self.ctx) }
     }
 
-    // void * 	pj_thread_get_os_handle (pj_thread_t *thread)
-    // const char * 	pj_thread_get_name (pj_thread_t *thread)
+    pub fn thread_get_os_handle(&self) -> Box<*mut c_void> {
+        unsafe { Box::new(pj_thread_get_os_handle(*self.ctx)) }
+    }
+
+    pub fn thread_get_name(&self) -> String {
+        unsafe {
+            let cstr = pj_thread_get_name(*self.ctx);
+            CStr::from_ptr(cstr).to_str().unwrap().to_string()
+        }
+    }
 
     pub fn thread_this() -> Self {
-        unsafe {
-            Self::from(Box::new(pj_thread_this()))
-        }
+        unsafe { Self::from(Box::new(pj_thread_this())) }
     }
 
     pub fn thread_resume(&self) -> Result<(), i32> {

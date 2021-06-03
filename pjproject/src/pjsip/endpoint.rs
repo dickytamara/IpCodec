@@ -5,7 +5,7 @@ use std::ffi::{CString, c_void};
 use pjlib_util_sys::pj_dns_resolver;
 use utils::{FromString, ToString};
 
-use crate::utils::{boolean_to_pjbool, check_boolean, check_status};
+use crate::{pj::PJPool, utils::{boolean_to_pjbool, check_boolean, check_status}};
 
 use super::*;
 
@@ -97,7 +97,21 @@ impl SIPEndpoint {
         }
     }
 
-    // pj_status_t 	pjsip_endpt_schedule_timer_w_grp_lock (SIPEndpoint *endpt, pj_timer_entry *entry, const pj_time_val *delay, int id_val, pj_grp_lock_t *grp_lock)
+    // pjsip_endpt_schedule_timer_w_grp_lock
+    pub fn schedule_timer_w_grp_lock(
+        &self,
+        entry: &mut Box<*mut pj_timer_entry>,
+        delay: &mut Box<*const pj_time_val>,
+        id_val: i32,
+        grp_lock: &mut Box<*mut pj_grp_lock_t>
+    ) -> Result<(), i32> {
+        unsafe {
+            check_status(pjsip_endpt_schedule_timer_w_grp_lock_dbg(
+                *self.ctx, **entry, **delay, id_val, **grp_lock,
+                std::ptr::null(), 0
+            ))
+        }
+    }
 
     // pjsip_endpt_cancel_timer
     pub fn cancel_timer(&self, entry: &mut pj_timer_entry) {
@@ -211,10 +225,15 @@ impl SIPEndpoint {
         unsafe { Box::new(pjsip_endpt_get_resolver(*self.ctx)) }
     }
 
-    // void 	pjsip_endpt_resolve (pjsip_endpoint *endpt, pj_pool_t *pool, pjsip_host_info *target, void *token, pjsip_resolver_callback *cb)
-    // pub fn pjsip_endpt_resolve(&self, pool: Box<*mut pj_pool_t>, target: &mut Box<*mut pjsip_host_info>, token: &mut Box<*mut c_void>, cb: pjsip_resolver_callback) {
-
-    // }
+    // pjsip_endpt_resolve
+    pub fn pjsip_endpt_resolve(
+        &self, pool: &PJPool,
+        target: &mut Box<*mut pjsip_host_info>,
+        token: &mut Box<*mut c_void>,
+        cb: pjsip_resolver_callback
+    ) {
+        unsafe { pjsip_endpt_resolve(*self.ctx, *pool.ctx, **target, **token, cb); }
+    }
 
     // pjsip_endpt_get_tpmgr
     pub fn get_tpmgr(&self) -> Box<*mut pjsip_tpmgr> {
@@ -226,8 +245,57 @@ impl SIPEndpoint {
         unsafe { Box::new(pjsip_endpt_get_ioqueue(*self.ctx)) }
     }
 
-    // pj_status_t 	pjsip_endpt_acquire_transport (pjsip_endpoint *endpt, pjsip_transport_type_e type, const pj_sockaddr_t *remote, int addr_len, const pjsip_tpselector *sel, pjsip_transport **p_tp)
-    // pj_status_t 	pjsip_endpt_acquire_transport2 (pjsip_endpoint *endpt, pjsip_transport_type_e type, const pj_sockaddr_t *remote, int addr_len, const pjsip_tpselector *sel, pjsip_tx_data *tdata, pjsip_transport **p_tp)
+    // pjsip_endpt_acquire_transport
+    pub fn acquire_transport(&self,
+        type_: SIPTransportType,
+        remote: &mut Box<*const pj_sockaddr_t>,
+        addr_len: i32,
+        sel: &mut Box<*const pjsip_tpselector>,
+    ) -> Result<Box<*mut pjsip_transport>, i32> {
+        unsafe {
+            let tp: Box<*mut pjsip_transport> = Box::new(std::ptr::null_mut());
+            let status = check_status(pjsip_endpt_acquire_transport(
+                *self.ctx,
+                type_.into(),
+                **remote,
+                addr_len,
+                **sel,
+                *tp as *mut _
+            ));
+
+            match status {
+                Ok(()) => {
+                    return Ok(tp)
+                },
+                Err(e) => return Err(e)
+            }
+        }
+    }
+
+    // pjsip_endpt_acquire_transport2
+    pub fn acquire_transport2(
+        &self,
+        type_: SIPTransportType,
+        remote: &mut Box<*const pj_sockaddr_t>,
+        addr_len: i32,
+        sel: &mut Box<*const pjsip_tpselector>,
+        tdata: &mut Box<*mut pjsip_tx_data>
+    ) -> Result<Box<*mut pjsip_transport>, i32> {
+        unsafe {
+            let tp: Box<*mut pjsip_transport> = Box::new(std::ptr::null_mut());
+            let status = check_status(pjsip_endpt_acquire_transport2(
+                *self.ctx, type_.into(), **remote, addr_len,
+                **sel, **tdata, *tp as *mut _
+            ));
+
+            match status {
+                Ok(()) => {
+                    return Ok(tp)
+                },
+                Err(e) => return Err(e)
+            }
+        }
+    }
 
     // pjsip_endpt_get_capability
     pub fn get_capability(&self, htype: i32, hname: String) -> Box<*const pjsip_hdr> {

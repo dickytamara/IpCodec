@@ -6,6 +6,8 @@ pub mod auto;
 pub mod pool;
 pub mod thread;
 
+pub use pool::*;
+pub use thread::*;
 
 pub type PJStr = pj_str_t;
 // pub type pj_timestamp__bindgen_ty_1 = pj_timestamp__bindgen_ty_1;
@@ -52,7 +54,7 @@ pub type PJStr = pj_str_t;
 // pub type pj_symbianos_params = pj_symbianos_params;
 // pub type pj_rwmutex_t = pj_rwmutex_t;
 // pub type pj_pool_block = pj_pool_block;
-pub type PJPool = pj_pool_t;
+// pub type PJPool = pj_pool_t;
 // pub type pj_pool_factory_policy = pj_pool_factory_policy;
 // pub type pj_pool_factory = pj_pool_factory;
 // pub type pj_caching_pool = pj_caching_pool;
