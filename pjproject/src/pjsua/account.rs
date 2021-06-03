@@ -1374,9 +1374,9 @@ impl UAAccount {
             let pool = pool_create("tmp-pool");
             let mut acc_cfg = Box::new(UAAccConfig::new());
 
-            let status = pjsua_sys::pjsua_acc_get_config(self.id, pool, acc_cfg.as_mut() as *mut _);
+            let status = pjsua_sys::pjsua_acc_get_config(self.id, *pool.ctx, acc_cfg.as_mut() as *mut _);
 
-            pool_release(pool);
+            pool.release();
             match utils::check_status(status) {
                 Ok(()) => { return Ok(acc_cfg); },
                 Err(e) => { return Err(e); }
@@ -1457,13 +1457,13 @@ impl UAAccount {
             let pool = pool_create("tmp-pool");
 
             let status = pjsua_sys::pjsua_acc_create_uac_contact(
-                pool,
+                *pool.ctx,
                 contact.as_mut() as *mut _,
                 self.id,
                 &mut uri as *mut _
             );
-    
-            pool_release(pool);
+
+            pool.release();
     
             match utils::check_status(status) {
                 Ok(()) => { return Ok(contact.to_string())},
@@ -1479,14 +1479,13 @@ impl UAAccount {
             let pool = pool_create("tmp-pool");
 
             let status = pjsua_sys::pjsua_acc_create_uas_contact(
-                pool,
+                *pool.ctx,
                 contact.as_mut() as *mut _,
                 self.id,
                 rdata as *mut _
             );
 
-            pool_release(pool);
-
+            pool.release();
             match utils::check_status(status) {
                 Ok(()) => { return Ok(contact.to_string()); },
                 Err(e) => { return Err(e); }
@@ -1671,20 +1670,18 @@ impl UAAccount {
 }
 
 // pjsua account helper
-
 pub fn ice_config_from_media_config(dst: &mut UAIceConfig, src: &mut UAMediaConfig) {
 
     let pool = pool_create("tmp-pool");
 
     unsafe {
         pjsua_sys::pjsua_ice_config_from_media_config(
-            pool,
+            *pool.ctx,
             dst as *mut _,
             src as *const _
         )
     }
-
-    pool_release(pool);
+    pool.release();
 }
 
 pub fn ice_config_dup(dst: &mut UAIceConfig, src: &mut UAIceConfig) {
@@ -1693,13 +1690,13 @@ pub fn ice_config_dup(dst: &mut UAIceConfig, src: &mut UAIceConfig) {
 
     unsafe {
         pjsua_sys::pjsua_ice_config_dup(
-            pool,
+            *pool.ctx,
             dst as *mut _,
             src as *const _
         )
     }
 
-    pool_release(pool);
+    pool.release();
 }
 
 pub fn turn_config_from_media_config(dst: &mut UATurnConfig, src: &mut UAMediaConfig) {
@@ -1708,13 +1705,13 @@ pub fn turn_config_from_media_config(dst: &mut UATurnConfig, src: &mut UAMediaCo
 
     unsafe {
         pjsua_sys::pjsua_turn_config_from_media_config(
-            pool,
+            *pool.ctx,
             dst as *mut _,
             src as *const _
         )
     }
 
-    pool_release(pool);
+    pool.release();
 }
 
 pub fn turn_config_dup(dst: &mut UATurnConfig, src: &mut UATurnConfig) {
@@ -1723,13 +1720,13 @@ pub fn turn_config_dup(dst: &mut UATurnConfig, src: &mut UATurnConfig) {
 
     unsafe {
         pjsua_sys::pjsua_turn_config_dup(
-            pool,
+            *pool.ctx,
             dst as *mut _,
             src as *const _
         )
     }
 
-    pool_release(pool);
+    pool.release();
 }
 
 pub fn srtp_opt_default(cfg: &mut UASrtpOpt) {
@@ -1746,14 +1743,14 @@ pub fn srtp_opt_dup(dst: &mut UASrtpOpt, src: &mut UASrtpOpt, check_str: bool) {
 
     unsafe {
         pjsua_sys::pjsua_srtp_opt_dup(
-            pool,
+            *pool.ctx,
             dst as *mut _,
             src as *const _,
             utils::boolean_to_pjbool(check_str)
         )
     }
 
-    pool_release(pool);
+    pool.release();
 }
 
 pub fn acc_config_dup (dst: &mut UAAccConfig, src: &mut UAAccConfig) {
@@ -1761,12 +1758,11 @@ pub fn acc_config_dup (dst: &mut UAAccConfig, src: &mut UAAccConfig) {
         let pool = pool_create("tmp-pool");
 
         pjsua_sys::pjsua_acc_config_dup(
-            pool,
+            *pool.ctx,
             dst as *mut _,
             src as *const _
         );
-
-        pool_release(pool);
+        pool.release();
     }
 }
 

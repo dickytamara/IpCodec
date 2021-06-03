@@ -279,13 +279,13 @@ impl UATransport {
 
         unsafe {
             pjsua_sys::pjsua_transport_config_dup(
-                pool,
+                *pool.ctx,
                 dst as *mut _,
                 src as *mut _
             );
         }
 
-        pool_release(pool)
+        pool.release();
     }
 
     pub fn transport_register(tp: &mut pjsip_transport) -> Result<UATransport, i32> {

@@ -6,6 +6,8 @@ use pjsip_simple_sys::{pjrpid_element, pjsip_evsub_state};
 use pjsip_sys::{PJSIP_MAX_TRANSPORTS, pjsip_endpoint, pjsip_method, pjsip_rx_data, pjsip_tpfactory, pjsip_transport, pjsip_tx_data};
 use pjsua_sys::*;
 
+use crate::pj::PJPool;
+
 use super::prelude::*;
 use super::utils;
 
@@ -341,35 +343,18 @@ pub enum CredentialInfoType {
 
 
 // function helper
-pub fn pool_create(pool_name: &str) -> *mut PJPool {
+pub fn pool_create(pool_name: &str) -> PJPool {
     unsafe {
-
+        let pool_name = CString::new(pool_name).unwrap().as_ptr();
         let ret = pjsua_sys::pjsua_pool_create(
-            CString::new(pool_name)
-            .expect("String error create pool_name")
-            .into_raw(),
+            pool_name,
             1000,
             1000
         );
 
-        assert_ne!(ret.is_null(), true);
-        ret
+        PJPool::from(Box::new(ret))
     }
 }
-
-pub fn pool_release(pool: *mut pj_pool_t) {
-    unsafe {
-        pj_pool_release(pool);
-    }
-}
-
-pub fn pool_safe_release(ppool: *mut *mut pj_pool_t) {
-    unsafe {
-        pj_pool_safe_release(ppool);
-    }
-}
-
-
 
 pub fn create () -> Result<(), i32> {
     unsafe { utils::check_status(pjsua_sys::pjsua_create()) }
@@ -412,27 +397,26 @@ pub fn logging_config_dup (dst: &mut UALoggingConfig, src: &mut UALoggingConfig)
         let pool = pool_create("tmp-pool");
 
         pjsua_sys::pjsua_logging_config_dup(
-            pool,
+            *pool.ctx,
             dst as *mut _,
             src as *const _
         );
 
-        pool_release(pool)
+        pool.release();
     }
 }
 
 pub fn config_dup (dst: &mut UAConfig, src: &mut UAConfig) {
     unsafe {
-
         let pool = pool_create("tmp-pool");
 
         pjsua_sys::pjsua_config_dup(
-            pool,
+            *pool.ctx,
             dst as *mut _,
             src as *const _
         );
 
-        pool_release(pool);
+        pool.release();
     }
 }
 
@@ -444,11 +428,9 @@ pub fn msg_data_clone (rhs: &mut UAMsgData) -> *mut UAMsgData {
     unsafe {
 
         let pool = pool_create("tmp-pool");
+        let ret = pjsua_sys::pjsua_msg_data_clone(*pool.ctx, rhs as *const _ );
 
-        let ret = pjsua_sys::pjsua_msg_data_clone(pool, rhs as *const _ );
-
-        pool_release(pool);
-
+        pool.release();
         ret
     }
 }

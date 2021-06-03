@@ -954,11 +954,9 @@ impl UAConf {
     
         unsafe {
             let pool = pool_create("tmp-pool");
-    
-            let result = pjsua_sys::pjsua_conf_add_port(pool, port, p_id);
-    
-            pool_release(pool);
-    
+            let result = pjsua_sys::pjsua_conf_add_port(*pool.ctx, port, p_id);
+
+            pool.release();
             if result == PJ_SUCCESS as i32 {
                 Ok(())
             } else {
