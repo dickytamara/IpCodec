@@ -4,9 +4,11 @@ use num_enum::*;
 
 pub mod auto;
 pub mod pool;
+pub mod timer;
 pub mod thread;
 
 pub use pool::*;
+pub use timer::*;
 pub use thread::*;
 
 pub type PJStr = pj_str_t;

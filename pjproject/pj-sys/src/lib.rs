@@ -1797,6 +1797,8 @@ extern "C" {
     pub fn PJ_FD_CLR(fd: pj_sock_t, fdsetp: *mut pj_fd_set_t);
     pub fn PJ_FD_ISSET(fd: pj_sock_t, fdsetp: *const pj_fd_set_t) -> pj_bool_t;
     pub fn pj_sock_select(n: c_int, readfds: *mut pj_fd_set_t, writefds: *mut pj_fd_set_t, exceptfds: *mut pj_fd_set_t, timeout: *const pj_time_val) -> c_int;
+
+    // Secure Socket layer
     pub fn pj_ssl_cert_load_from_files(pool: *mut pj_pool_t, CA_file: *const pj_str_t, cert_file: *const pj_str_t, privkey_file: *const pj_str_t, privkey_pass: *const pj_str_t, p_cert: *mut *mut pj_ssl_cert_t) -> pj_status_t;
     pub fn pj_ssl_cert_load_from_files2(pool: *mut pj_pool_t, CA_file: *const pj_str_t, CA_path: *const pj_str_t, cert_file: *const pj_str_t, privkey_file: *const pj_str_t, privkey_pass: *const pj_str_t, p_cert: *mut *mut pj_ssl_cert_t) -> pj_status_t;
     pub fn pj_ssl_cert_load_from_buffer(pool: *mut pj_pool_t, CA_buf: *const pj_ssl_cert_buffer, cert_buf: *const pj_ssl_cert_buffer, privkey_buf: *const pj_ssl_cert_buffer, privkey_pass: *const pj_str_t, p_cert: *mut *mut pj_ssl_cert_t) -> pj_status_t;
@@ -1811,6 +1813,7 @@ extern "C" {
     pub fn pj_ssl_curve_is_supported(curve: pj_ssl_curve) -> pj_bool_t;
     pub fn pj_ssl_curve_name(curve: pj_ssl_curve) -> *const c_char;
     pub fn pj_ssl_curve_id(curve_name: *const c_char) -> pj_ssl_curve;
+
     pub fn pj_ssl_sock_param_default(param: *mut pj_ssl_sock_param);
     pub fn pj_ssl_sock_param_copy(pool: *mut pj_pool_t, dst: *mut pj_ssl_sock_param, src: *const pj_ssl_sock_param);
     pub fn pj_ssl_sock_create(pool: *mut pj_pool_t, param: *const pj_ssl_sock_param, p_ssock: *mut *mut pj_ssl_sock_t) -> pj_status_t;
@@ -1830,6 +1833,8 @@ extern "C" {
     pub fn pj_ssl_sock_start_connect(ssock: *mut pj_ssl_sock_t, pool: *mut pj_pool_t, localaddr: *const pj_sockaddr_t, remaddr: *const pj_sockaddr_t, addr_len: c_int) -> pj_status_t;
     pub fn pj_ssl_sock_start_connect2(ssock: *mut pj_ssl_sock_t, connect_param: *mut pj_ssl_start_connect_param) -> pj_status_t;
     pub fn pj_ssl_sock_renegotiate(ssock: *mut pj_ssl_sock_t) -> pj_status_t;
+
+    // basic timer operation
     pub fn pj_timer_heap_mem_size(count: pj_size_t) -> pj_size_t;
     pub fn pj_timer_heap_create(pool: *mut pj_pool_t, count: pj_size_t, ht: *mut *mut pj_timer_heap_t) -> pj_status_t;
     pub fn pj_timer_heap_destroy(ht: *mut pj_timer_heap_t);

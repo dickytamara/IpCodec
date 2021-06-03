@@ -1,5 +1,5 @@
 
-use pj_sys::{PJ_SUCCESS, pj_pool_factory, pj_pool_release, pj_pool_safe_release, pj_pool_t, pj_str_t, pj_time_val, pj_timer_entry};
+use pj_sys::{PJ_SUCCESS, pj_pool_factory, pj_str_t, pj_time_val, pj_timer_entry};
 use pjmedia_sys::{pjmedia_codec_param, pjmedia_echo_stat, pjmedia_endpt, pjmedia_port, pjmedia_sdp_session, pjmedia_snd_dev_info, pjmedia_snd_port, pjmedia_snd_port_param};
 use pjnath_sys::{pj_stun_nat_type, pj_turn_sock_tls_cfg};
 use pjsip_simple_sys::{pjrpid_element, pjsip_evsub_state};
@@ -345,7 +345,7 @@ pub enum CredentialInfoType {
 // function helper
 pub fn pool_create(pool_name: &str) -> PJPool {
     unsafe {
-        let pool_name = CString::new(pool_name).unwrap().as_ptr();
+        let pool_name = CString::new(pool_name).unwrap().into_raw();
         let ret = pjsua_sys::pjsua_pool_create(
             pool_name,
             1000,

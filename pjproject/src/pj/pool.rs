@@ -23,7 +23,7 @@ impl PJPool {
         callback: pj_pool_callback
     ) -> Self {
         unsafe {
-            let mut name = CString::new(name.as_str()).unwrap().as_ptr();
+            let name = CString::new(name.as_str()).unwrap().into_raw();
             let pool = pj_pool_create(
                 **factory,
                 name,
