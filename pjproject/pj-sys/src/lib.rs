@@ -925,12 +925,8 @@ pub struct pj_rbtree_node {
     pub user_data: *mut c_void,
     pub color: pj_rbcolor_t,
 }
-pub type pj_rbtree_comp = ::std::option::Option<
-    unsafe extern "C" fn(
-        key1: *const c_void,
-        key2: *const c_void,
-    ) -> c_int,
->;
+
+pub type pj_rbtree_comp = ::std::option::Option< unsafe extern "C" fn(key1: *const c_void, key2: *const c_void) -> c_int >;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

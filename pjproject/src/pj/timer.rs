@@ -5,7 +5,7 @@ use pj_sys::*;
 
 use crate::{prelude::AutoCreate, utils::{boolean_to_pjbool, check_boolean, check_status}};
 
-use super::PJPool;
+use super::{PJPool, PJTimeVal};
 
 pub struct PJTimerHeap { pub ctx: Box<*mut pj_timer_heap_t> }
 pub struct PJTimerEntry{ pub ctx: Box<*mut pj_timer_entry> }
@@ -60,14 +60,14 @@ impl PJTimerHeap {
     }
 
     // pj_status_t 	pj_timer_heap_schedule (pj_timer_heap_t *ht, pj_timer_entry *entry, const pj_time_val *delay)
-    pub fn schedule(&self, entry: &PJTimerEntry, delay: &mut Box<*const pj_time_val>) -> Result<(), i32> {
+    pub fn schedule(&self, entry: &PJTimerEntry, delay: &PJTimeVal) -> Result<(), i32> {
         unsafe {
-            check_status(pj_timer_heap_schedule_dbg(*self.ctx, *entry.ctx, **delay, std::ptr::null_mut(), 0))
+            check_status(pj_timer_heap_schedule_dbg(*self.ctx, *entry.ctx, delay as *const _, std::ptr::null_mut(), 0))
         }
     }
 
     // pj_status_t 	pj_timer_heap_schedule_w_grp_lock (pj_timer_heap_t *ht, pj_timer_entry *entry, const pj_time_val *delay, int id_val, pj_grp_lock_t *grp_lock)
-    pub fn schedule_w_grp_lock(&self, entry: &PJTimerEntry, delay: &mut pj_time_val, id_val: i32, grp_lock: &mut Box<*mut pj_grp_lock_t>) -> Result<(), i32> {
+    pub fn schedule_w_grp_lock(&self, entry: &PJTimerEntry, delay: &PJTimeVal, id_val: i32, grp_lock: &mut Box<*mut pj_grp_lock_t>) -> Result<(), i32> {
         unsafe {
             check_status(pj_timer_heap_schedule_w_grp_lock_dbg(
                 *self.ctx,
@@ -97,12 +97,12 @@ impl PJTimerHeap {
     }
 
     // pj_status_t 	pj_timer_heap_earliest_time (pj_timer_heap_t *ht, pj_time_val *timeval)
-    pub fn earliest_time(&self, timeval: &mut pj_time_val) -> Result<(), i32> {
+    pub fn earliest_time(&self, timeval: &mut PJTimeVal) -> Result<(), i32> {
         unsafe { check_status(pj_timer_heap_earliest_time(*self.ctx, timeval as *mut _)) }
     }
 
     // unsigned 	pj_timer_heap_poll (pj_timer_heap_t *ht, pj_time_val *next_delay)
-    pub fn poll(&self, next_delay: &mut pj_time_val) -> u32 {
+    pub fn poll(&self, next_delay: &mut PJTimeVal) -> u32 {
         unsafe { pj_timer_heap_poll(*self.ctx, next_delay as *mut _) }
     }
 

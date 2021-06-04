@@ -6,10 +6,14 @@ pub mod auto;
 pub mod pool;
 pub mod timer;
 pub mod thread;
+pub mod rbtree;
+pub mod ioqueue;
 
 pub use pool::*;
 pub use timer::*;
 pub use thread::*;
+pub use rbtree::*;
+pub use ioqueue::*;
 
 pub type PJStr = pj_str_t;
 // pub type pj_timestamp__bindgen_ty_1 = pj_timestamp__bindgen_ty_1;
@@ -27,7 +31,7 @@ pub type PJStr = pj_str_t;
 // pub type pj_sem_t = pj_sem_t;
 // pub type pj_event_t = pj_event_t;
 // pub type pj_pipe_t = pj_pipe_t;
-// pub type pj_time_val = pj_time_val;
+pub type PJTimeVal = pj_time_val;
 // pub type pj_parsed_time = pj_parsed_time;
 // pub type pj_ioqueue_op_key_t = pj_ioqueue_op_key_t;
 // pub type pj_ioqueue_callback = pj_ioqueue_callback;
