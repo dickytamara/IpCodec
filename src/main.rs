@@ -101,8 +101,8 @@ impl AudioLevelThread {
             let mut desc= [0i64;64usize];
 
             // register main thread
-            if !pj::thread::PJThread::thread_is_registered() {
-                pj::thread::PJThread::thread_register(None, &mut desc).unwrap();
+            if !pj::thread::PJThread::is_registered() {
+                pj::thread::PJThread::register(None, &mut desc).unwrap();
             }
 
             loop {

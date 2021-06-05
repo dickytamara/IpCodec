@@ -7,6 +7,7 @@ use pjsip_sys::{PJSIP_MAX_TRANSPORTS, pjsip_endpoint, pjsip_method, pjsip_rx_dat
 use pjsua_sys::*;
 
 use crate::pj::PJPool;
+use crate::pjsip::endpoint::SIPEndpoint;
 
 use super::prelude::*;
 use super::utils;
@@ -447,8 +448,8 @@ pub fn reconfigure_logging (c: &mut UALoggingConfig) -> Result<(), i32> {
     unsafe { utils::check_status(pjsua_sys::pjsua_reconfigure_logging(c as *const _)) }
 }
 
-pub fn get_pjsip_endpt() -> *mut pjsip_endpoint {
-    unsafe { pjsua_sys::pjsua_get_pjsip_endpt() }
+pub fn get_pjsip_endpt() -> SIPEndpoint {
+    unsafe { SIPEndpoint::from(Box::new(pjsua_sys::pjsua_get_pjsip_endpt())) }
 }
 
 pub fn get_pjmedia_endpt() -> *mut pjmedia_endpt {

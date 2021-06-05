@@ -12,6 +12,14 @@ impl From<Box<*mut pj_pool_t>> for PJPool {
     }
 }
 
+pub struct PJPoolBlock { pub ctx: Box<pj_pool_block> }
+
+impl From<pj_pool_block> for PJPoolBlock {
+    fn from (type_: pj_pool_block) -> Self {
+        Self { ctx: Box::new(type_)}
+    }
+}
+
 impl PJPool {
 
     // pj_pool_create
@@ -37,7 +45,7 @@ impl PJPool {
     }
 
     // pj_pool_release
-    pub fn release(self) {
+    pub fn release(&self) {
         unsafe { pj_pool_release(*self.ctx) }
     }
 
@@ -91,8 +99,8 @@ impl PJPool {
     // }
 
     // pj_pool_alloc_from_block
-    pub fn alloc_from_block(block: &mut Box<*mut pj_pool_block>, size: u64) -> Box<*mut c_void> {
-        unsafe { Box::new(pj_pool_alloc_from_block(**block, size)) }
+    pub fn alloc_from_block(block: &mut PJPoolBlock, size: u64) -> Box<*mut c_void> {
+        unsafe { Box::new(pj_pool_alloc_from_block(block.ctx.as_mut() as *mut _, size)) }
     }
     // pj_pool_allocate_find
     pub fn allocate_find(&self, size: u64) -> Box<*mut c_void> {

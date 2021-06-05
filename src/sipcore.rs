@@ -27,7 +27,7 @@ pub struct SIPCore {
     pub default_acc_cred: Box<CredentialInfo>,
     pub default_acc: Option<UAAccount>,
     pub default_call_setting: UACallSetting,
-    def_pool: Option<Box::<*mut PJPool>>, // this pool mostlly unused.
+    def_pool: Option<PJPool>, // this pool mostlly unused.
     module: SIPModule,
     no_udp: bool,
     no_tcp: bool,
@@ -135,13 +135,15 @@ impl SIPCore {
         }
 
         // default application pool
-        self.def_pool = Some(Box::new(pjsua::pool_create("ipcodec_app")));
+        self.def_pool = Some(pjsua::pool_create("ipcodec_app"));
 
         // register sub module for unhandeled error
         self.module.set_priority(SIPModulePriority::Application);
         self.module.set_name(String::from("mod-default-handler"));
         self.module.connect_on_rx_request(Some(on_rx_request));
-        SIPModule::register(&mut self.module);
+        let endpt = pjsua::get_pjsip_endpt();
+        endpt.register_module(&mut self.module).unwrap();
+        //SIPModule::register(&mut self.module);
 
         pjsua::init(
             &mut self.ua_config,
@@ -216,11 +218,11 @@ impl SIPCore {
     }
 
     pub fn restart(&mut self) {
-        match self.def_pool {
-            Some(ref mut pool) => {
-                pjsua::pool_release(**pool);
-            }, None => ()
-        };
+
+        if self.def_pool.is_some() {
+            self.def_pool.as_ref().unwrap().release();
+            self.def_pool = None
+        }
 
         self.stop();
         self.start();

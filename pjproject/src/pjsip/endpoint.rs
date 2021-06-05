@@ -12,11 +12,9 @@ use super::*;
 
 pub struct SIPEndpoint { ctx: Box<*mut pjsip_sys::pjsip_endpoint> }
 
-impl From<*mut pjsip_endpoint> for SIPEndpoint {
-    fn from(ptr: *mut pjsip_endpoint) -> Self {
-        Self {
-            ctx: Box::new(ptr),
-        }
+impl From<Box<*mut pjsip_endpoint>> for SIPEndpoint {
+    fn from(ptr: Box<*mut pjsip_endpoint>) -> Self {
+        Self { ctx: ptr }
     }
 }
 
@@ -40,7 +38,7 @@ impl SIPEndpoint {
 
             match status {
                 Ok(()) => {
-                    return Ok(SIPEndpoint::from(*endpt))
+                    return Ok(SIPEndpoint::from(endpt))
                 }
                 Err(e) => return Err(e)
             }
