@@ -370,11 +370,10 @@ impl SIPCore {
         self.current_call = Some(call);
         (self.events.borrow().invite)(SIPInvState::Incoming);
 
-        // if self.auto_answer >
-
-        // if self.auto_answer > 0 {
-        //     call.answer2(&mut opt, 200, None, None);
-        // }
+        let mut opt = UACallSetting::default();
+        if self.auto_answer {
+            call.answer2(&mut opt, SIPStatusCode::Ok, None, None).unwrap();
+        }
     }
 
     pub fn callback_on_reg_state(&self, acc: UAAccount) {

@@ -8,12 +8,14 @@ pub mod timer;
 pub mod thread;
 pub mod rbtree;
 pub mod ioqueue;
+pub mod ssl;
 
 pub use pool::*;
 pub use timer::*;
 pub use thread::*;
 pub use rbtree::*;
 pub use ioqueue::*;
+pub use ssl::*;
 
 pub type PJStr = pj_str_t;
 // pub type pj_timestamp__bindgen_ty_1 = pj_timestamp__bindgen_ty_1;

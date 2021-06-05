@@ -70,8 +70,6 @@ impl PJIoQueue {
     pub fn poll(&self, timeout: &pj_time_val) -> i32 {
         unsafe { pj_ioqueue_poll(*self.ctx, timeout as *const _) }
     }
-
-
 }
 
 impl PJIoQueueKey {
