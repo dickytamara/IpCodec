@@ -67,6 +67,9 @@ impl PJSslSock {
     }
 
     // pj_status_t 	pj_ssl_sock_set_certificate (pj_ssl_sock_t *ssock, pj_pool_t *pool, const pj_ssl_cert_t *cert)
+    pub fn set_certificate(&self, pool: &PJPool, cert: &mut Box<*mut pj_ssl_cert_t>) -> Result<(), i32> {
+        unsafe { check_status(pj_ssl_sock_set_certificate(*self.ctx, *pool.ctx, **cert)) }
+    }
 
     // pj_status_t 	pj_ssl_sock_close (pj_ssl_sock_t *ssock)
     pub fn close(&self) -> Result<(), i32> {

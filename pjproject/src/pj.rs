@@ -4,6 +4,8 @@ use num_enum::*;
 
 pub mod auto;
 pub mod pool;
+pub mod atomic;
+pub mod mutex;
 pub mod timer;
 pub mod thread;
 pub mod rbtree;
@@ -11,6 +13,8 @@ pub mod ioqueue;
 pub mod ssl;
 
 pub use pool::*;
+pub use atomic::*;
+pub use mutex::*;
 pub use timer::*;
 pub use thread::*;
 pub use rbtree::*;
