@@ -10,7 +10,10 @@ pub mod timer;
 pub mod thread;
 pub mod rbtree;
 pub mod ioqueue;
+pub mod semaphore;
+pub mod event;
 pub mod ssl;
+pub mod grp;
 
 pub use pool::*;
 pub use atomic::*;
@@ -19,7 +22,10 @@ pub use timer::*;
 pub use thread::*;
 pub use rbtree::*;
 pub use ioqueue::*;
+pub use semaphore::*;
 pub use ssl::*;
+pub use event::*;
+pub use grp::*;
 
 pub type PJStr = pj_str_t;
 // pub type pj_timestamp__bindgen_ty_1 = pj_timestamp__bindgen_ty_1;
