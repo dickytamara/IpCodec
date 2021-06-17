@@ -5,7 +5,7 @@ use pj_sys::*;
 
 use crate::{prelude::AutoCreate, utils::{boolean_to_pjbool, check_boolean, check_status}};
 
-use super::{PJPool, PJTimeVal};
+use super::{PJGrpLock, PJPool, PJTimeVal};
 
 pub struct PJTimerHeap { pub ctx: Box<*mut pj_timer_heap_t> }
 pub struct PJTimerEntry{ pub ctx: Box<*mut pj_timer_entry> }
@@ -67,14 +67,14 @@ impl PJTimerHeap {
     }
 
     // pj_status_t 	pj_timer_heap_schedule_w_grp_lock (pj_timer_heap_t *ht, pj_timer_entry *entry, const pj_time_val *delay, int id_val, pj_grp_lock_t *grp_lock)
-    pub fn schedule_w_grp_lock(&self, entry: &PJTimerEntry, delay: &PJTimeVal, id_val: i32, grp_lock: &mut Box<*mut pj_grp_lock_t>) -> Result<(), i32> {
+    pub fn schedule_w_grp_lock(&self, entry: &PJTimerEntry, delay: &PJTimeVal, id_val: i32, grp_lock: &mut PJGrpLock) -> Result<(), i32> {
         unsafe {
             check_status(pj_timer_heap_schedule_w_grp_lock_dbg(
                 *self.ctx,
                 *entry.ctx,
                 delay as *const _,
                 id_val,
-                **grp_lock,
+                *grp_lock.ctx,
                 std::ptr::null(),
                 0
             ))

@@ -472,7 +472,8 @@ fn main() {
     callback_codec_widget(&mut sipua, &codec_widget);
 
     // test call data
-    dialpad_widget.set_call_address_text(String::from("sip://@27.50.19.174"));
+    // dialpad_widget.set_call_address_text(String::from("sip://@27.50.19.174"));
+    dialpad_widget.set_call_address_text(String::from("sip://@192.168.100.2"));
     dialpad_widget.add_call_log("sip://@27.50.19.174");
     dialpad_widget.add_call_log("*888#");
     dialpad_widget.add_call_log("*363#");

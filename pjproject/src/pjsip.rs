@@ -5,6 +5,7 @@
 
 pub mod auto;
 pub mod endpoint;
+pub mod transport;
 pub mod core;
 
 use pj_sys::*;
