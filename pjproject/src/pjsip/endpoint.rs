@@ -10,7 +10,7 @@ use crate::{pj::PJPool, utils::{boolean_to_pjbool, check_boolean, check_status}}
 use super::*;
 
 
-pub struct SIPEndpoint { ctx: Box<*mut pjsip_sys::pjsip_endpoint> }
+pub struct SIPEndpoint { pub ctx: Box<*mut pjsip_sys::pjsip_endpoint> }
 
 impl From<Box<*mut pjsip_endpoint>> for SIPEndpoint {
     fn from(ptr: Box<*mut pjsip_endpoint>) -> Self {

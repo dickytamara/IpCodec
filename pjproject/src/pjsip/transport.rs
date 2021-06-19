@@ -1,5 +1,9 @@
 
 
+
+use crate::pj::PJPool;
+use crate::pjsip::endpoint::SIPEndpoint;
+use crate::utils::check_boolean;
 use std::{convert::TryFrom, ffi::{CStr, CString}};
 
 use pj_sys::pj_str_t;
@@ -59,6 +63,18 @@ impl From<Box<*mut pjsip_tpselector>> for SIPTpSelector {
         Self { ctx: ptr }
     }
 }
+
+
+pub struct SIPTpFactory {
+    pub ctx: Box<*mut pjsip_tpfactory>
+}
+
+impl From<Box<*mut pjsip_tpfactory>> for SIPTpFactory {
+    fn from(ptr: Box<*mut pjsip_tpfactory>) -> Self {
+        Self { ctx: ptr }
+    }
+}
+
 
 impl SIPTransport {
 
@@ -174,6 +190,7 @@ impl SIPTransport {
     }
 
     // pj_status_t 	pjsip_transport_add_state_listener (pjsip_transport *tp, pjsip_tp_state_callback cb, void *user_data, pjsip_tp_state_listener_key **key)
+    // pub fn add_state_listener(&mut self, cb: pjsip_tp_state_callback, user_data: Box<*mut void>, ) -> 
 
     // pj_status_t 	pjsip_transport_remove_state_listener (pjsip_transport *tp, pjsip_tp_state_listener_key *key, const void *user_data)
 
@@ -183,59 +200,198 @@ impl SIPTransport {
 }
 
 impl SIPRxData {
-// char * 	pjsip_rx_data_get_info (pjsip_rx_data *rdata)
+    // char * 	pjsip_rx_data_get_info (pjsip_rx_data *rdata)
+    pub fn get_info(&mut self) -> String {
+        unsafe {
+            let res = pjsip_rx_data_get_info(*self.ctx);
+            CStr::from_ptr(res).to_owned().into_string().unwrap()
+        }
+    }
 
-// pj_status_t 	pjsip_rx_data_clone (const pjsip_rx_data *src, unsigned flags, pjsip_rx_data **p_rdata)
+    // pj_status_t 	pjsip_rx_data_clone (const pjsip_rx_data *src, unsigned flags, pjsip_rx_data **p_rdata)
+    pub fn data_clone(&mut self, flags: u32) -> Result<Self, i32> {
+        unsafe {
+            let tx_data = Box::new(std::ptr::null_mut());
 
-// pj_status_t 	pjsip_rx_data_free_cloned (pjsip_rx_data *rdata)
+            let status = check_status(pjsip_rx_data_clone(*self.ctx, flags, *tx_data as *mut _));
+            match status {
+                Ok(()) => { return Ok(SIPRxData::from(tx_data)); },
+                Err(e) => { return Err(e); }
+            }
+        }
+    }
+
+    // pj_status_t 	pjsip_rx_data_free_cloned (pjsip_rx_data *rdata)
+    pub fn free_cloned(&mut self) -> Result<(), i32> {
+        unsafe {
+            check_status(pjsip_rx_data_free_cloned(*self.ctx))
+        }
+    }
 }
 
 impl SIPTxData {
 
     // pj_status_t 	pjsip_tx_data_create (pjsip_tpmgr *mgr, pjsip_tx_data **tdata)
+    pub fn create(mgr: &mut SIPTpMgr) -> Result <SIPTxData, i32> {
+        unsafe {
+            let ptr: Box<*mut pjsip_tx_data> = Box::new(std::ptr::null_mut());
+
+            let status = check_status(pjsip_tx_data_create(*mgr.ctx, *ptr as *mut _));
+
+            match status {
+                Ok(()) => { return Ok(SIPTxData::from(ptr)); },
+                Err(e) => { return Err(e); }
+            }
+        }
+    }
 
     // void 	pjsip_tx_data_add_ref (pjsip_tx_data *tdata)
+    pub fn add_ref(&mut self) {
+        unsafe { pjsip_tx_data_add_ref(*self.ctx) }
+    }
 
     // pj_status_t 	pjsip_tx_data_dec_ref (pjsip_tx_data *tdata)
+    pub fn dec_ref(&mut self) -> Result<(), i32> {
+        unsafe { check_status(pjsip_tx_data_dec_ref(*self.ctx)) }
+    }
+
 
     // pj_status_t 	pjsip_tx_data_encode (pjsip_tx_data *tdata)
+    pub fn encode(&mut self) -> Result<(), i32> {
+        unsafe { check_status(pjsip_tx_data_encode(*self.ctx)) }
+    }
 
     // pj_bool_t 	pjsip_tx_data_is_valid (pjsip_tx_data *tdata)
+    pub fn is_valid(&mut self) -> bool {
+        unsafe { check_boolean(pjsip_tx_data_is_valid(*self.ctx)) }
+    }
 
     // void 	pjsip_tx_data_invalidate_msg (pjsip_tx_data *tdata)
+    pub fn invalidate_msg(&mut self) {
+        unsafe { pjsip_tx_data_invalidate_msg(*self.ctx) }
+    }
 
     // char * 	pjsip_tx_data_get_info (pjsip_tx_data *tdata)
+    pub fn get_info(&mut self) -> String {
+        unsafe {
+            let ptr = pjsip_tx_data_get_info(*self.ctx);
+            CStr::from_ptr(ptr).to_owned().into_string().unwrap()
+        }
+    }
 
     // pj_status_t 	pjsip_tx_data_set_transport (pjsip_tx_data *tdata, const pjsip_tpselector *sel)
+    pub fn set_transport(&mut self, sel: &mut SIPTpSelector) -> Result<(), i32> {
+        unsafe { check_status(pjsip_tx_data_set_transport(*self.ctx, *sel.ctx)) }
+    }
 
     // pj_status_t 	pjsip_tx_data_clone (const pjsip_tx_data *src, unsigned flags, pjsip_tx_data **p_rdata)
+    pub fn clone(&mut self, flags: u32) -> Result<Self, i32> {
+        unsafe {
+            let ptr: Box<*mut pjsip_tx_data> = Box::new(std::ptr::null_mut()); 
+
+            let status = check_status(pjsip_tx_data_clone(*self.ctx, flags, *ptr as *mut _));
+
+            match status {
+                Ok(()) => { return Ok(SIPTxData::from(ptr)); },
+                Err(e) => { return Err(e); }
+            }
+        }
+    }
 
 }
 
 impl SIPTpMgr {
+
     // pj_ssize_t 	pjsip_tpmgr_receive_packet (pjsip_tpmgr *mgr, pjsip_rx_data *rdata)
+    pub fn receive_packet(&mut self, rdata: &mut SIPRxData) -> i64 {
+        unsafe { pjsip_tpmgr_receive_packet(*self.ctx, *rdata.ctx) }
+    }
 
     // pj_status_t 	pjsip_tpmgr_register_tpfactory (pjsip_tpmgr *mgr, pjsip_tpfactory *tpf)
+    pub fn register_tpfactory(&mut self, tpf: &mut SIPTpFactory) -> Result<(), i32> {
+        unsafe { check_status(pjsip_tpmgr_register_tpfactory(*self.ctx, *tpf.ctx)) }
+    }
 
     // pj_status_t 	pjsip_tpmgr_unregister_tpfactory (pjsip_tpmgr *mgr, pjsip_tpfactory *tpf)
+    pub fn unregister_factory(&mut self, tpf: &mut SIPTpFactory) -> Result<(), i32> {
+        unsafe { check_status(pjsip_tpmgr_unregister_tpfactory(*self.ctx, *tpf.ctx)) }
+    }
 
     // pj_status_t 	pjsip_tpmgr_create (pj_pool_t *pool, pjsip_endpoint *endpt, pjsip_rx_callback rx_cb, pjsip_tx_callback tx_cb, pjsip_tpmgr **p_mgr)
+    pub fn create(pool: &mut PJPool, endpt: SIPEndpoint, rx_cb: pjsip_rx_callback, tx_cb: pjsip_tx_callback) -> Result<Self, i32> {
+        unsafe {
+            let ptr: Box<*mut pjsip_tpmgr> = Box::new(std::ptr::null_mut());
+
+            let status = check_status(pjsip_tpmgr_create(
+                    *pool.ctx,
+                    *endpt.ctx,
+                    rx_cb,
+                    tx_cb,
+                    *ptr as *mut _
+                ));
+
+            match status {
+                Ok(()) => { return Ok(SIPTpMgr::from(ptr)); },
+                Err(e) => { return Err(e); }
+            }
+        }
+    }
 
     // pj_status_t 	pjsip_tpmgr_find_local_addr (pjsip_tpmgr *tpmgr, pj_pool_t *pool, pjsip_transport_type_e type, const pjsip_tpselector *sel, pj_str_t *ip_addr, int *port)
+    pub fn find_local_addr(&mut self, pool: &mut PJPool, type_: SIPTransportType, sel: &mut SIPTpSelector, ip_addr: String, port: &mut i32) -> Result<(), i32> {
+        unsafe { 
+
+            let mut ip_addr = pj_str_t::from_string(ip_addr);
+
+            check_status( pjsip_tpmgr_find_local_addr(
+                *self.ctx, *pool.ctx, type_.into(), *sel.ctx, &mut ip_addr as *mut _, port as *mut _
+            ))
+        }
+    }
 
     // void 	pjsip_tpmgr_fla2_param_default (pjsip_tpmgr_fla2_param *prm)
+    pub fn fla2_param_default(prm: &mut Box<*mut pjsip_tpmgr_fla2_param>) {
+        unsafe { pjsip_tpmgr_fla2_param_default(**prm) }
+    }
 
     // pj_status_t 	pjsip_tpmgr_find_local_addr2 (pjsip_tpmgr *tpmgr, pj_pool_t *pool, pjsip_tpmgr_fla2_param *prm)
+    pub fn find_local_addr2(&mut self, pool: &mut PJPool, prm: &mut Box<*mut pjsip_tpmgr_fla2_param>) -> Result<(), i32> {
+        unsafe { check_status(pjsip_tpmgr_find_local_addr2(*self.ctx, *pool.ctx, **prm)) }
+    }
 
     // unsigned 	pjsip_tpmgr_get_transport_count (pjsip_tpmgr *mgr)
+    pub fn get_trasport_count(&mut self) -> u32 {
+        unsafe { pjsip_tpmgr_get_transport_count(*self.ctx) }
+    }
 
     // pj_status_t 	pjsip_tpmgr_destroy (pjsip_tpmgr *mgr)
+    pub fn destroy(&mut self) -> Result<(), i32> {
+        unsafe { check_status(pjsip_tpmgr_destroy(*self.ctx)) }
+    }
 
     // void 	pjsip_tpmgr_dump_transports (pjsip_tpmgr *mgr)
+    pub fn dump_transports(&mut self) {
+        unsafe { pjsip_tpmgr_dump_transports(*self.ctx) }
+    }
 
     // pj_status_t 	pjsip_tpmgr_acquire_transport (pjsip_tpmgr *mgr, pjsip_transport_type_e type, const pj_sockaddr_t *remote, int addr_len, const pjsip_tpselector *sel, pjsip_transport **tp)
+    pub fn acquire_transport(&mut self, type_: SIPTransportType, remote: &mut Box<*mut pj_sys::pj_sockaddr_t>, addr_len: i32, sel: &mut SIPTpSelector) -> Result<SIPTransport, i32> {
+        unsafe { 
+            let ptr: Box<*mut pjsip_transport> = Box::new(std::ptr::null_mut());
+
+            let status = check_status( pjsip_tpmgr_acquire_transport(
+                    *self.ctx, type_.into(), **remote, addr_len, *sel.ctx, *ptr as *mut _
+                ));
+
+            match status {
+                Ok(()) => { return Ok(SIPTransport::from(ptr)); },
+                Err(e) => { return Err(e); }
+            }
+        }
+    }
 
     // pj_status_t 	pjsip_tpmgr_acquire_transport2 (pjsip_tpmgr *mgr, pjsip_transport_type_e type, const pj_sockaddr_t *remote, int addr_len, const pjsip_tpselector *sel, pjsip_tx_data *tdata, pjsip_transport **tp)
+
 
     // pj_status_t 	pjsip_tpmgr_send_raw (pjsip_tpmgr *mgr, pjsip_transport_type_e tp_type, const pjsip_tpselector *sel, pjsip_tx_data *tdata, const void *raw_data, pj_size_t data_len, const pj_sockaddr_t *addr, int addr_len, void *token, pjsip_tp_send_callback cb)
 
@@ -248,8 +404,14 @@ impl SIPTpMgr {
 
 impl SIPTpSelector {
     // void 	pjsip_tpselector_add_ref (pjsip_tpselector *sel)
+    pub fn add_ref(&mut self) {
+        unsafe { pjsip_tpselector_add_ref(*self.ctx) }
+    }
 
     // void 	pjsip_tpselector_dec_ref (pjsip_tpselector *sel)
+    pub fn dec_ref(&mut self) {
+        unsafe { pjsip_tpselector_dec_ref(*self.ctx) }
+    }
 }
 
 
