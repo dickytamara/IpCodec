@@ -1,16 +1,16 @@
-#![allow(non_camel_case_types)]
-#![allow(non_upper_case_globals)]
-#![allow(non_snake_case)]
 
+mod auto;
+mod endpoint;
+mod transport;
+mod module;
 
-pub mod auto;
-pub mod endpoint;
-pub mod transport;
-pub mod core;
+pub use auto::*;
+pub use endpoint::*;
+pub use transport::*;
+pub use module::*;
 
 use pj_sys::*;
-
-use pjsip_sys::*;
+pub use pjsip_sys::*;
 use super::utils;
 
 use num_enum::*;
@@ -74,17 +74,17 @@ pub type SIPModule = pjsip_module;
 // pub type pjsip_ext_resolver = pjsip_ext_resolver;
 // pub type pjsip_tpselector = pjsip_tpselector;
 // pub type pjsip_rx_data_op_key = pjsip_rx_data_op_key;
-pub type SIPRxData = pjsip_rx_data;
+// pub type SIPRxData = pjsip_rx_data;
 // pub type pjsip_rx_data__bindgen_ty_1 = pjsip_rx_data__bindgen_ty_1;
 // pub type pjsip_rx_data__bindgen_ty_2 = pjsip_rx_data__bindgen_ty_2;
 // pub type pjsip_rx_data__bindgen_ty_3 = pjsip_rx_data__bindgen_ty_3;
 // pub type pjsip_rx_data__bindgen_ty_4 = pjsip_rx_data__bindgen_ty_4;
 // pub type pjsip_tx_data_op_key = pjsip_tx_data_op_key;
-pub type SIPTxData = pjsip_tx_data;
+// pub type SIPTxData = pjsip_tx_data;
 // pub type pjsip_tx_data__bindgen_ty_1 = pjsip_tx_data__bindgen_ty_1;
 // pub type pjsip_tx_data__bindgen_ty_2 = pjsip_tx_data__bindgen_ty_2;
 // pub type pjsip_transport_key = pjsip_transport_key;
-pub type SIPTransport = pjsip_transport;
+// pub type SIPTransport = pjsip_transport;
 // pub type pjsip_tpfactory = pjsip_tpfactory;
 // pub type pjsip_tpmgr_fla2_param = pjsip_tpmgr_fla2_param;
 pub type SIPTransportStateInfo = pjsip_transport_state_info;

@@ -1,6 +1,6 @@
 
 use super::utils::AutoCreate;
-use super::*;
+use pjsua_sys::*;
 
 impl AutoCreate<pjsua_srv_pres> for pjsua_srv_pres {}
 impl AutoCreate<pjsua_logging_config> for pjsua_logging_config {}

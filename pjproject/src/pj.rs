@@ -2,18 +2,18 @@
 use pj_sys::*;
 use num_enum::*;
 
-pub mod auto;
-pub mod pool;
-pub mod atomic;
-pub mod mutex;
-pub mod timer;
-pub mod thread;
-pub mod rbtree;
-pub mod ioqueue;
-pub mod semaphore;
-pub mod event;
-pub mod ssl;
-pub mod grp;
+mod auto;
+mod pool;
+mod atomic;
+mod mutex;
+mod timer;
+mod thread;
+mod rbtree;
+mod ioqueue;
+mod semaphore;
+mod event;
+mod ssl;
+mod grp;
 
 pub use pool::*;
 pub use atomic::*;

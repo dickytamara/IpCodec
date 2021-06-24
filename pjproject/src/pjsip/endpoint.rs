@@ -287,9 +287,7 @@ impl SIPEndpoint {
             ));
 
             match status {
-                Ok(()) => {
-                    return Ok(tp)
-                },
+                Ok(()) =>  return Ok(tp) ,
                 Err(e) => return Err(e)
             }
         }

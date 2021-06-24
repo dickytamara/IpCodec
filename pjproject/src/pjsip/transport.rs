@@ -2,7 +2,7 @@
 
 
 use crate::pj::PJPool;
-use crate::pjsip::endpoint::SIPEndpoint;
+use crate::pjsip::SIPEndpoint;
 use crate::utils::check_boolean;
 use std::{convert::TryFrom, ffi::{CStr, CString}};
 
@@ -398,6 +398,9 @@ impl SIPTpMgr {
     // pj_status_t 	pjsip_tpmgr_set_state_cb (pjsip_tpmgr *mgr, pjsip_tp_state_callback cb)
 
     // pjsip_tp_state_callback 	pjsip_tpmgr_get_state_cb (const pjsip_tpmgr *mgr)
+    // pub fn get_state_cb(&mut self) -> pjsip_tp_state_callback {
+    //     unsafe {  }
+    // }
 
     // pj_status_t 	pjsip_tpmgr_set_drop_data_cb (pjsip_tpmgr *mgr, pjsip_tp_on_rx_dropped_cb cb)
 }

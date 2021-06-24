@@ -1,13 +1,9 @@
-use pjproject::{pjsip, pjsip_ua::SIPInvState, pjsua::{call::UACall}, prelude::*};
+use pjproject::{pjsip, pjsip_ua::SIPInvState, prelude::*};
 use pjproject::prelude::AutoDefault;
 use pjproject::pj::*;
 use pjproject::pjsip::*;
 use pjproject::pjsua::*;
 use pjproject::pjmedia::*;
-
-use pjproject::pjsua::transport::*;
-use pjproject::pjsua::account::*;
-use pjproject::pjsua::media::*;
 
 use pjproject::pjsua;
 
@@ -365,7 +361,7 @@ impl SIPCore {
         }
     }
 
-    pub fn callback_on_incomming_call(&mut self, account: UAAccount, call: UACall, rdata: *mut SIPRxData) {
+    pub fn callback_on_incomming_call(&mut self, account: UAAccount, call: UACall, rdata: SIPRxData) {
 
         self.current_call = Some(call);
         (self.events.borrow().invite)(SIPInvState::Incoming);
@@ -479,25 +475,25 @@ impl SIPCoreEventsExt for SIPCore {
 //     }
 // }
 
-unsafe extern "C" fn on_rx_request(rdata: *mut SIPRxData) -> i32 {
+unsafe extern "C" fn on_rx_request(rdata: *mut pjproject::pjsip_sys::pjsip_rx_data) -> i32 {
 
     // pjsip_tx_data *tdata;
     // pjsip_status_code status_code;
     // pj_status_t status;
 
-    let status_code: SIPStatusCode;
-    let rdata: Box<*mut SIPRxData> = Box::new(rdata);
-    let tdata: Box<*mut SIPTxData> = Box::new(std::ptr::null_mut());
+    // let status_code: SIPStatusCode;
+    // let rdata: Box<*mut SIPRxData> = Box::new(rdata);
+    // let tdata: Box<*mut SIPTxData> = Box::new(std::ptr::null_mut());
 
     /* Don't respond to ACK! */
     // if (pjsip_method_cmp(&rdata->msg_info.msg->line.req.method, &pjsip_ack_method) == 0)
 	// return PJ_TRUE;
 
     // Don't respond to ACK
-    let ack_method = pjsip::ack_method();
-    if pjsip::method_cmp(&(*((**rdata).msg_info.msg)).line.req.as_ref().method, &ack_method) == 0 {
-        return 0
-    }
+    // let ack_method = pjsip::ack_method();
+    // if pjsip::method_cmp(&(*((**rdata).msg_info.msg)).line.req.as_ref().method, &ack_method) == 0 {
+    //     return 0
+    // }
 
     /* Simple registrar */
     // if (pjsip_method_cmp(&rdata->msg_info.msg->line.req.method, &pjsip_register_method) == 0)
@@ -507,11 +503,11 @@ unsafe extern "C" fn on_rx_request(rdata: *mut SIPRxData) -> i32 {
     // }
 
     // Simple registrar
-    let register_method = pjsip::register_method();
-    if pjsip::method_cmp(&(*((**rdata).msg_info.msg)).line.req.as_ref().method, &register_method) == 0 {
-        // TODO: sip simple register
-        return 0
-    }
+    // let register_method = pjsip::register_method();
+    // if pjsip::method_cmp(&(*((**rdata).msg_info.msg)).line.req.as_ref().method, &register_method) == 0 {
+    //     // TODO: sip simple register
+    //     return 0
+    // }
 
     /* Create basic response. */
     // if (pjsip_method_cmp(&rdata->msg_info.msg->line.req.method, &pjsip_notify_method) == 0)
@@ -524,14 +520,14 @@ unsafe extern "C" fn on_rx_request(rdata: *mut SIPRxData) -> i32 {
     // }
 
     // Create basic response
-    let notify_method = pjsip::register_method();
-    if pjsip::method_cmp(&(*((**rdata).msg_info.msg)).line.req.as_ref().method, &notify_method) == 0 {
-        // Unsolicited NOTIFY's, send with Bad Request
-        status_code = SIPStatusCode::BadRequest;
-    } else {
-        // Probably unknown method
-        status_code = SIPStatusCode::MethodNotallowed;
-    }
+    // let notify_method = pjsip::register_method();
+    // if pjsip::method_cmp(&(*((**rdata).msg_info.msg)).line.req.as_ref().method, &notify_method) == 0 {
+    //     // Unsolicited NOTIFY's, send with Bad Request
+    //     status_code = SIPStatusCode::BadRequest;
+    // } else {
+    //     // Probably unknown method
+    //     status_code = SIPStatusCode::MethodNotallowed;
+    // }
 
     // status = pjsip_endpt_create_response(pjsua_get_pjsip_endpt(), rdata, status_code, NULL, &tdata);
     // if (status != PJ_SUCCESS) {
@@ -577,9 +573,9 @@ unsafe extern "C" fn on_call_state(call_id: i32, e: *mut SIPEvent) {
 }
 
 // on_incoming_call(acc_id, call_id, rdata)
-unsafe extern "C" fn on_incoming_call( acc_id: i32, call_id: i32, rdata: *mut SIPRxData) {
+unsafe extern "C" fn on_incoming_call( acc_id: i32, call_id: i32, rdata: *mut pjproject::pjsip::pjsip_rx_data) {
     SIP_CORE.as_mut().unwrap()
-    .callback_on_incomming_call(UAAccount::from(acc_id), UACall::from(call_id), rdata)
+    .callback_on_incomming_call(UAAccount::from(acc_id), UACall::from(call_id), SIPRxData::from(Box::new(rdata)))
 }
 
 // on_call_media_state(call_id)

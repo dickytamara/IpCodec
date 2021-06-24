@@ -38,11 +38,13 @@ mod sipcore;
 mod settings_tls;
 
 
+
 use gtk::prelude::*;
 use gio::prelude::*;
+use pjproject::prelude::*;
 use helper::{HelperFileSettings, application_config_path};
-use pjproject::{pjmedia::MediaEchoFlag, pjnath::{IceSessTrickle, TurnTpType}, pjsip_ua::SIPInvState, pjsua::{CredentialInfo, CredentialInfoType, EncodingQuality, ua::CredentialInfoExt}, prelude::*};
-use pjproject::pjsua::media::UASound;
+use pjproject::{pjmedia::MediaEchoFlag, pjnath::{IceSessTrickle, TurnTpType}, pjsip_ua::SIPInvState, pjsua::{CredentialInfo, CredentialInfoType, EncodingQuality}};
+use pjproject::pjsua::UASound;
 use systemstat::Duration;
 
 use pjproject::pj;
@@ -56,7 +58,7 @@ use std::include_str;
 
 use gtk::{Application, Builder};
 
-use dialpad::{DialpadWidget};
+use dialpad::DialpadWidget;
 use audio_line::AudioLineWidget;
 use maintab::MaintabWidget;
 use header::HeaderWidget;
@@ -101,8 +103,8 @@ impl AudioLevelThread {
             let mut desc= [0i64;64usize];
 
             // register main thread
-            if !pj::thread::PJThread::is_registered() {
-                pj::thread::PJThread::register(None, &mut desc).unwrap();
+            if !pj::PJThread::is_registered() {
+                pj::PJThread::register(None, &mut desc).unwrap();
             }
 
             loop {
@@ -472,8 +474,8 @@ fn main() {
     callback_codec_widget(&mut sipua, &codec_widget);
 
     // test call data
-    // dialpad_widget.set_call_address_text(String::from("sip://@27.50.19.174"));
-    dialpad_widget.set_call_address_text(String::from("sip://@192.168.100.2"));
+    dialpad_widget.set_call_address_text(String::from("sip:ipcodec03@27.50.19.174"));
+    //dialpad_widget.set_call_address_text(String::from("sip://@192.168.100.2"));
     dialpad_widget.add_call_log("sip://@27.50.19.174");
     dialpad_widget.add_call_log("*888#");
     dialpad_widget.add_call_log("*363#");
@@ -481,7 +483,7 @@ fn main() {
     // account test
     account_widget.set_sip_url("sip:ipcodec01@27.50.19.174");
     account_widget.set_registrar_url("sip:27.50.19.174");
-    account_widget.set_realm("asterisk");
+    account_widget.set_realm("*");
     account_widget.set_username("ipcodec01");
     account_widget.set_password("12345678");
 

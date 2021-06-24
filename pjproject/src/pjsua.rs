@@ -3,13 +3,13 @@ use pj_sys::{PJ_SUCCESS, pj_pool_factory, pj_str_t, pj_time_val, pj_timer_entry}
 use pjmedia_sys::{pjmedia_codec_param, pjmedia_echo_stat, pjmedia_endpt, pjmedia_port, pjmedia_sdp_session, pjmedia_snd_dev_info, pjmedia_snd_port, pjmedia_snd_port_param};
 use pjnath_sys::{pj_stun_nat_type, pj_turn_sock_tls_cfg};
 use pjsip_simple_sys::{pjrpid_element, pjsip_evsub_state};
-use pjsip_sys::{PJSIP_MAX_TRANSPORTS, pjsip_endpoint, pjsip_method, pjsip_rx_data, pjsip_tpfactory, pjsip_transport, pjsip_tx_data};
+use pjsip_sys::{PJSIP_MAX_TRANSPORTS, pjsip_method, pjsip_rx_data, pjsip_tpfactory, pjsip_transport, pjsip_tx_data};
 use pjsua_sys::*;
 
 use crate::pj::PJPool;
-use crate::pjsip::endpoint::SIPEndpoint;
+use crate::pjsip::SIPEndpoint;
 
-use super::prelude::*;
+//use super::prelude::*;
 use super::utils;
 
 use std::convert::TryFrom;
@@ -21,13 +21,21 @@ use num_enum::IntoPrimitive;
 use num_enum::TryFromPrimitive;
 
 
-pub mod auto;
-pub mod ua;
-pub mod media;
-pub mod account;
-pub mod transport;
-pub mod buddy;
-pub mod call;
+mod auto;
+mod ua;
+mod media;
+mod account;
+mod transport;
+mod buddy;
+mod call;
+
+pub use auto::*;
+pub use ua::*;
+pub use media::*;
+pub use account::*;
+pub use transport::*;
+pub use buddy::*;
+pub use call::*;
 
 // basic api struct
 pub type UALoggingConfig = pjsua_sys::pjsua_logging_config;

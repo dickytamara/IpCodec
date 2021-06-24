@@ -3,17 +3,17 @@
 #![allow(non_upper_case_globals)]
 
 extern crate num_enum;
-extern crate pj_sys;
-extern crate pjlib_util_sys;
-extern crate pjnath_sys;
-extern crate pjmedia_sys;
-extern crate pjmedia_audiodev_sys;
-extern crate pjmedia_videodev_sys;
-extern crate pjmedia_codec_sys;
-extern crate pjsip_sys;
-extern crate pjsip_simple_sys;
-extern crate pjsip_ua_sys;
-extern crate pjsua_sys;
+pub extern crate pj_sys;
+pub extern crate pjlib_util_sys;
+pub extern crate pjnath_sys;
+pub extern crate pjmedia_sys;
+pub extern crate pjmedia_audiodev_sys;
+pub extern crate pjmedia_videodev_sys;
+pub extern crate pjmedia_codec_sys;
+pub extern crate pjsip_sys;
+pub extern crate pjsip_simple_sys;
+pub extern crate pjsip_ua_sys;
+pub extern crate pjsua_sys;
 
 pub mod utils;
 pub mod prelude;
