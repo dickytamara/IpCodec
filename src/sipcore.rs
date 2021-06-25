@@ -134,11 +134,13 @@ impl SIPCore {
         self.def_pool = Some(pjsua::pool_create("ipcodec_app"));
 
         // register sub module for unhandeled error
-        self.module.set_priority(SIPModulePriority::Application);
-        self.module.set_name(String::from("mod-default-handler"));
-        self.module.connect_on_rx_request(Some(on_rx_request));
-        let endpt = pjsua::get_pjsip_endpt();
-        endpt.register_module(&mut self.module).unwrap();
+        // in version 2.10 we dont need to register any module
+
+        // self.module.set_priority(SIPModulePriority::Application);
+        // self.module.set_name(String::from("mod-default-handler"));
+        // self.module.connect_on_rx_request(Some(on_rx_request));
+        // let endpt = pjsua::get_pjsip_endpt();
+        // endpt.register_module(&mut self.module).unwrap();
         //SIPModule::register(&mut self.module);
 
         pjsua::init(
@@ -393,177 +395,6 @@ impl SIPCoreEventsExt for SIPCore {
     fn connect_incoming_call <F: Fn() + 'static> (&self, f: F) {
         self.events.borrow_mut().incoming_call = Box::new(f);
     }
-}
-
-// fn simple_registrar(rdata: *mut pjsip_rx_data) {
-//     println!("ON Simple Registrar");
-//     unsafe {
-//         let tdata: *const pjsip_tx_data = ptr::null();
-//         let str_null: *const pj_str_t = ptr::null();
-//         let status: pj_status_t;
-//         let mut cnt: c_uint = 0;
-
-//         status = pjsip_endpt_create_response(
-//             pjsua_get_pjsip_endpt(),
-//             rdata as *const _,
-//             200,
-//             str_null as *const _,
-//             tdata as *mut _,
-//         );
-
-//         if status != PJ_SUCCESS as i32 {
-//             return;
-//         }
-
-//         let exp: *const pjsip_expires_hdr = pjsip_msg_find_hdr(
-//             (*rdata).msg_info.msg,
-//             PJSIP_H_EXPIRES,
-//             ptr::null_mut(),
-//         ) as *const _;
-
-//         // let rdata_ = &*rdata;
-//         // let llist: pjsip_hdr = (*(*rdata).msg_info.msg).hdr;
-//         // let mut h: *mut pjsip_hdr = (*(*rdata).msg_info.msg).hdr.next;
-//         let llist = &(*(&*rdata).msg_info.msg).hdr;
-//         let mut h= &*((*(&*rdata).msg_info.msg).hdr).next;
-
-//         while h != &*llist.next {
-//             if (*h as pjsip_hdr).type_ == (PJSIP_H_CONTACT as pjsip_hdr_e) {
-//                 let c: *const pjsip_contact_hdr = h as *const pjsip_contact_hdr;
-//                 let mut e: c_uint = (*c).expires;
-
-//                 if e != 0xffffffff {
-//                     if !exp.is_null() {
-//                         e = (*exp).ivalue;
-//                     } else {
-//                         e = 3600;
-//                     }
-//                 }
-
-//                 if e > 0 {
-//                     let nc: *mut pjsip_contact_hdr =
-//                         pjsip_hdr_clone((*tdata).pool, h as *const _) as *mut pjsip_contact_hdr;
-
-//                     (*nc).expires = e;
-//                     pj_list_insert_before((*tdata).msg as *mut _, nc as *mut _);
-//                     cnt = cnt + 1;
-//                 }
-//                 h = (*h).next;
-//             }
-//         }
-
-//         // todo review c code for this. it's c clasic problem
-//         let srv: *mut pjsip_generic_string_hdr =
-//             pjsip_generic_string_hdr_create((*tdata).pool, str_null, str_null);
-//         // create server name
-//         let tmp: CString = CString::new("Server").expect("cant create Server string");
-//         (*srv).name = pj_str(tmp.as_ptr() as *mut c_char);
-//         // create add description
-//         let tmp: CString =
-//             CString::new("IpCodec simple registrar").expect("cant create simple registrar");
-//         (*srv).hvalue = pj_str(tmp.as_ptr() as *mut c_char);
-
-//         pj_list_insert_before((*tdata).msg as *mut _, srv as *mut _);
-//         let cb: pjsip_send_callback = None;
-//         pjsip_endpt_send_response2(
-//             pjsua::get_pjsip_endpt(),
-//             rdata,
-//             tdata as *mut _,
-//             ptr::null_mut(),
-//             None,
-//         );
-//     }
-// }
-
-unsafe extern "C" fn on_rx_request(rdata: *mut pjproject::pjsip_sys::pjsip_rx_data) -> i32 {
-
-    // pjsip_tx_data *tdata;
-    // pjsip_status_code status_code;
-    // pj_status_t status;
-
-    // let status_code: SIPStatusCode;
-    // let rdata: Box<*mut SIPRxData> = Box::new(rdata);
-    // let tdata: Box<*mut SIPTxData> = Box::new(std::ptr::null_mut());
-
-    /* Don't respond to ACK! */
-    // if (pjsip_method_cmp(&rdata->msg_info.msg->line.req.method, &pjsip_ack_method) == 0)
-	// return PJ_TRUE;
-
-    // Don't respond to ACK
-    // let ack_method = pjsip::ack_method();
-    // if pjsip::method_cmp(&(*((**rdata).msg_info.msg)).line.req.as_ref().method, &ack_method) == 0 {
-    //     return 0
-    // }
-
-    /* Simple registrar */
-    // if (pjsip_method_cmp(&rdata->msg_info.msg->line.req.method, &pjsip_register_method) == 0)
-    // {
-    //     simple_registrar(rdata);
-    //     return PJ_TRUE;
-    // }
-
-    // Simple registrar
-    // let register_method = pjsip::register_method();
-    // if pjsip::method_cmp(&(*((**rdata).msg_info.msg)).line.req.as_ref().method, &register_method) == 0 {
-    //     // TODO: sip simple register
-    //     return 0
-    // }
-
-    /* Create basic response. */
-    // if (pjsip_method_cmp(&rdata->msg_info.msg->line.req.method, &pjsip_notify_method) == 0)
-    // {
-    //     /* Unsolicited NOTIFY's, send with Bad Request */
-    //     status_code = PJSIP_SC_BAD_REQUEST;
-    // } else {
-    //     /* Probably unknown method */
-    //     status_code = PJSIP_SC_METHOD_NOT_ALLOWED;
-    // }
-
-    // Create basic response
-    // let notify_method = pjsip::register_method();
-    // if pjsip::method_cmp(&(*((**rdata).msg_info.msg)).line.req.as_ref().method, &notify_method) == 0 {
-    //     // Unsolicited NOTIFY's, send with Bad Request
-    //     status_code = SIPStatusCode::BadRequest;
-    // } else {
-    //     // Probably unknown method
-    //     status_code = SIPStatusCode::MethodNotallowed;
-    // }
-
-    // status = pjsip_endpt_create_response(pjsua_get_pjsip_endpt(), rdata, status_code, NULL, &tdata);
-    // if (status != PJ_SUCCESS) {
-    //     pjsua_perror(THIS_FILE, "Unable to create response", status);
-    //     return PJ_TRUE;
-    // }
-
-    // pjsip::endpt_create_response(pjsua::get_pjsip_endpt(), rdata, status_code, None).unwrap();
-
-    /* Add Allow if we're responding with 405 */
-    // if (status_code == PJSIP_SC_METHOD_NOT_ALLOWED) {
-    //     const pjsip_hdr *cap_hdr;
-    //     cap_hdr = pjsip_endpt_get_capability(pjsua_get_pjsip_endpt(), PJSIP_H_ALLOW, NULL);
-    //     if (cap_hdr) {
-    //         pjsip_msg_add_hdr(tdata->msg, (pjsip_hdr *)pjsip_hdr_clone(tdata->pool, cap_hdr));
-    //     }
-    // }
-
-    /* Add User-Agent header */
-    // {
-    //     pj_str_t user_agent;
-    //     char tmp[80];
-    //     const pj_str_t USER_AGENT = { "User-Agent", 10};
-    //     pjsip_hdr *h;
-
-    //     pj_ansi_snprintf(tmp, sizeof(tmp), "PJSUA v%s/%s", pj_get_version(), PJ_OS_NAME);
-    //     pj_strdup2_with_null(tdata->pool, &user_agent, tmp);
-
-    //     h = (pjsip_hdr*) pjsip_generic_string_hdr_create(tdata->pool, &USER_AGENT, &user_agent);
-    //     pjsip_msg_add_hdr(tdata->msg, h);
-    // }
-
-    // pjsip_endpt_send_response2(pjsua_get_pjsip_endpt(), rdata, tdata, NULL, NULL);
-
-    // return PJ_TRUE;
-    0
 }
 
 // on_call_state(pjsua_call_id, pjsip_event)
