@@ -1,11 +1,11 @@
-use pjproject::{pjsip, pjsip_ua::SIPInvState, prelude::*};
-use pjproject::prelude::AutoDefault;
-use pjproject::pj::*;
-use pjproject::pjsip::*;
-use pjproject::pjsua::*;
-use pjproject::pjmedia::*;
+use pjproject_rs::{pjsip, pjsip_ua::SIPInvState, prelude::*};
+use pjproject_rs::prelude::AutoDefault;
+use pjproject_rs::pj::*;
+use pjproject_rs::pjsip::*;
+use pjproject_rs::pjsua::*;
+use pjproject_rs::pjmedia::*;
 
-use pjproject::pjsua;
+use pjproject_rs::pjsua;
 
 use std::{cell::RefCell, rc::Rc};
 
@@ -404,7 +404,7 @@ unsafe extern "C" fn on_call_state(call_id: i32, e: *mut SIPEvent) {
 }
 
 // on_incoming_call(acc_id, call_id, rdata)
-unsafe extern "C" fn on_incoming_call( acc_id: i32, call_id: i32, rdata: *mut pjproject::pjsip::pjsip_rx_data) {
+unsafe extern "C" fn on_incoming_call( acc_id: i32, call_id: i32, rdata: *mut pjproject_rs::pjsip::pjsip_rx_data) {
     SIP_CORE.as_mut().unwrap()
     .callback_on_incomming_call(UAAccount::from(acc_id), UACall::from(call_id), SIPRxData::from(Box::new(rdata)))
 }

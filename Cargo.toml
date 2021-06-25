@@ -7,7 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-pjproject = { path = "./pjproject" }
+pjproject-rs = { path = "../pjproject-rs" }
 configparser = "1.0.0"
 systemstat = "0.1.7"
 

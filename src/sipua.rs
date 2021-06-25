@@ -1,6 +1,6 @@
-use pjproject::pjsip_ua::SIPInvState;
-use pjproject::pjsua::{CredentialInfo, UAAccConfig, UAConfig, UALoggingConfig, UAMediaConfig};
-use pjproject::prelude::UAConfigExt;
+use pjproject_rs::pjsip_ua::SIPInvState;
+use pjproject_rs::pjsua::{CredentialInfo, UAAccConfig, UAConfig, UALoggingConfig, UAMediaConfig};
+use pjproject_rs::prelude::UAConfigExt;
 
 use super::sipcore::*;
 use std::ops::Drop;

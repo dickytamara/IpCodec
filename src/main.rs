@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 #![allow(non_snake_case)]
 #![allow(unused_variables)]
-extern crate pjproject;
+extern crate pjproject_rs;
 
 extern crate gtk;
 extern crate gio;
@@ -41,13 +41,13 @@ mod settings_tls;
 
 use gtk::prelude::*;
 use gio::prelude::*;
-use pjproject::prelude::*;
+use pjproject_rs::prelude::*;
 use helper::{HelperFileSettings, application_config_path};
-use pjproject::{pjmedia::MediaEchoFlag, pjnath::{IceSessTrickle, TurnTpType}, pjsip_ua::SIPInvState, pjsua::{CredentialInfo, CredentialInfoType, EncodingQuality}};
-use pjproject::pjsua::UASound;
+use pjproject_rs::{pjmedia::MediaEchoFlag, pjnath::{IceSessTrickle, TurnTpType}, pjsip_ua::SIPInvState, pjsua::{CredentialInfo, CredentialInfoType, EncodingQuality}};
+use pjproject_rs::pjsua::UASound;
 use systemstat::Duration;
 
-use pjproject::pj;
+use pjproject_rs::pj;
 // use pjnath_sys::*;
 
 use std::{cell::{RefCell}, convert::{TryFrom, TryInto}, env, rc::Rc, thread};
